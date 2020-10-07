@@ -46,12 +46,28 @@ def _reject_constant(value):
     raise ValueError(f"nonstandard JSON number: {value}")
 
 
-def _jsonl(path):
-    try:
-        values = [json.loads(line, object_pairs_hook=_unique_object, parse_constant=_reject_constant) for line in Path(path).read_text().splitlines() if line.strip()]
-    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
-        raise ValueError(f"malformed JSONL in {path}") from exc
-    if not values or any(not isinstance(item, dict) for item in values):
+def _jsonl(path, max_bytes=16 * 1024 * 1024, max_records=100000):
+    if type(max_bytes) is not int or max_bytes < 1 or type(max_records) is not int or max_records < 1:
+        raise ValueError("positive byte and record limits required")
+    values, byte_count = [], 0
+    with Path(path).open("rb") as stream:
+        for line in stream:
+            byte_count += len(line)
+            if byte_count > max_bytes:
+                raise ValueError("dataset byte budget exceeded")
+            if not line.strip():
+                continue
+            if len(values) >= max_records:
+                raise ValueError("dataset record budget exceeded")
+            try:
+                item = json.loads(line.decode("utf-8"), object_pairs_hook=_unique_object,
+                                  parse_constant=_reject_constant)
+            except (ValueError, UnicodeDecodeError) as exc:
+                raise ValueError(f"malformed JSONL in {path}: {exc}") from exc
+            if not isinstance(item, dict):
+                raise ValueError("JSONL records must be objects")
+            values.append(item)
+    if not values:
         raise ValueError("JSONL must contain at least one object")
     return values
 
