@@ -33,9 +33,22 @@ def corpus_hash(documents):
     return canonical_hash([asdict(d) for d in documents])
 
 
+def _unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON field: {key}")
+        result[key] = value
+    return result
+
+
+def _reject_constant(value):
+    raise ValueError(f"nonstandard JSON number: {value}")
+
+
 def _jsonl(path):
     try:
-        values = [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+        values = [json.loads(line, object_pairs_hook=_unique_object, parse_constant=_reject_constant) for line in Path(path).read_text().splitlines() if line.strip()]
     except (json.JSONDecodeError, UnicodeDecodeError) as exc:
         raise ValueError(f"malformed JSONL in {path}") from exc
     if not values or any(not isinstance(item, dict) for item in values):
