@@ -19,3 +19,12 @@ def test_jsonl_resource_limits(tmp_path):
     with pytest.raises(ValueError, match='byte'): _jsonl(path, max_bytes=4)
     with pytest.raises(ValueError, match='record'): _jsonl(path, max_records=1)
 
+
+
+def test_jsonl_source_line_errors(tmp_path):
+    from retrieval_lab.core import _jsonl
+    path = tmp_path / 'broken.jsonl'; path.write_text('{"a":1}\n\nnot-json\n')
+    with pytest.raises(ValueError, match=r'broken.jsonl:3'): _jsonl(path)
+    path.write_text('{"a":1}\n[1]\n')
+    with pytest.raises(ValueError, match=r'broken.jsonl:2'): _jsonl(path)
+

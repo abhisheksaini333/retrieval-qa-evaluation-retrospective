@@ -51,7 +51,7 @@ def _jsonl(path, max_bytes=16 * 1024 * 1024, max_records=100000):
         raise ValueError("positive byte and record limits required")
     values, byte_count = [], 0
     with Path(path).open("rb") as stream:
-        for line in stream:
+        for line_number, line in enumerate(stream, 1):
             byte_count += len(line)
             if byte_count > max_bytes:
                 raise ValueError("dataset byte budget exceeded")
@@ -63,9 +63,9 @@ def _jsonl(path, max_bytes=16 * 1024 * 1024, max_records=100000):
                 item = json.loads(line.decode("utf-8"), object_pairs_hook=_unique_object,
                                   parse_constant=_reject_constant)
             except (ValueError, UnicodeDecodeError) as exc:
-                raise ValueError(f"malformed JSONL in {path}: {exc}") from exc
+                raise ValueError(f"{path}:{line_number}: malformed JSONL: {exc}") from exc
             if not isinstance(item, dict):
-                raise ValueError("JSONL records must be objects")
+                raise ValueError(f"{path}:{line_number}: JSONL records must be objects")
             values.append(item)
     if not values:
         raise ValueError("JSONL must contain at least one object")
