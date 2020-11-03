@@ -78,12 +78,19 @@ def _text(value, field, limit=10000):
     return value
 
 
+def validate_identifier(value):
+    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", value):
+        raise ValueError("identifier must be 1-128 ASCII letters, digits, dots, colons, underscores or hyphens")
+    return value
+
+
 def load_corpus(path):
     documents, seen = [], set()
     for item in _jsonl(path):
         if set(item) != {"doc_id", "title", "text"}:
             raise ValueError("document fields must be doc_id, title, text")
         document = Document(**{key: _text(value, key) for key, value in item.items()})
+        validate_identifier(document.doc_id)
         if document.doc_id in seen:
             raise ValueError(f"duplicate document ID: {document.doc_id}")
         seen.add(document.doc_id)
@@ -106,6 +113,7 @@ def load_queries(path, documents):
                 _text(value, key)
             if len(set(item[key])) != len(item[key]):
                 raise ValueError(f"duplicate {key}")
+        validate_identifier(item["query_id"])
         if item["query_id"] in seen:
             raise ValueError("duplicate query ID")
         seen.add(item["query_id"])

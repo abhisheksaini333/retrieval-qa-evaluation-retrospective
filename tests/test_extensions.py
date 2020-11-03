@@ -28,3 +28,12 @@ def test_jsonl_source_line_errors(tmp_path):
     path.write_text('{"a":1}\n[1]\n')
     with pytest.raises(ValueError, match=r'broken.jsonl:2'): _jsonl(path)
 
+
+
+def test_identifier_contract(tmp_path):
+    from retrieval_lab.core import load_corpus
+    path = tmp_path / 'corpus.jsonl'
+    for identifier in [' a', 'a ', 'a\tb', '../a', 'x'*129]:
+        path.write_text(json.dumps({'doc_id':identifier,'title':'Title','text':'Body'}))
+        with pytest.raises(ValueError, match='identifier'): load_corpus(path)
+
