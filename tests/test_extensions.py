@@ -37,3 +37,12 @@ def test_identifier_contract(tmp_path):
         path.write_text(json.dumps({'doc_id':identifier,'title':'Title','text':'Body'}))
         with pytest.raises(ValueError, match='identifier'): load_corpus(path)
 
+
+
+def test_in_memory_contracts():
+    from retrieval_lab.core import Document, Query
+    with pytest.raises(ValueError): Document('id','title','')
+    with pytest.raises(ValueError): Query('q','Question?',('d',),())
+    with pytest.raises(ValueError): Query('q','Question?',('d','d'),('answer',))
+    assert Query('q','Question?',(),()).answers == ()
+

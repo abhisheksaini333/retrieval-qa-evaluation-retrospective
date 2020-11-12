@@ -16,6 +16,11 @@ class Document:
     title: str
     text: str
 
+    def __post_init__(self):
+        validate_identifier(self.doc_id)
+        _text(self.title, "title")
+        _text(self.text, "text")
+
 
 @dataclass(frozen=True)
 class Query:
@@ -23,6 +28,19 @@ class Query:
     question: str
     relevant_ids: tuple[str, ...]
     answers: tuple[str, ...]
+
+    def __post_init__(self):
+        validate_identifier(self.query_id)
+        _text(self.question, "question", 2048)
+        for field in [self.relevant_ids, self.answers]:
+            if not isinstance(field, tuple) or any(not isinstance(x, str) or not x.strip() for x in field):
+                raise ValueError("query labels must be tuples of nonempty strings")
+            if len(set(field)) != len(field):
+                raise ValueError("duplicate query labels")
+        if bool(self.relevant_ids) != bool(self.answers):
+            raise ValueError("answerable queries need answers and relevant IDs")
+        for identifier in self.relevant_ids:
+            validate_identifier(identifier)
 
 
 def canonical_hash(value):
