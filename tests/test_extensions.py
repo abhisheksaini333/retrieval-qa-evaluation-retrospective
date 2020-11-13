@@ -46,3 +46,12 @@ def test_in_memory_contracts():
     with pytest.raises(ValueError): Query('q','Question?',('d','d'),('answer',))
     assert Query('q','Question?',(),()).answers == ()
 
+
+
+def test_duplicate_query_normalization(tmp_path):
+    from retrieval_lab.core import load_queries, question_key
+    assert question_key('  ＨOW   long? ') == question_key('how long?')
+    path=tmp_path/'q.jsonl'
+    path.write_text('\n'.join(json.dumps({'query_id':q,'question':text,'relevant_ids':[],'answers':[]}) for q,text in [('a','Who  owns it?'),('b','who owns it?')]))
+    with pytest.raises(ValueError, match='duplicate question'): load_queries(path, [])
+

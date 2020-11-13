@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import statistics
 import string
+import unicodedata
 
 
 @dataclass(frozen=True)
@@ -116,8 +117,12 @@ def load_corpus(path):
     return documents
 
 
+def question_key(question):
+    return " ".join(unicodedata.normalize("NFKC", question).casefold().split())
+
+
 def load_queries(path, documents):
-    queries, seen = [], set()
+    queries, seen, seen_questions = [], set(), set()
     lookup = {d.doc_id: d for d in documents}
     for item in _jsonl(path):
         if set(item) != {"query_id", "question", "relevant_ids", "answers"}:
@@ -135,6 +140,10 @@ def load_queries(path, documents):
         if item["query_id"] in seen:
             raise ValueError("duplicate query ID")
         seen.add(item["query_id"])
+        key = question_key(item["question"])
+        if key in seen_questions:
+            raise ValueError("duplicate question within split")
+        seen_questions.add(key)
         if set(item["relevant_ids"]) - lookup.keys():
             raise ValueError("query references unknown document")
         if bool(item["answers"]) != bool(item["relevant_ids"]):
@@ -149,7 +158,7 @@ def load_queries(path, documents):
 
 def validate_splits(dev, test):
     ids = {q.query_id for q in dev} & {q.query_id for q in test}
-    questions = {normalize(q.question) for q in dev} & {normalize(q.question) for q in test}
+    questions = {question_key(q.question) for q in dev} & {question_key(q.question) for q in test}
     if ids or questions:
         raise ValueError("development/test overlap detected")
 
