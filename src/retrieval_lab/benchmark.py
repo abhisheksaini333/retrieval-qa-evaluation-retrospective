@@ -18,6 +18,8 @@ def audit_data(path):
     dev = load_queries(path / "dev.jsonl", documents)
     test = load_queries(path / "test.jsonl", documents)
     validate_splits(dev, test)
+    from .core import validate_evidence_isolation
+    validate_evidence_isolation(dev, test, documents)
     overlap = sorted({d for q in dev for d in q.relevant_ids} & {d for q in test for d in q.relevant_ids})
     if overlap:
         raise ValueError("gold document overlap between development and held-out test")

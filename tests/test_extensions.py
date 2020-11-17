@@ -55,3 +55,11 @@ def test_duplicate_query_normalization(tmp_path):
     path.write_text('\n'.join(json.dumps({'query_id':q,'question':text,'relevant_ids':[],'answers':[]}) for q,text in [('a','Who  owns it?'),('b','who owns it?')]))
     with pytest.raises(ValueError, match='duplicate question'): load_queries(path, [])
 
+
+
+def test_evidence_content_leakage():
+    from retrieval_lab.core import Document, Query, validate_evidence_isolation
+    docs=[Document('a','One','Same evidence.'),Document('b','Two',' same  evidence. ')]
+    dev=[Query('x','First?',('a',),('evidence',))];test=[Query('y','Second?',('b',),('evidence',))]
+    with pytest.raises(ValueError,match='content overlap'):validate_evidence_isolation(dev,test,docs)
+

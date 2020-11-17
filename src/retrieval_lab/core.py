@@ -311,3 +311,11 @@ def score_predictions(rows, threshold, reader_k=3):
                      "correct_abstention", "unanswerable_false_positive"]:
         metrics[f"count_{category}"] = sum(r["failure"] == category for r in scored)
     return metrics, scored
+
+
+def validate_evidence_isolation(dev, test, documents):
+    lookup = {d.doc_id: question_key(d.text) for d in documents}
+    left = {lookup[d] for q in dev for d in q.relevant_ids}
+    right = {lookup[d] for q in test for d in q.relevant_ids}
+    if left & right:
+        raise ValueError("evidence content overlap across splits")
