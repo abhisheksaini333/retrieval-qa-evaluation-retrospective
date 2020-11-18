@@ -63,3 +63,13 @@ def test_evidence_content_leakage():
     dev=[Query('x','First?',('a',),('evidence',))];test=[Query('y','Second?',('b',),('evidence',))]
     with pytest.raises(ValueError,match='content overlap'):validate_evidence_isolation(dev,test,docs)
 
+
+
+def test_answer_span_offsets():
+    from retrieval_lab.annotations import answer_spans, validate_span
+    text='red then red'
+    assert answer_spans(text,'red') == [(0,3),(9,12)]
+    assert validate_span(text,'red',9,12) == (9,12)
+    for bounds in [(1,4),(-1,3),(True,3),(9,15)]:
+        with pytest.raises(ValueError):validate_span(text,'red',*bounds)
+
