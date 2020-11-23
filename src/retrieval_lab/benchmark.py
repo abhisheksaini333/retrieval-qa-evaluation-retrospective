@@ -23,6 +23,10 @@ def audit_data(path):
     overlap = sorted({d for q in dev for d in q.relevant_ids} & {d for q in test for d in q.relevant_ids})
     if overlap:
         raise ValueError("gold document overlap between development and held-out test")
+    from .datasets import validate_provenance
+    validate_provenance(json.loads((path / "provenance.json").read_text()),
+                        {"documents": len(documents), "development_queries": len(dev),
+                         "held_out_queries": len(test)})
     return {"document_count": len(documents), "dev_count": len(dev), "test_count": len(test),
             "corpus_sha256": corpus_hash(documents), "gold_doc_overlap": overlap}
 

@@ -73,3 +73,13 @@ def test_answer_span_offsets():
     for bounds in [(1,4),(-1,3),(True,3),(9,15)]:
         with pytest.raises(ValueError):validate_span(text,'red',*bounds)
 
+
+
+def test_provenance_count_validation():
+    from retrieval_lab.datasets import validate_provenance
+    counts={'documents':2,'development_queries':1,'held_out_queries':1}
+    value={'kind':'synthetic','license':'MIT','permission':'original','counts':counts}
+    validate_provenance(value,counts)
+    with pytest.raises(ValueError,match='counts'):validate_provenance(value,{**counts,'documents':3})
+    with pytest.raises(ValueError):validate_provenance({**value,'license':''},counts)
+
