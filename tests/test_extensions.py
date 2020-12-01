@@ -83,3 +83,12 @@ def test_provenance_count_validation():
     with pytest.raises(ValueError,match='counts'):validate_provenance(value,{**counts,'documents':3})
     with pytest.raises(ValueError):validate_provenance({**value,'license':''},counts)
 
+
+
+def test_dataset_manifest_change_detection(tmp_path):
+    from retrieval_lab.datasets import dataset_manifest, verify_dataset_manifest
+    for name in ['corpus.jsonl','dev.jsonl','test.jsonl','provenance.json']:(tmp_path/name).write_text('{}')
+    manifest=dataset_manifest(tmp_path);verify_dataset_manifest(tmp_path,manifest)
+    (tmp_path/'provenance.json').write_text('{"license":"changed"}')
+    with pytest.raises(ValueError,match='mismatch'):verify_dataset_manifest(tmp_path,manifest)
+

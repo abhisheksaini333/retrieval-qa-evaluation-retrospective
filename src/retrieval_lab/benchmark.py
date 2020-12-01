@@ -28,7 +28,8 @@ def audit_data(path):
                         {"documents": len(documents), "development_queries": len(dev),
                          "held_out_queries": len(test)})
     return {"document_count": len(documents), "dev_count": len(dev), "test_count": len(test),
-            "corpus_sha256": corpus_hash(documents), "gold_doc_overlap": overlap}
+            "corpus_sha256": corpus_hash(documents), "gold_doc_overlap": overlap,
+            "dataset_manifest": __import__("retrieval_lab.datasets", fromlist=["dataset_manifest"]).dataset_manifest(path)}
 
 
 def download_models(path):
