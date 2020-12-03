@@ -24,3 +24,14 @@ def dataset_manifest(path):
 def verify_dataset_manifest(path, manifest):
     if dataset_manifest(path) != manifest:
         raise ValueError("dataset manifest mismatch")
+
+
+def validate_split_policy(dev, test, documents, policy="document"):
+    from .core import validate_splits, validate_evidence_isolation
+    if policy not in {"document", "query"}:
+        raise ValueError("split policy must be document or query")
+    validate_splits(dev, test)
+    if policy == "document":
+        if {d for q in dev for d in q.relevant_ids} & {d for q in test for d in q.relevant_ids}:
+            raise ValueError("gold document overlap across splits")
+        validate_evidence_isolation(dev, test, documents)

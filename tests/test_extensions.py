@@ -92,3 +92,14 @@ def test_dataset_manifest_change_detection(tmp_path):
     (tmp_path/'provenance.json').write_text('{"license":"changed"}')
     with pytest.raises(ValueError,match='mismatch'):verify_dataset_manifest(tmp_path,manifest)
 
+
+
+def test_split_isolation_policies():
+    from retrieval_lab.datasets import validate_split_policy
+    from retrieval_lab.core import Document, Query
+    docs=[Document('a','Title','answer')]
+    dev=[Query('a','First?',('a',),('answer',))];test=[Query('b','Second?',('a',),('answer',))]
+    validate_split_policy(dev,test,docs,'query')
+    with pytest.raises(ValueError):validate_split_policy(dev,test,docs,'document')
+    with pytest.raises(ValueError):validate_split_policy(dev,test,docs,'unknown')
+
