@@ -103,3 +103,14 @@ def test_split_isolation_policies():
     with pytest.raises(ValueError):validate_split_policy(dev,test,docs,'document')
     with pytest.raises(ValueError):validate_split_policy(dev,test,docs,'unknown')
 
+
+
+def test_grouped_split_reproducibility():
+    from retrieval_lab.datasets import grouped_split
+    items=[{'id':i,'group':str(i//2)} for i in range(10)]
+    dev,test=grouped_split(items,lambda x:x['group'],0.4,seed=7)
+    assert (dev,test)==grouped_split(items,lambda x:x['group'],0.4,seed=7)
+    assert not {x['group'] for x in dev}&{x['group'] for x in test}
+    assert len(dev)+len(test)==10 and dev and test
+    with pytest.raises(ValueError):grouped_split(items,lambda x:x['group'],1)
+
