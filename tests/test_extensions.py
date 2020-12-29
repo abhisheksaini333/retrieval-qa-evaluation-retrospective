@@ -114,3 +114,18 @@ def test_grouped_split_reproducibility():
     assert len(dev)+len(test)==10 and dev and test
     with pytest.raises(ValueError):grouped_split(items,lambda x:x['group'],1)
 
+
+
+def test_generator_corpus_parity():
+    from retrieval_lab.core import BM25, Document
+    from retrieval_lab.models import QABundle
+    import numpy as np
+    docs=[Document('a','Archive','Receipts are retained.')]
+    class EncoderDouble:
+        dimension=2
+        def encode(self,texts):return np.tile([1.,0.],(len(texts),1))
+    assert BM25(iter(docs)).search('receipts')==BM25(docs).search('receipts')
+    bundle=QABundle(iter(docs),EncoderDouble(),None)
+    assert bundle.lookup == {'a':docs[0]}
+    assert bundle.index.embeddings.shape == (1,2)
+

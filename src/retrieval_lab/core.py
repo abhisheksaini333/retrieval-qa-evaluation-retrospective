@@ -177,10 +177,10 @@ class BM25:
     """Okapi BM25 with positive Robertson IDF; deterministic document-ID ties."""
     def __init__(self, documents, k1=1.5, b=0.75):
         self.documents = list(documents)
-        if len({d.doc_id for d in documents}) != len(documents):
+        if len({d.doc_id for d in self.documents}) != len(self.documents):
             raise ValueError("duplicate document ID")
         self.k1, self.b = k1, b
-        self.counts = [Counter(tokens(d.title + " " + d.text)) for d in documents]
+        self.counts = [Counter(tokens(d.title + " " + d.text)) for d in self.documents]
         self.lengths = [sum(c.values()) for c in self.counts]
         self.avg_length = statistics.mean(self.lengths) if self.lengths else 0
         self.df = Counter(word for counts in self.counts for word in counts)

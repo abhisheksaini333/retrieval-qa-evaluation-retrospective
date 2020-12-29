@@ -119,7 +119,7 @@ class QABundle:
         self.documents, self.encoder, self.reader = list(documents), encoder, reader
         self.threshold, self.reader_k = float(threshold), reader_k
         self.index = DenseIndex(self.documents, encoder, embeddings)
-        self.lookup = {d.doc_id: d for d in documents}
+        self.lookup = {d.doc_id: d for d in self.documents}
 
     def raw_predict(self, question, retriever=None):
         validate_request(question, self.reader_k)
