@@ -179,6 +179,9 @@ class BM25:
         self.documents = list(documents)
         if len({d.doc_id for d in self.documents}) != len(self.documents):
             raise ValueError("duplicate document ID")
+        if (type(k1) not in (int, float) or not math.isfinite(k1) or k1 <= 0
+                or type(b) not in (int, float) or not math.isfinite(b) or not 0 <= b <= 1):
+            raise ValueError("BM25 requires finite k1 > 0 and b in [0,1]")
         self.k1, self.b = k1, b
         self.counts = [Counter(tokens(d.title + " " + d.text)) for d in self.documents]
         self.lengths = [sum(c.values()) for c in self.counts]
