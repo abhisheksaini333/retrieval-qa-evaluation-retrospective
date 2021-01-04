@@ -175,7 +175,7 @@ def tokens(text):
 
 class BM25:
     """Okapi BM25 with positive Robertson IDF; deterministic document-ID ties."""
-    def __init__(self, documents, k1=1.5, b=0.75):
+    def __init__(self, documents, k1=1.5, b=0.75, tokenizer=None):
         self.documents = list(documents)
         if len({d.doc_id for d in self.documents}) != len(self.documents):
             raise ValueError("duplicate document ID")
@@ -183,7 +183,10 @@ class BM25:
                 or type(b) not in (int, float) or not math.isfinite(b) or not 0 <= b <= 1):
             raise ValueError("BM25 requires finite k1 > 0 and b in [0,1]")
         self.k1, self.b = k1, b
-        self.counts = [Counter(tokens(d.title + " " + d.text)) for d in self.documents]
+        self.tokenizer = tokenizer if tokenizer is not None else tokens
+        if not callable(self.tokenizer):
+            raise ValueError("tokenizer must be callable")
+        self.counts = [Counter(self.tokenizer(d.title + " " + d.text)) for d in self.documents]
         self.lengths = [sum(c.values()) for c in self.counts]
         self.avg_length = statistics.mean(self.lengths) if self.lengths else 0
         self.df = Counter(word for counts in self.counts for word in counts)
@@ -196,7 +199,7 @@ class BM25:
         ranked = []
         for document, counts, length in zip(self.documents, self.counts, self.lengths):
             score = 0.0
-            for word in set(tokens(question)):
+            for word in set(self.tokenizer(question)):
                 tf = counts[word]
                 if tf:
                     idf = math.log(1 + (n - self.df[word] + 0.5) / (self.df[word] + 0.5))

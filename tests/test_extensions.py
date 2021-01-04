@@ -137,3 +137,14 @@ def test_bm25_hyperparameters():
         with pytest.raises(ValueError):BM25([],**kwargs)
     assert BM25([],b=0).search('ok') == []
 
+
+
+def test_unicode_retrieval_tokenizer():
+    from retrieval_lab.core import BM25,Document
+    from retrieval_lab.text import RetrievalTokenizer
+    tokenizer=RetrievalTokenizer(min_length=2)
+    assert tokenizer('ＡＳＴＥＲ Straße x') == ['aster','strasse']
+    index=BM25([Document('a','Aster','Receipts')],tokenizer=tokenizer)
+    assert index.search('ＡＳＴＥＲ')[0][0]=='a'
+    assert tokenizer.fingerprint != RetrievalTokenizer(min_length=1).fingerprint
+
