@@ -148,3 +148,13 @@ def test_unicode_retrieval_tokenizer():
     assert index.search('ＡＳＴＥＲ')[0][0]=='a'
     assert tokenizer.fingerprint != RetrievalTokenizer(min_length=1).fingerprint
 
+
+
+def test_bm25_explanations_reconcile():
+    from retrieval_lab.core import BM25,Document
+    index=BM25([Document('a','Archive','Archive receipt'),Document('b','Other','receipt')])
+    result=index.explain('archive missing','a')
+    assert sum(x['contribution'] for x in result['terms']) == pytest.approx(index.search('archive missing')[0][1])
+    assert result['terms'][1]['contribution']==0
+    with pytest.raises(ValueError):index.explain('archive','unknown')
+

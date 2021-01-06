@@ -191,6 +191,22 @@ class BM25:
         self.avg_length = statistics.mean(self.lengths) if self.lengths else 0
         self.df = Counter(word for counts in self.counts for word in counts)
 
+    def explain(self, question, doc_id):
+        validate_request(question, 1)
+        positions = {d.doc_id: i for i, d in enumerate(self.documents)}
+        if doc_id not in positions:
+            raise ValueError("unknown document ID")
+        index = positions[doc_id]
+        counts, length, terms = self.counts[index], self.lengths[index], []
+        for word in sorted(set(self.tokenizer(question))):
+            tf, contribution = counts[word], 0.0
+            idf = math.log(1 + (len(self.documents) - self.df[word] + 0.5) / (self.df[word] + 0.5))
+            if tf:
+                contribution = idf * tf * (self.k1 + 1) / (
+                    tf + self.k1 * (1 - self.b + self.b * length / self.avg_length))
+            terms.append({"term": word, "frequency": tf, "idf": idf, "contribution": contribution})
+        return {"doc_id": doc_id, "terms": terms, "score": sum(x["contribution"] for x in terms)}
+
     def search(self, question, k=5):
         validate_request(question, k)
         n = len(self.documents)
