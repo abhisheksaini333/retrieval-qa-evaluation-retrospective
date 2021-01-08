@@ -190,6 +190,15 @@ class BM25:
         self.lengths = [sum(c.values()) for c in self.counts]
         self.avg_length = statistics.mean(self.lengths) if self.lengths else 0
         self.df = Counter(word for counts in self.counts for word in counts)
+        self.postings = {}
+        for index, counts in enumerate(self.counts):
+            for word in counts:
+                self.postings.setdefault(word, set()).add(index)
+
+    def candidate_ids(self, question):
+        validate_request(question, 1)
+        indices = set().union(*(self.postings.get(word, set()) for word in self.tokenizer(question)))
+        return [self.documents[index].doc_id for index in sorted(indices)]
 
     def explain(self, question, doc_id):
         validate_request(question, 1)
@@ -213,7 +222,10 @@ class BM25:
         if not n:
             return []
         ranked = []
+        candidates = set(self.candidate_ids(question))
         for document, counts, length in zip(self.documents, self.counts, self.lengths):
+            if document.doc_id not in candidates:
+                continue
             score = 0.0
             for word in set(self.tokenizer(question)):
                 tf = counts[word]

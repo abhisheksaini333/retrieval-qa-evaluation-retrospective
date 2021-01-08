@@ -158,3 +158,12 @@ def test_bm25_explanations_reconcile():
     assert result['terms'][1]['contribution']==0
     with pytest.raises(ValueError):index.explain('archive','unknown')
 
+
+
+def test_bm25_postings_candidates():
+    from retrieval_lab.core import BM25,Document
+    index=BM25([Document('a','First','archive'),Document('b','Second','storage'),Document('c','Third','archive storage')])
+    assert index.candidate_ids('archive absent') == ['a','c']
+    expected=sorted([(d.doc_id,index.explain('archive',d.doc_id)['score']) for d in index.documents if index.explain('archive',d.doc_id)['score']>0],key=lambda x:(-x[1],x[0]))
+    assert index.search('archive')==expected
+
