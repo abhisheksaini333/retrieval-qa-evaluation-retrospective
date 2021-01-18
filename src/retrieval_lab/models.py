@@ -84,7 +84,8 @@ class DenseIndex:
             return []
         similarities = self.embeddings @ self.encoder.encode([question])[0]
         ranked = [(document.doc_id, float(score)) for document, score in zip(self.documents, similarities)]
-        return sorted(ranked, key=lambda pair: (-pair[1], pair[0]))[:k]
+        from .retrieval import stable_top_k
+        return stable_top_k(ranked, k)
 
 
 class Reader:

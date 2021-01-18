@@ -167,3 +167,11 @@ def test_bm25_postings_candidates():
     expected=sorted([(d.doc_id,index.explain('archive',d.doc_id)['score']) for d in index.documents if index.explain('archive',d.doc_id)['score']>0],key=lambda x:(-x[1],x[0]))
     assert index.search('archive')==expected
 
+
+
+def test_stable_topk_matches_full_sort():
+    from retrieval_lab.retrieval import stable_top_k
+    rows=[('z',1.),('a',1.),('c',2.),('b',0.)]
+    for k in [1,2,5]:assert stable_top_k(iter(rows),k)==sorted(rows,key=lambda x:(-x[1],x[0]))[:k]
+    with pytest.raises(ValueError):stable_top_k(rows,0)
+

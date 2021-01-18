@@ -235,7 +235,8 @@ class BM25:
                         tf + self.k1 * (1 - self.b + self.b * length / self.avg_length))
             if score > 0:
                 ranked.append((document.doc_id, score))
-        return sorted(ranked, key=lambda pair: (-pair[1], pair[0]))[:k]
+        from .retrieval import stable_top_k
+        return stable_top_k(ranked, k)
 
 
 def validate_index(manifest, documents, encoder_fingerprint):
