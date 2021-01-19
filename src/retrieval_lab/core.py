@@ -175,7 +175,7 @@ def tokens(text):
 
 class BM25:
     """Okapi BM25 with positive Robertson IDF; deterministic document-ID ties."""
-    def __init__(self, documents, k1=1.5, b=0.75, tokenizer=None):
+    def __init__(self, documents, k1=1.5, b=0.75, tokenizer=None, title_weight=1.0):
         self.documents = list(documents)
         if len({d.doc_id for d in self.documents}) != len(self.documents):
             raise ValueError("duplicate document ID")
@@ -186,7 +186,16 @@ class BM25:
         self.tokenizer = tokenizer if tokenizer is not None else tokens
         if not callable(self.tokenizer):
             raise ValueError("tokenizer must be callable")
-        self.counts = [Counter(self.tokenizer(d.title + " " + d.text)) for d in self.documents]
+        if type(title_weight) not in (int, float) or not math.isfinite(title_weight) or title_weight < 0:
+            raise ValueError("title weight must be finite and nonnegative")
+        self.title_weight = title_weight
+        self.counts = []
+        for document in self.documents:
+            counts = Counter(self.tokenizer(document.text))
+            for token, frequency in Counter(self.tokenizer(document.title)).items():
+                if title_weight:
+                    counts[token] += frequency * title_weight
+            self.counts.append(counts)
         self.lengths = [sum(c.values()) for c in self.counts]
         self.avg_length = statistics.mean(self.lengths) if self.lengths else 0
         self.df = Counter(word for counts in self.counts for word in counts)

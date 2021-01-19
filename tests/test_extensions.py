@@ -175,3 +175,12 @@ def test_stable_topk_matches_full_sort():
     for k in [1,2,5]:assert stable_top_k(iter(rows),k)==sorted(rows,key=lambda x:(-x[1],x[0]))[:k]
     with pytest.raises(ValueError):stable_top_k(rows,0)
 
+
+
+def test_title_weighting():
+    from retrieval_lab.core import BM25,Document
+    docs=[Document('title','needle','noise noise'),Document('body','noise','needle needle')]
+    assert BM25(docs,title_weight=5).search('needle')[0][0]=='title'
+    assert BM25(docs,title_weight=0).search('needle')[0][0]=='body'
+    with pytest.raises(ValueError):BM25(docs,title_weight=-1)
+
