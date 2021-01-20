@@ -184,3 +184,11 @@ def test_title_weighting():
     assert BM25(docs,title_weight=0).search('needle')[0][0]=='body'
     with pytest.raises(ValueError):BM25(docs,title_weight=-1)
 
+
+
+def test_retriever_result_contract():
+    from retrieval_lab.retrieval import validate_ranked
+    assert validate_ranked([('a',-0.2)],{'a'},2)==[('a',-0.2)]
+    for ranked in [[('x',1.)],[('a',float('nan'))],[('a',1.),('a',2.)],[('a',True)]]:
+        with pytest.raises(ValueError):validate_ranked(ranked,{'a'},2)
+

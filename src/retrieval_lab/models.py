@@ -125,7 +125,10 @@ class QABundle:
     def raw_predict(self, question, retriever=None):
         validate_request(question, self.reader_k)
         started = time.perf_counter()
-        ranked = (retriever or self.index).search(question, max(5, self.reader_k))
+        from .retrieval import validate_ranked
+        engine = self.index if retriever is None else retriever
+        ranked = validate_ranked(engine.search(question, max(5, self.reader_k)),
+                                 self.lookup, max(5, self.reader_k))
         retrieved = time.perf_counter()
         output = self.reader.answer(question, [self.lookup[d] for d, _ in ranked[:self.reader_k]])
         finished = time.perf_counter()
