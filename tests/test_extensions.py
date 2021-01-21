@@ -192,3 +192,12 @@ def test_retriever_result_contract():
     for ranked in [[('x',1.)],[('a',float('nan'))],[('a',1.),('a',2.)],[('a',True)]]:
         with pytest.raises(ValueError):validate_ranked(ranked,{'a'},2)
 
+
+
+def test_weighted_rank_fusion():
+    from retrieval_lab.retrieval import reciprocal_rank_fusion
+    result=reciprocal_rank_fusion([[('a',9),('b',1)],[('b',0.1)]],weights=[1,2],rank_constant=0,k=2)
+    assert result==[('b',2.5),('a',1.)]
+    assert reciprocal_rank_fusion([[]],k=2)==[]
+    with pytest.raises(ValueError):reciprocal_rank_fusion([[('a',1),('a',2)]])
+

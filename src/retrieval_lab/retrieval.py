@@ -25,3 +25,32 @@ def validate_ranked(ranked, known_ids, k):
             raise ValueError("retrieval score must be finite")
         seen.add(identifier)
     return rows
+
+
+def reciprocal_rank_fusion(rankings, *, weights=None, rank_constant=60, k=5):
+    import math
+    from collections import defaultdict
+    rankings = [list(ranking) for ranking in rankings]
+    weights = [1.0] * len(rankings) if weights is None else list(weights)
+    if (len(weights) != len(rankings) or type(rank_constant) not in (int, float)
+            or not math.isfinite(rank_constant) or rank_constant < 0
+            or any(type(w) not in (int, float) or not math.isfinite(w) or w < 0 for w in weights)):
+        raise ValueError("invalid fusion configuration")
+    scores = defaultdict(float)
+    for ranking, weight in zip(rankings, weights):
+        identifiers = [row[0] for row in ranking]
+        if len(set(identifiers)) != len(identifiers):
+            raise ValueError("duplicate IDs in fusion component")
+        if weight:
+            for rank, identifier in enumerate(identifiers, 1):
+                scores[identifier] += weight / (rank_constant + rank)
+    return stable_top_k(scores.items(), k)
+
+
+class FusionRetriever:
+    def __init__(self, retrievers, weights=None, rank_constant=60):
+        self.retrievers, self.weights, self.rank_constant = list(retrievers), weights, rank_constant
+
+    def search(self, question, k=5):
+        return reciprocal_rank_fusion([engine.search(question, k) for engine in self.retrievers],
+                                      weights=self.weights, rank_constant=self.rank_constant, k=k)
