@@ -211,3 +211,16 @@ def test_mmr_diversity_selection():
     assert [x[0] for x in mmr_select([1.,0.],vectors,['a','b','c'],2,0.)]==['a','c']
     with pytest.raises(ValueError):mmr_select([1.,0.],vectors,['a','b','c'],2,-1.)
 
+
+
+def test_retrieval_cache_invalidation():
+    from retrieval_lab.retrieval import CachedRetriever
+    class Engine:
+        fingerprint='one'; calls=0
+        def search(self,q,k=5):self.calls+=1;return [('a',float(self.calls))]
+    engine=Engine();cache=CachedRetriever(engine,capacity=1)
+    first=cache.search('q');assert cache.search('q')==first and engine.calls==1
+    first.append(('bad',0));assert len(cache.search('q'))==1
+    engine.fingerprint='two';cache.search('q');assert engine.calls==2
+    cache.search('other');cache.search('q');assert engine.calls==4
+

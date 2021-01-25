@@ -81,3 +81,25 @@ def mmr_select(query, vectors, doc_ids, k=5, relevance_weight=0.5):
         selected.append(best)
         remaining.remove(best)
     return [(doc_ids[i], float(relevance[i])) for i in selected]
+
+
+class CachedRetriever:
+    def __init__(self, retriever, capacity=128):
+        from collections import OrderedDict
+        if type(capacity) is not int or capacity < 1:
+            raise ValueError("cache capacity must be positive")
+        self.retriever, self.capacity, self.cache = retriever, capacity, OrderedDict()
+
+    def search(self, question, k=5):
+        from .core import validate_request
+        validate_request(question, k)
+        identity = getattr(self.retriever, "fingerprint", None)
+        if not isinstance(identity, str) or not identity:
+            raise ValueError("cached retriever requires a current fingerprint")
+        key = (identity, question, k)
+        if key not in self.cache:
+            self.cache[key] = tuple(self.retriever.search(question, k))
+            if len(self.cache) > self.capacity:
+                self.cache.popitem(last=False)
+        self.cache.move_to_end(key)
+        return list(self.cache[key])
