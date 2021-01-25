@@ -201,3 +201,13 @@ def test_weighted_rank_fusion():
     assert reciprocal_rank_fusion([[]],k=2)==[]
     with pytest.raises(ValueError):reciprocal_rank_fusion([[('a',1),('a',2)]])
 
+
+
+def test_mmr_diversity_selection():
+    from retrieval_lab.retrieval import mmr_select
+    import numpy as np
+    vectors=np.array([[1.,0.],[0.99,0.1],[0.,1.]])
+    assert [x[0] for x in mmr_select([1.,0.],vectors,['a','b','c'],2,1.)]==['a','b']
+    assert [x[0] for x in mmr_select([1.,0.],vectors,['a','b','c'],2,0.)]==['a','c']
+    with pytest.raises(ValueError):mmr_select([1.,0.],vectors,['a','b','c'],2,-1.)
+

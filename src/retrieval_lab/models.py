@@ -88,6 +88,15 @@ class DenseIndex:
         return stable_top_k(ranked, k)
 
 
+    def search_diverse(self, question, k=5, relevance_weight=0.5):
+        from .retrieval import mmr_select
+        validate_request(question, k)
+        if not self.documents:
+            return []
+        return mmr_select(self.encoder.encode([question])[0], self.embeddings,
+                          [d.doc_id for d in self.documents], k, relevance_weight)
+
+
 class Reader:
     def __init__(self, path):
         self.path = Path(path)

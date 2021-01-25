@@ -54,3 +54,30 @@ class FusionRetriever:
     def search(self, question, k=5):
         return reciprocal_rank_fusion([engine.search(question, k) for engine in self.retrievers],
                                       weights=self.weights, rank_constant=self.rank_constant, k=k)
+
+
+def mmr_select(query, vectors, doc_ids, k=5, relevance_weight=0.5):
+    import numpy as np
+    from .core import validate_request
+    validate_request("MMR", k)
+    matrix, query = np.asarray(vectors, dtype=float), np.asarray(query, dtype=float)
+    if (type(relevance_weight) not in (int, float) or not 0 <= relevance_weight <= 1
+            or matrix.ndim != 2 or query.shape != (matrix.shape[1],)
+            or len(doc_ids) != len(matrix) or len(set(doc_ids)) != len(doc_ids)
+            or not np.isfinite(matrix).all() or not np.isfinite(query).all()):
+        raise ValueError("invalid MMR inputs")
+    norms = np.linalg.norm(matrix, axis=1)
+    if (norms == 0).any() or np.linalg.norm(query) == 0:
+        raise ValueError("MMR requires nonzero vectors")
+    matrix = matrix / norms[:, None]
+    relevance = matrix @ (query / np.linalg.norm(query))
+    selected, remaining = [], set(range(len(matrix)))
+    while remaining and len(selected) < k:
+        def objective(index):
+            redundancy = max((float(matrix[index] @ matrix[j]) for j in selected), default=0.0)
+            return (float(relevance[index]) if not selected else
+                    relevance_weight * float(relevance[index]) - (1 - relevance_weight) * redundancy)
+        best = min(remaining, key=lambda i: (-objective(i), doc_ids[i]))
+        selected.append(best)
+        remaining.remove(best)
+    return [(doc_ids[i], float(relevance[i])) for i in selected]
