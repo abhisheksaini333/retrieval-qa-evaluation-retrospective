@@ -103,3 +103,16 @@ class CachedRetriever:
                 self.cache.popitem(last=False)
         self.cache.move_to_end(key)
         return list(self.cache[key])
+
+
+def retrieve_batch(retriever, queries, k=5):
+    from .core import validate_identifier, validate_request
+    queries, seen = list(queries), set()
+    for identifier, question in queries:
+        validate_identifier(identifier)
+        validate_request(question, k)
+        if identifier in seen:
+            raise ValueError("duplicate batch query ID")
+        seen.add(identifier)
+    return [{"query_id": identifier, "ranked": retriever.search(question, k)}
+            for identifier, question in queries]

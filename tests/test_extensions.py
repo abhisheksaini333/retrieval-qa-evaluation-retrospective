@@ -224,3 +224,13 @@ def test_retrieval_cache_invalidation():
     engine.fingerprint='two';cache.search('q');assert engine.calls==2
     cache.search('other');cache.search('q');assert engine.calls==4
 
+
+
+def test_batch_retrieval_identity():
+    from retrieval_lab.retrieval import retrieve_batch
+    from retrieval_lab.core import BM25,Document
+    engine=BM25([Document('a','Title','archive')])
+    queries=[('q2','archive'),('q1','missing')]
+    assert retrieve_batch(engine,queries)==[{'query_id':'q2','ranked':engine.search('archive')},{'query_id':'q1','ranked':[]}]
+    with pytest.raises(ValueError):retrieve_batch(engine,[('q','a'),('q','b')])
+
