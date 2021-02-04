@@ -278,12 +278,29 @@ def answer_scores(answer, references):
 def _validate_rows(rows):
     if not rows:
         raise ValueError("evaluation requires nonempty rows")
+    required = {"query_id", "raw_answer", "confidence", "answers", "ranked_ids", "relevant_ids",
+                "retrieval_ms", "reader_ms", "total_ms"}
     for row in rows:
+        if not isinstance(row, dict) or not required <= row.keys():
+            raise ValueError("evaluation row is missing required fields")
+        validate_identifier(row["query_id"])
+        if not isinstance(row["raw_answer"], str):
+            raise ValueError("raw answer must be a string")
         score = row["confidence"]
-        if not isinstance(score, (float, int)) or not math.isfinite(score) or not 0 <= score <= 1:
+        if type(score) not in (float, int) or not math.isfinite(score) or not 0 <= score <= 1:
             raise ValueError("confidence must be finite and in [0,1]")
-        if len(set(row["ranked_ids"])) != len(row["ranked_ids"]):
-            raise ValueError("duplicate retrieved document IDs")
+        for field in ["answers", "ranked_ids", "relevant_ids"]:
+            values = row[field]
+            if not isinstance(values, (list, tuple)) or any(not isinstance(v, str) or not v.strip() for v in values):
+                raise ValueError(f"{field} must contain nonempty strings")
+            if len(set(values)) != len(values):
+                raise ValueError(f"duplicate {field}")
+        if bool(row["answers"]) != bool(row["relevant_ids"]):
+            raise ValueError("answers and relevance labels disagree")
+        for phase in ["retrieval_ms", "reader_ms", "total_ms"]:
+            value = row[phase]
+            if type(value) not in (float, int) or not math.isfinite(value) or value < 0:
+                raise ValueError("latencies must be finite nonnegative numbers")
 
 
 def calibrate_threshold(rows, *, split):

@@ -234,3 +234,16 @@ def test_batch_retrieval_identity():
     assert retrieve_batch(engine,queries)==[{'query_id':'q2','ranked':engine.search('archive')},{'query_id':'q1','ranked':[]}]
     with pytest.raises(ValueError):retrieve_batch(engine,[('q','a'),('q','b')])
 
+
+
+def metric_row(**changes):
+    row={'query_id':'q','raw_answer':'seven years','confidence':0.9,'answers':['seven years'],'ranked_ids':['d'],'relevant_ids':['d'],'retrieval_ms':1.,'reader_ms':2.,'total_ms':3.}
+    return {**row,**changes}
+
+
+def test_evaluation_row_contracts():
+    from retrieval_lab.core import score_predictions
+    for changes in [{'confidence':True},{'total_ms':-1},{'reader_ms':float('nan')},{'answers':'seven years'},{'relevant_ids':['d','d']},{'raw_answer':None}]:
+        with pytest.raises(ValueError):score_predictions([metric_row(**changes)],0.5)
+    with pytest.raises(ValueError):score_predictions([{'confidence':0.5}],0.5)
+
