@@ -278,12 +278,16 @@ def answer_scores(answer, references):
 def _validate_rows(rows):
     if not rows:
         raise ValueError("evaluation requires nonempty rows")
+    seen_query_ids = set()
     required = {"query_id", "raw_answer", "confidence", "answers", "ranked_ids", "relevant_ids",
                 "retrieval_ms", "reader_ms", "total_ms"}
     for row in rows:
         if not isinstance(row, dict) or not required <= row.keys():
             raise ValueError("evaluation row is missing required fields")
         validate_identifier(row["query_id"])
+        if row["query_id"] in seen_query_ids:
+            raise ValueError("duplicate evaluation query ID")
+        seen_query_ids.add(row["query_id"])
         if not isinstance(row["raw_answer"], str):
             raise ValueError("raw answer must be a string")
         score = row["confidence"]
@@ -331,8 +335,12 @@ def percentile(values, fraction):
     return values[low] + (values[high] - values[low]) * (position - low)
 
 
-def score_predictions(rows, threshold, reader_k=3):
+def score_predictions(rows, threshold, reader_k=3, *, expected_query_ids=None):
     _validate_rows(rows)
+    if expected_query_ids is not None:
+        expected = list(expected_query_ids)
+        if len(set(expected)) != len(expected) or set(expected) != {r["query_id"] for r in rows}:
+            raise ValueError("evaluation query coverage mismatch")
     if not math.isfinite(threshold):
         raise ValueError("threshold must be finite")
     scored = []

@@ -247,3 +247,11 @@ def test_evaluation_row_contracts():
         with pytest.raises(ValueError):score_predictions([metric_row(**changes)],0.5)
     with pytest.raises(ValueError):score_predictions([{'confidence':0.5}],0.5)
 
+
+
+def test_evaluation_query_coverage():
+    from retrieval_lab.core import score_predictions
+    with pytest.raises(ValueError,match='duplicate'):score_predictions([metric_row(),metric_row()],0.5)
+    with pytest.raises(ValueError,match='coverage'):score_predictions([metric_row()],0.5,expected_query_ids=['q','missing'])
+    assert score_predictions([metric_row()],0.5,expected_query_ids=['q'])[0]['query_count']==1
+
