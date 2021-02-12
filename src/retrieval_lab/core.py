@@ -307,6 +307,10 @@ def _validate_rows(rows):
                 raise ValueError("latencies must be finite nonnegative numbers")
 
 
+def has_answer(value):
+    return isinstance(value, str) and bool(value.strip())
+
+
 def calibrate_threshold(rows, *, split):
     """Maximize dev balanced answerability accuracy; higher threshold wins ties."""
     if split != "dev":
@@ -319,8 +323,8 @@ def calibrate_threshold(rows, *, split):
     candidates = sorted({0.0, 1.0000001, *(r["confidence"] for r in rows)})
     curve = []
     for threshold in candidates:
-        tpr = statistics.mean(bool(r["raw_answer"]) and r["confidence"] >= threshold for r in positives)
-        tnr = statistics.mean(not r["raw_answer"] or r["confidence"] < threshold for r in negatives)
+        tpr = statistics.mean(has_answer(r["raw_answer"]) and r["confidence"] >= threshold for r in positives)
+        tnr = statistics.mean(not has_answer(r["raw_answer"]) or r["confidence"] < threshold for r in negatives)
         curve.append({"threshold": threshold, "balanced_accuracy": (tpr + tnr) / 2})
     winner = max(curve, key=lambda row: (row["balanced_accuracy"], row["threshold"]))
     return {"split": "dev", "threshold": winner["threshold"],
@@ -345,7 +349,7 @@ def score_predictions(rows, threshold, reader_k=3, *, expected_query_ids=None):
         raise ValueError("threshold must be finite")
     scored = []
     for row in rows:
-        answer = row["raw_answer"] if row["confidence"] >= threshold else ""
+        answer = row["raw_answer"] if has_answer(row["raw_answer"]) and row["confidence"] >= threshold else ""
         em, f1 = answer_scores(answer, row["answers"])
         relevant = set(row["relevant_ids"])
         if not relevant:

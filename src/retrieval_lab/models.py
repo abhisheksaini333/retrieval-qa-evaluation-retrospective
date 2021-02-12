@@ -147,7 +147,8 @@ class QABundle:
 
     def predict(self, question):
         raw = self.raw_predict(question)
-        accepted = bool(raw["raw_answer"]) and raw["confidence"] >= self.threshold
+        from .core import has_answer
+        accepted = has_answer(raw["raw_answer"]) and raw["confidence"] >= self.threshold
         return {"answer": raw["raw_answer"] if accepted else "", "confidence": raw["confidence"],
                 "abstained": not accepted, "document_id": raw["document_id"] if accepted else None,
                 "start": raw["start"] if accepted else None, "end": raw["end"] if accepted else None,

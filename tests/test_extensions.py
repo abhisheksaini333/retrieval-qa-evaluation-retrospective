@@ -255,3 +255,12 @@ def test_evaluation_query_coverage():
     with pytest.raises(ValueError,match='coverage'):score_predictions([metric_row()],0.5,expected_query_ids=['q','missing'])
     assert score_predictions([metric_row()],0.5,expected_query_ids=['q'])[0]['query_count']==1
 
+
+
+def test_whitespace_abstention_consistency():
+    from retrieval_lab.core import score_predictions
+    metrics,rows=score_predictions([metric_row(raw_answer='  ',answers=[],relevant_ids=[])],0.5)
+    assert rows[0]['failure']=='correct_abstention'
+    assert rows[0]['answer']=='' and rows[0]['abstained']
+    assert metrics['coverage']==0 and metrics['answer_em']==1
+
