@@ -256,14 +256,19 @@ def validate_index(manifest, documents, encoder_fingerprint):
             raise ValueError(f"index mismatch: {key}")
 
 
-def normalize(text):
+def normalize(text, policy="squad"):
+    if not isinstance(text, str) or policy not in {"squad", "unicode"}:
+        raise ValueError("normalization requires text and a known policy")
+    if policy == "unicode":
+        text = unicodedata.normalize("NFKC", text).casefold()
+        text = "".join(c for c in text if not unicodedata.category(c).startswith("P"))
     text = text.lower().translate(str.maketrans("", "", string.punctuation))
     return " ".join(re.sub(r"\b(a|an|the)\b", " ", text).split())
 
 
-def answer_scores(answer, references):
-    reference_tokens = [normalize(g).split() for g in references] or [[]]
-    predicted = normalize(answer).split()
+def answer_scores(answer, references, policy="squad"):
+    reference_tokens = [normalize(g, policy).split() for g in references] or [[]]
+    predicted = normalize(answer, policy).split()
     exact, f1 = 0.0, 0.0
     for gold in reference_tokens:
         exact = max(exact, float(predicted == gold))

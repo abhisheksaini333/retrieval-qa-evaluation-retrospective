@@ -264,3 +264,12 @@ def test_whitespace_abstention_consistency():
     assert rows[0]['answer']=='' and rows[0]['abstained']
     assert metrics['coverage']==0 and metrics['answer_em']==1
 
+
+
+def test_unicode_answer_normalization():
+    from retrieval_lab.core import answer_scores,normalize
+    assert answer_scores('ＴＨＥ ＣＡＴ！',['cat'],policy='unicode')==(1.,1.)
+    assert answer_scores('ＴＨＥ ＣＡＴ！',['cat'])==(0.,0.)
+    with pytest.raises(ValueError):normalize('answer',policy='unknown')
+    assert normalize('The seven-years')=='sevenyears'
+
