@@ -273,3 +273,14 @@ def test_unicode_answer_normalization():
     with pytest.raises(ValueError):normalize('answer',policy='unknown')
     assert normalize('The seven-years')=='sevenyears'
 
+
+
+def test_metric_cutoff_configuration():
+    from retrieval_lab.core import score_predictions,percentile
+    values,_=score_predictions([metric_row()],0.5,cutoffs=(2,4))
+    assert values['recall_at_2']==1 and values['mrr_at_4']==1
+    for kwargs in [{'reader_k':0},{'cutoffs':(0,)},{'cutoffs':(1,1)}]:
+        with pytest.raises(ValueError):score_predictions([metric_row()],0.5,**kwargs)
+    for values,p in [([],0.5),([1],2),([float('nan')],0.5)]:
+        with pytest.raises(ValueError):percentile(values,p)
+

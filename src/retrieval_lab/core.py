@@ -338,24 +338,35 @@ def calibrate_threshold(rows, *, split):
 
 
 def percentile(values, fraction):
+    values = list(values)
+    if (not values or type(fraction) not in (int, float) or not 0 <= fraction <= 1
+            or any(type(v) not in (int, float) or not math.isfinite(v) for v in values)):
+        raise ValueError("percentile requires finite samples and a fraction in [0,1]")
     values = sorted(values)
     position = (len(values) - 1) * fraction
     low, high = math.floor(position), math.ceil(position)
     return values[low] + (values[high] - values[low]) * (position - low)
 
 
-def score_predictions(rows, threshold, reader_k=3, *, expected_query_ids=None):
+def score_predictions(rows, threshold, reader_k=3, *, expected_query_ids=None, cutoffs=(1, 3, 5), normalization="squad"):
     _validate_rows(rows)
     if expected_query_ids is not None:
         expected = list(expected_query_ids)
         if len(set(expected)) != len(expected) or set(expected) != {r["query_id"] for r in rows}:
             raise ValueError("evaluation query coverage mismatch")
-    if not math.isfinite(threshold):
-        raise ValueError("threshold must be finite")
+    validate_request("reader candidates", reader_k)
+    cutoffs = tuple(cutoffs)
+    if not cutoffs or len(set(cutoffs)) != len(cutoffs):
+        raise ValueError("metric cutoffs must be nonempty and unique")
+    for cutoff in cutoffs:
+        validate_request("metric cutoff", cutoff)
+    if type(threshold) not in (int, float) or not math.isfinite(threshold) or not 0 <= threshold <= 1.0000001:
+        raise ValueError("threshold must be finite and within the score range or abstain-all sentinel")
+    normalize("", normalization)
     scored = []
     for row in rows:
         answer = row["raw_answer"] if has_answer(row["raw_answer"]) and row["confidence"] >= threshold else ""
-        em, f1 = answer_scores(answer, row["answers"])
+        em, f1 = answer_scores(answer, row["answers"], normalization)
         relevant = set(row["relevant_ids"])
         if not relevant:
             failure = "correct_abstention" if not answer else "unanswerable_false_positive"
@@ -372,13 +383,13 @@ def score_predictions(rows, threshold, reader_k=3, *, expected_query_ids=None):
                "answer_em": statistics.mean(r["answer_em"] for r in scored),
                "answer_f1": statistics.mean(r["answer_f1"] for r in scored),
                "coverage": statistics.mean(bool(r["answer"]) for r in scored)}
-    for k in [1, 3, 5]:
+    for k in sorted(cutoffs):
         recalls = [len(set(r["ranked_ids"][:k]) & set(r["relevant_ids"])) / len(r["relevant_ids"])
                    for r in answerable]
         metrics[f"recall_at_{k}"] = statistics.mean(recalls) if recalls else 0.0
-    reciprocal_ranks = [next((1 / (i + 1) for i, d in enumerate(r["ranked_ids"][:5])
+    reciprocal_ranks = [next((1 / (i + 1) for i, d in enumerate(r["ranked_ids"][:max(cutoffs)])
                               if d in r["relevant_ids"]), 0.0) for r in answerable]
-    metrics["mrr_at_5"] = statistics.mean(reciprocal_ranks) if reciprocal_ranks else 0.0
+    metrics[f"mrr_at_{max(cutoffs)}"] = statistics.mean(reciprocal_ranks) if reciprocal_ranks else 0.0
     accepted = [r for r in scored if r["answer"]]
     metrics["selective_em"] = statistics.mean(r["answer_em"] for r in accepted) if accepted else 0.0
     for phase in ["retrieval", "reader", "total"]:
