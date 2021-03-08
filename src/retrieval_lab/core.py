@@ -386,12 +386,14 @@ def score_predictions(rows, threshold, reader_k=3, *, expected_query_ids=None, c
     for k in sorted(cutoffs):
         recalls = [len(set(r["ranked_ids"][:k]) & set(r["relevant_ids"])) / len(r["relevant_ids"])
                    for r in answerable]
-        metrics[f"recall_at_{k}"] = statistics.mean(recalls) if recalls else 0.0
+        metrics[f"recall_at_{k}"] = statistics.mean(recalls) if recalls else None
     reciprocal_ranks = [next((1 / (i + 1) for i, d in enumerate(r["ranked_ids"][:max(cutoffs)])
                               if d in r["relevant_ids"]), 0.0) for r in answerable]
-    metrics[f"mrr_at_{max(cutoffs)}"] = statistics.mean(reciprocal_ranks) if reciprocal_ranks else 0.0
+    metrics[f"mrr_at_{max(cutoffs)}"] = statistics.mean(reciprocal_ranks) if reciprocal_ranks else None
     accepted = [r for r in scored if r["answer"]]
-    metrics["selective_em"] = statistics.mean(r["answer_em"] for r in accepted) if accepted else 0.0
+    metrics["selective_em"] = statistics.mean(r["answer_em"] for r in accepted) if accepted else None
+    metrics["retrieval_query_count"] = len(answerable)
+    metrics["accepted_answer_count"] = len(accepted)
     for phase in ["retrieval", "reader", "total"]:
         values = [r[f"{phase}_ms"] for r in rows]
         metrics[f"latency_{phase}_p50_ms"] = percentile(values, 0.5)

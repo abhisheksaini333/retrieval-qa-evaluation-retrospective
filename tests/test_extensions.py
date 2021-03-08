@@ -284,3 +284,12 @@ def test_metric_cutoff_configuration():
     for values,p in [([],0.5),([1],2),([float('nan')],0.5)]:
         with pytest.raises(ValueError):percentile(values,p)
 
+
+
+def test_undefined_metric_denominators():
+    from retrieval_lab.core import score_predictions
+    metrics,_=score_predictions([metric_row(raw_answer='',answers=[],relevant_ids=[])],0.5)
+    assert metrics['recall_at_1'] is None and metrics['mrr_at_5'] is None
+    assert metrics['selective_em'] is None
+    assert metrics['retrieval_query_count']==0 and metrics['accepted_answer_count']==0
+

@@ -101,7 +101,7 @@ def run(data, models, output, evidence):
         for split, rows in [("dev", dev_rows), ("test", test_rows)]:
             metrics, scored = score_predictions(rows, threshold, reader_k=3)
             experiment[split] = {"metrics": metrics, "predictions": scored}
-            metrics_for_tracking.update({f"{name}.{split}.{key}": value for key, value in metrics.items()})
+            metrics_for_tracking.update({f"{name}.{split}.{key}": value for key, value in metrics.items() if value is not None})
         report["experiments"][name] = experiment
         if name == "dense":
             bundle.threshold = threshold
