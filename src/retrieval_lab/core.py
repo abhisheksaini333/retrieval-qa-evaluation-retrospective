@@ -383,6 +383,13 @@ def score_predictions(rows, threshold, reader_k=3, *, expected_query_ids=None, c
                "answer_em": statistics.mean(r["answer_em"] for r in scored),
                "answer_f1": statistics.mean(r["answer_f1"] for r in scored),
                "coverage": statistics.mean(bool(r["answer"]) for r in scored)}
+    positive = [r for r in scored if r["answers"]]
+    negative = [r for r in scored if not r["answers"]]
+    metrics["answerable_em"] = statistics.mean(r["answer_em"] for r in positive) if positive else None
+    metrics["answerable_f1"] = statistics.mean(r["answer_f1"] for r in positive) if positive else None
+    metrics["unanswerable_count"] = len(negative)
+    metrics["unanswerable_rejection_rate"] = (statistics.mean(r["abstained"] for r in negative)
+                                               if negative else None)
     for k in sorted(cutoffs):
         recalls = [len(set(r["ranked_ids"][:k]) & set(r["relevant_ids"])) / len(r["relevant_ids"])
                    for r in answerable]

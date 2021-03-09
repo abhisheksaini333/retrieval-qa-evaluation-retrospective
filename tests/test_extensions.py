@@ -293,3 +293,12 @@ def test_undefined_metric_denominators():
     assert metrics['selective_em'] is None
     assert metrics['retrieval_query_count']==0 and metrics['accepted_answer_count']==0
 
+
+
+def test_answerability_subgroups():
+    from retrieval_lab.core import score_predictions
+    rows=[metric_row(),metric_row(query_id='n',raw_answer='',answers=[],relevant_ids=[])]
+    metrics,_=score_predictions(rows,0.5)
+    assert metrics['answerable_em']==1 and metrics['unanswerable_rejection_rate']==1
+    assert metrics['unanswerable_count']==1 and metrics['answerable_count']==1
+
