@@ -302,3 +302,11 @@ def test_answerability_subgroups():
     assert metrics['answerable_em']==1 and metrics['unanswerable_rejection_rate']==1
     assert metrics['unanswerable_count']==1 and metrics['answerable_count']==1
 
+
+
+def test_citation_support_independent_of_answer():
+    from retrieval_lab.metrics import citation_metrics
+    rows=[{**metric_row(),'answer':'seven years','answer_em':1.,'document_id':'wrong'},
+          {**metric_row(query_id='q2'),'answer':'seven years','answer_em':1.,'document_id':'d'}]
+    assert citation_metrics(rows)=={'citation_precision':0.5,'attributed_answer_count':2,'supported_answer_em':0.5}
+
