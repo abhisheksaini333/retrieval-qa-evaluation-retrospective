@@ -310,3 +310,15 @@ def test_citation_support_independent_of_answer():
           {**metric_row(query_id='q2'),'answer':'seven years','answer_em':1.,'document_id':'d'}]
     assert citation_metrics(rows)=={'citation_precision':0.5,'attributed_answer_count':2,'supported_answer_em':0.5}
 
+
+
+def test_reference_answer_metric_conformance():
+    from retrieval_lab.core import answer_scores,score_predictions
+    assert answer_scores('the red red car',['red car','red red car'])==(1.,1.)
+    assert answer_scores('red red',['red blue'])==(0.,0.5)
+    assert answer_scores('',[])==(1.,1.)
+    assert answer_scores('extra',[])==(0.,0.)
+    row=metric_row(ranked_ids=['x','y','z','w','d'])
+    result,_=score_predictions([row],0.5)
+    assert result['recall_at_3']==0 and result['mrr_at_5']==0.2
+
