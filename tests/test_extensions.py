@@ -330,3 +330,13 @@ def test_precision_at_cutoff():
     assert precision_at_k(['x','a'],{'a'},1)==0
     with pytest.raises(ValueError):precision_at_k(['a','a'],{'a'},2)
 
+
+
+def test_graded_ndcg():
+    from retrieval_lab.metrics import ndcg_at_k
+    relevance={'a':3,'b':1}
+    assert ndcg_at_k(['a','b'],relevance,2)==1
+    assert 0<ndcg_at_k(['b','a'],relevance,2)<1
+    assert ndcg_at_k(['a'],{'a':0},1) is None
+    with pytest.raises(ValueError):ndcg_at_k(['a'],{'a':-1},1)
+

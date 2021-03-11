@@ -22,3 +22,14 @@ def _ranking(ranked, k):
 
 def precision_at_k(ranked, relevant, k):
     return len(set(_ranking(ranked, k)) & set(relevant)) / k
+
+
+def ndcg_at_k(ranked, relevance, k):
+    ranked = _ranking(ranked, k)
+    if any(type(g) not in (int, float) or not math.isfinite(g) or not 0 <= g <= 32
+           for g in relevance.values()):
+        raise ValueError("relevance grades must be finite and in [0,32]")
+    def discounted(grades):
+        return sum((2 ** grade - 1) / math.log2(rank + 2) for rank, grade in enumerate(grades))
+    ideal = discounted(sorted(relevance.values(), reverse=True)[:k])
+    return discounted([relevance.get(d, 0) for d in ranked]) / ideal if ideal else None
