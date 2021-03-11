@@ -394,6 +394,9 @@ def score_predictions(rows, threshold, reader_k=3, *, expected_query_ids=None, c
         recalls = [len(set(r["ranked_ids"][:k]) & set(r["relevant_ids"])) / len(r["relevant_ids"])
                    for r in answerable]
         metrics[f"recall_at_{k}"] = statistics.mean(recalls) if recalls else None
+        from .metrics import precision_at_k
+        metrics[f"precision_at_{k}"] = (statistics.mean(precision_at_k(r["ranked_ids"], r["relevant_ids"], k)
+                                                        for r in answerable) if answerable else None)
     reciprocal_ranks = [next((1 / (i + 1) for i, d in enumerate(r["ranked_ids"][:max(cutoffs)])
                               if d in r["relevant_ids"]), 0.0) for r in answerable]
     metrics[f"mrr_at_{max(cutoffs)}"] = statistics.mean(reciprocal_ranks) if reciprocal_ranks else None

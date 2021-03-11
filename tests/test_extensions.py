@@ -322,3 +322,11 @@ def test_reference_answer_metric_conformance():
     result,_=score_predictions([row],0.5)
     assert result['recall_at_3']==0 and result['mrr_at_5']==0.2
 
+
+
+def test_precision_at_cutoff():
+    from retrieval_lab.metrics import precision_at_k
+    assert precision_at_k(['a'],{'a'},3)==pytest.approx(1/3)
+    assert precision_at_k(['x','a'],{'a'},1)==0
+    with pytest.raises(ValueError):precision_at_k(['a','a'],{'a'},2)
+
