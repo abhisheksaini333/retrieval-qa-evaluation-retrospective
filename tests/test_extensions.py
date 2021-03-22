@@ -340,3 +340,12 @@ def test_graded_ndcg():
     assert ndcg_at_k(['a'],{'a':0},1) is None
     with pytest.raises(ValueError):ndcg_at_k(['a'],{'a':-1},1)
 
+
+
+def test_average_precision_multiple_gold_documents():
+    from retrieval_lab.metrics import average_precision,mean_average_precision
+    assert average_precision(['a','x','b'],{'a','b'},3)==pytest.approx(5/6)
+    assert average_precision(['a'],{'a','b'},1)==0.5
+    assert mean_average_precision([(['a'],{'a'}),([],set())],3)==1
+    assert average_precision([],set(),3) is None
+

@@ -33,3 +33,21 @@ def ndcg_at_k(ranked, relevance, k):
         return sum((2 ** grade - 1) / math.log2(rank + 2) for rank, grade in enumerate(grades))
     ideal = discounted(sorted(relevance.values(), reverse=True)[:k])
     return discounted([relevance.get(d, 0) for d in ranked]) / ideal if ideal else None
+
+
+def average_precision(ranked, relevant, k=5):
+    ranked, relevant = _ranking(ranked, k), set(relevant)
+    if not relevant:
+        return None
+    hits, total = 0, 0.0
+    for rank, identifier in enumerate(ranked, 1):
+        if identifier in relevant:
+            hits += 1
+            total += hits / rank
+    return total / len(relevant)
+
+
+def mean_average_precision(examples, k=5):
+    values = [average_precision(ranked, relevant, k) for ranked, relevant in examples]
+    defined = [value for value in values if value is not None]
+    return statistics.mean(defined) if defined else None
