@@ -51,3 +51,20 @@ def mean_average_precision(examples, k=5):
     values = [average_precision(ranked, relevant, k) for ranked, relevant in examples]
     defined = [value for value in values if value is not None]
     return statistics.mean(defined) if defined else None
+
+
+def risk_coverage_curve(rows):
+    from .core import _validate_rows, answer_scores, has_answer
+    _validate_rows(rows)
+    candidates = sorted([r for r in rows if has_answer(r["raw_answer"])],
+                        key=lambda r: (-r["confidence"], r["query_id"]))
+    points, accepted, wrong, area, previous = [], 0, 0, 0.0, 0.0
+    for threshold in sorted({r["confidence"] for r in candidates}, reverse=True):
+        group = [r for r in candidates if r["confidence"] == threshold]
+        accepted += len(group)
+        wrong += sum(1 - answer_scores(r["raw_answer"], r["answers"])[0] for r in group)
+        coverage, risk = accepted / len(rows), wrong / accepted
+        area += (coverage - previous) * risk
+        previous = coverage
+        points.append({"threshold": threshold, "coverage": coverage, "risk": risk, "accepted": accepted})
+    return {"points": points, "aurc": area, "integration": "right-step over attainable coverage"}

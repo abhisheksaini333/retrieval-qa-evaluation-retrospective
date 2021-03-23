@@ -349,3 +349,13 @@ def test_average_precision_multiple_gold_documents():
     assert mean_average_precision([(['a'],{'a'}),([],set())],3)==1
     assert average_precision([],set(),3) is None
 
+
+
+def test_risk_coverage_ties():
+    from retrieval_lab.metrics import risk_coverage_curve
+    rows=[metric_row(confidence=0.8),metric_row(query_id='q2',raw_answer='wrong',confidence=0.8)]
+    report=risk_coverage_curve(rows)
+    assert len(report['points'])==1
+    assert report['points'][0]['coverage']==1 and report['points'][0]['risk']==0.5
+    assert report['aurc']==0.5
+
