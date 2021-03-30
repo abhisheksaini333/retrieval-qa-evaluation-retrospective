@@ -359,3 +359,13 @@ def test_risk_coverage_ties():
     assert report['points'][0]['coverage']==1 and report['points'][0]['risk']==0.5
     assert report['aurc']==0.5
 
+
+
+def test_seeded_bootstrap_intervals():
+    from retrieval_lab.metrics import bootstrap_mean
+    result=bootstrap_mean([0.,1.,1.],repetitions=100,seed=12)
+    assert result==bootstrap_mean([0.,1.,1.],repetitions=100,seed=12)
+    assert result['lower']<=result['estimate']<=result['upper']
+    assert bootstrap_mean([2.,2.],repetitions=20)['lower']==2.
+    with pytest.raises(ValueError):bootstrap_mean([],repetitions=20)
+

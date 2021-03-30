@@ -68,3 +68,19 @@ def risk_coverage_curve(rows):
         previous = coverage
         points.append({"threshold": threshold, "coverage": coverage, "risk": risk, "accepted": accepted})
     return {"points": points, "aurc": area, "integration": "right-step over attainable coverage"}
+
+
+def bootstrap_mean(values, *, repetitions=1000, confidence=0.95, seed=0):
+    import random
+    from .core import percentile
+    values = list(values)
+    if (not values or any(type(v) not in (int, float) or not math.isfinite(v) for v in values)
+            or type(repetitions) is not int or not 2 <= repetitions <= 100000
+            or type(seed) is not int or type(confidence) not in (float, int) or not 0 < confidence < 1):
+        raise ValueError("invalid bootstrap samples or configuration")
+    randomizer = random.Random(seed)
+    samples = [statistics.mean(randomizer.choices(values, k=len(values))) for _ in range(repetitions)]
+    tail = (1 - confidence) / 2
+    return {"estimate": statistics.mean(values), "lower": percentile(samples, tail),
+            "upper": percentile(samples, 1 - tail), "confidence": confidence,
+            "repetitions": repetitions, "seed": seed, "sample_count": len(values)}
