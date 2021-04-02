@@ -369,3 +369,13 @@ def test_seeded_bootstrap_intervals():
     assert bootstrap_mean([2.,2.],repetitions=20)['lower']==2.
     with pytest.raises(ValueError):bootstrap_mean([],repetitions=20)
 
+
+
+def test_paired_query_comparison():
+    from retrieval_lab.metrics import paired_comparison
+    left=[{'query_id':'a','answer_em':1.},{'query_id':'b','answer_em':0.}]
+    right=[{'query_id':'b','answer_em':0.},{'query_id':'a','answer_em':0.}]
+    result=paired_comparison(left,right,repetitions=30)
+    assert result['estimate']==0.5 and result['wins']==1 and result['ties']==1
+    with pytest.raises(ValueError):paired_comparison(left,right[:1],repetitions=30)
+

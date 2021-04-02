@@ -84,3 +84,15 @@ def bootstrap_mean(values, *, repetitions=1000, confidence=0.95, seed=0):
     return {"estimate": statistics.mean(values), "lower": percentile(samples, tail),
             "upper": percentile(samples, 1 - tail), "confidence": confidence,
             "repetitions": repetitions, "seed": seed, "sample_count": len(values)}
+
+
+def paired_comparison(left, right, metric="answer_em", **bootstrap_options):
+    left, right = list(left), list(right)
+    first = {r["query_id"]: r[metric] for r in left}
+    second = {r["query_id"]: r[metric] for r in right}
+    if len(first) != len(left) or len(second) != len(right) or not first or first.keys() != second.keys():
+        raise ValueError("paired comparison requires identical unique query coverage")
+    differences = [first[key] - second[key] for key in sorted(first)]
+    return {**bootstrap_mean(differences, **bootstrap_options),
+            "wins": sum(v > 0 for v in differences), "ties": sum(v == 0 for v in differences),
+            "losses": sum(v < 0 for v in differences), "metric": metric}
