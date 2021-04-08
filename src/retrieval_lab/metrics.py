@@ -96,3 +96,20 @@ def paired_comparison(left, right, metric="answer_em", **bootstrap_options):
     return {**bootstrap_mean(differences, **bootstrap_options),
             "wins": sum(v > 0 for v in differences), "ties": sum(v == 0 for v in differences),
             "losses": sum(v < 0 for v in differences), "metric": metric}
+
+
+def slice_metrics(rows, annotations, threshold, **metric_options):
+    from .core import _validate_rows, score_predictions
+    _validate_rows(rows)
+    ids = {r["query_id"] for r in rows}
+    if set(annotations) - ids:
+        raise ValueError("slice annotations contain unknown query IDs")
+    groups = {}
+    for row in rows:
+        labels = annotations.get(row["query_id"], [])
+        if not isinstance(labels, (list, tuple)) or any(not isinstance(s, str) or not s.strip() for s in labels):
+            raise ValueError("slice labels must be nonempty strings")
+        for label in set(labels):
+            groups.setdefault(label, []).append(row)
+    return {label: score_predictions(group, threshold, **metric_options)[0]
+            for label, group in sorted(groups.items())}
