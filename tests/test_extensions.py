@@ -497,3 +497,15 @@ def test_overlapping_slice_metrics():
     assert result["easy"]["query_count"] == 1 and result["easy"]["answer_em"] == 1
     with pytest.raises(ValueError):
         slice_metrics(rows, {"unknown": ["all"]}, 0.5)
+
+
+def test_calibration_dataset_binding():
+    from retrieval_lab.calibration import bind_calibration, verify_binding
+
+    rows = [metric_row(), metric_row(query_id="n", answers=[], relevant_ids=[], confidence=0.1)]
+    artifact = bind_calibration(rows, "dataset-a")
+    verify_binding(artifact, rows, "dataset-a")
+    with pytest.raises(ValueError):
+        verify_binding(artifact, rows, "dataset-b")
+    with pytest.raises(ValueError):
+        verify_binding(artifact, [{**rows[0], "query_id": "test"}, rows[1]], "dataset-a")
