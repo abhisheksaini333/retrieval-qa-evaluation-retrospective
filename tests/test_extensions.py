@@ -509,3 +509,13 @@ def test_calibration_dataset_binding():
         verify_binding(artifact, rows, "dataset-b")
     with pytest.raises(ValueError):
         verify_binding(artifact, [{**rows[0], "query_id": "test"}, rows[1]], "dataset-a")
+
+
+def test_selective_risk_calibration():
+    from retrieval_lab.calibration import calibrate_risk
+
+    rows = [metric_row(confidence=0.8), metric_row(query_id="wrong", raw_answer="incorrect", confidence=0.2)]
+    result = calibrate_risk(rows, max_risk=0.0, min_coverage=0.5)
+    assert result["threshold"] == 0.8 and result["risk"] == 0 and result["coverage"] == 0.5
+    with pytest.raises(ValueError):
+        calibrate_risk(rows, max_risk=0, min_coverage=1)

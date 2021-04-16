@@ -21,3 +21,22 @@ def verify_binding(artifact, rows, dataset_fingerprint):
     if (artifact.get("schema_version") != 1 or artifact.get("dataset_fingerprint") != dataset_fingerprint
             or artifact.get("development_fingerprint") != development_fingerprint(rows)):
         raise ValueError("calibration development-data binding mismatch")
+
+
+def calibrate_risk(rows, *, max_risk=0.1, min_coverage=0.0, split="dev"):
+    _validate_rows(rows)
+    if (split != "dev" or type(max_risk) not in (int, float) or not 0 <= max_risk <= 1
+            or type(min_coverage) not in (int, float) or not 0 <= min_coverage <= 1):
+        raise ValueError("invalid development risk calibration configuration")
+    candidates = []
+    for threshold in sorted({0.0, 1.0000001, *(r["confidence"] for r in rows)}):
+        accepted = [r for r in rows if has_answer(r["raw_answer"]) and r["confidence"] >= threshold]
+        coverage = len(accepted) / len(rows)
+        risk = (sum(1 - answer_scores(r["raw_answer"], r["answers"])[0] for r in accepted) / len(accepted)
+                if accepted else None)
+        if (risk is None or risk <= max_risk) and coverage >= min_coverage:
+            candidates.append({"threshold": threshold, "risk": risk, "coverage": coverage})
+    if not candidates:
+        raise ValueError("no development threshold meets risk and coverage constraints")
+    return {**max(candidates, key=lambda row: (row["coverage"], row["threshold"])),
+            "objective": "selective_risk", "split": "dev", "max_risk": max_risk}
