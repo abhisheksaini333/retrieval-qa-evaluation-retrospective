@@ -519,3 +519,15 @@ def test_selective_risk_calibration():
     assert result["threshold"] == 0.8 and result["risk"] == 0 and result["coverage"] == 0.5
     with pytest.raises(ValueError):
         calibrate_risk(rows, max_risk=0, min_coverage=1)
+
+
+def test_calibration_minimum_support():
+    from retrieval_lab.core import calibrate_threshold
+
+    rows = [metric_row(), metric_row(query_id="n", answers=[], relevant_ids=[], confidence=0.1)]
+    with pytest.raises(ValueError, match="support"):
+        calibrate_threshold(rows, split="dev", min_class_count=2)
+    assert calibrate_threshold(rows, split="dev", min_class_count=1)["class_counts"] == {
+        "answerable": 1,
+        "unanswerable": 1,
+    }

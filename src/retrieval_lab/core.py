@@ -316,15 +316,17 @@ def has_answer(value):
     return isinstance(value, str) and bool(value.strip())
 
 
-def calibrate_threshold(rows, *, split):
+def calibrate_threshold(rows, *, split, min_class_count=1):
     """Maximize dev balanced answerability accuracy; higher threshold wins ties."""
     if split != "dev":
         raise ValueError("threshold selection requires split='dev'")
     _validate_rows(rows)
     positives = [r for r in rows if r["answers"]]
     negatives = [r for r in rows if not r["answers"]]
-    if not positives or not negatives:
-        raise ValueError("development calibration needs answerable and unanswerable questions")
+    if type(min_class_count) is not int or min_class_count < 1:
+        raise ValueError("minimum class support must be a positive integer")
+    if len(positives) < min_class_count or len(negatives) < min_class_count:
+        raise ValueError("development calibration has insufficient answerability class support")
     candidates = sorted({0.0, 1.0000001, *(r["confidence"] for r in rows)})
     curve = []
     for threshold in candidates:
@@ -332,7 +334,8 @@ def calibrate_threshold(rows, *, split):
         tnr = statistics.mean(not has_answer(r["raw_answer"]) or r["confidence"] < threshold for r in negatives)
         curve.append({"threshold": threshold, "balanced_accuracy": (tpr + tnr) / 2})
     winner = max(curve, key=lambda row: (row["balanced_accuracy"], row["threshold"]))
-    return {"split": "dev", "threshold": winner["threshold"],
+    return {"split": "dev", "class_counts": {"answerable": len(positives), "unanswerable": len(negatives)},
+            "threshold": winner["threshold"],
             "objective": "balanced_answerability_accuracy", "objective_value": winner["balanced_accuracy"],
             "tie_break": "higher_threshold", "query_ids": [r["query_id"] for r in rows], "curve": curve}
 
