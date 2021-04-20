@@ -531,3 +531,16 @@ def test_calibration_minimum_support():
         "answerable": 1,
         "unanswerable": 1,
     }
+
+
+def test_threshold_confusion_totals():
+    from retrieval_lab.calibration import threshold_diagnostics
+
+    rows = [metric_row(confidence=0.9), metric_row(query_id="n", answers=[], relevant_ids=[], confidence=0.2)]
+    curve = threshold_diagnostics(rows)
+    for point in curve:
+        assert sum(point[key] for key in ["tp", "tn", "fp", "fn"]) == 2
+    assert [point["accepted"] for point in curve] == sorted(
+        [point["accepted"] for point in curve], reverse=True
+    )
+    assert next(p for p in curve if p["threshold"] == 0.9)["balanced_accuracy"] == 1

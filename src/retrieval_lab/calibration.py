@@ -40,3 +40,18 @@ def calibrate_risk(rows, *, max_risk=0.1, min_coverage=0.0, split="dev"):
         raise ValueError("no development threshold meets risk and coverage constraints")
     return {**max(candidates, key=lambda row: (row["coverage"], row["threshold"])),
             "objective": "selective_risk", "split": "dev", "max_risk": max_risk}
+
+
+def threshold_diagnostics(rows):
+    _validate_rows(rows)
+    curve = []
+    for threshold in sorted({0.0, 1.0000001, *(r["confidence"] for r in rows)}):
+        counts = {"tp": 0, "tn": 0, "fp": 0, "fn": 0}
+        for row in rows:
+            accepted = has_answer(row["raw_answer"]) and row["confidence"] >= threshold
+            counts[("tp" if accepted else "fn") if row["answers"] else ("fp" if accepted else "tn")] += 1
+        positive, negative = counts["tp"] + counts["fn"], counts["tn"] + counts["fp"]
+        balanced = (counts["tp"] / positive + counts["tn"] / negative) / 2 if positive and negative else None
+        curve.append({"threshold": threshold, **counts, "accepted": counts["tp"] + counts["fp"],
+                      "balanced_accuracy": balanced})
+    return curve
