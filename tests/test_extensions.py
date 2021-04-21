@@ -544,3 +544,18 @@ def test_threshold_confusion_totals():
         [point["accepted"] for point in curve], reverse=True
     )
     assert next(p for p in curve if p["threshold"] == 0.9)["balanced_accuracy"] == 1
+
+
+def test_calibration_artifact_roundtrip(tmp_path):
+    from retrieval_lab.calibration import bind_calibration, save_calibration, load_calibration
+
+    rows = [metric_row(), metric_row(query_id="n", answers=[], relevant_ids=[], confidence=0.1)]
+    artifact = bind_calibration(rows, "data")
+    path = tmp_path / "threshold.json"
+    save_calibration(path, artifact)
+    assert load_calibration(path) == artifact
+    payload = json.loads(path.read_text())
+    payload["artifact"]["calibration"]["threshold"] = 0.123
+    path.write_text(json.dumps(payload))
+    with pytest.raises(ValueError, match="checksum"):
+        load_calibration(path)

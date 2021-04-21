@@ -55,3 +55,37 @@ def threshold_diagnostics(rows):
         curve.append({"threshold": threshold, **counts, "accepted": counts["tp"] + counts["fp"],
                       "balanced_accuracy": balanced})
     return curve
+
+
+def save_calibration(path, artifact):
+    import json
+    from pathlib import Path
+    path = Path(path)
+    validate_calibration_artifact(artifact)
+    payload = {"artifact": artifact, "sha256": canonical_hash(artifact)}
+    with path.open("x", encoding="utf-8") as stream:
+        stream.write(json.dumps(payload, indent=2, allow_nan=False) + "\n")
+
+
+def validate_calibration_artifact(artifact):
+    import math
+    if not isinstance(artifact, dict) or artifact.get("schema_version") != 1:
+        raise ValueError("unsupported calibration artifact schema")
+    calibration = artifact.get("calibration", {})
+    threshold = calibration.get("threshold")
+    if (calibration.get("split") != "dev" or type(threshold) not in (int, float)
+            or not math.isfinite(threshold) or not 0 <= threshold <= 1.0000001):
+        raise ValueError("invalid development threshold artifact")
+    for field in ["dataset_fingerprint", "development_fingerprint"]:
+        if not isinstance(artifact.get(field), str) or not artifact[field]:
+            raise ValueError("calibration fingerprint required")
+
+
+def load_calibration(path):
+    import json
+    from pathlib import Path
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or payload.get("sha256") != canonical_hash(payload.get("artifact")):
+        raise ValueError("calibration checksum mismatch")
+    validate_calibration_artifact(payload["artifact"])
+    return payload["artifact"]
