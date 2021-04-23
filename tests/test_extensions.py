@@ -559,3 +559,23 @@ def test_calibration_artifact_roundtrip(tmp_path):
     path.write_text(json.dumps(payload))
     with pytest.raises(ValueError, match="checksum"):
         load_calibration(path)
+
+
+def test_grouped_calibration_folds():
+    from retrieval_lab.calibration import cross_validate_calibration
+
+    rows = [
+        metric_row(
+            query_id=f"q{i}",
+            answers=["seven years"] if i % 2 else [],
+            relevant_ids=["d"] if i % 2 else [],
+            confidence=0.8 if i % 2 else 0.1,
+        )
+        for i in range(8)
+    ]
+    groups = {f"q{i}": str(i // 2) for i in range(8)}
+    result = cross_validate_calibration(rows, groups, folds=2, seed=4)
+    assert result == cross_validate_calibration(rows, groups, folds=2, seed=4)
+    assert len(result) == 2
+    for fold in result:
+        assert not set(fold["train_groups"]) & set(fold["validation_groups"])

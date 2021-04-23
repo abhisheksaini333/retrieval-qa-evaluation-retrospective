@@ -89,3 +89,26 @@ def load_calibration(path):
         raise ValueError("calibration checksum mismatch")
     validate_calibration_artifact(payload["artifact"])
     return payload["artifact"]
+
+
+def cross_validate_calibration(rows, groups, *, folds=3, seed=0):
+    import random
+    from .core import score_predictions
+    _validate_rows(rows)
+    if set(groups) != {r["query_id"] for r in rows} or any(not isinstance(g, str) for g in groups.values()):
+        raise ValueError("calibration groups must cover every development query")
+    keys = sorted(set(groups.values()))
+    if type(folds) is not int or not 2 <= folds <= len(keys) or type(seed) is not int:
+        raise ValueError("invalid grouped fold configuration")
+    random.Random(seed).shuffle(keys)
+    results = []
+    for fold in range(folds):
+        held = set(keys[fold::folds])
+        train = [r for r in rows if groups[r["query_id"]] not in held]
+        validation = [r for r in rows if groups[r["query_id"]] in held]
+        calibration = calibrate_threshold(train, split="dev")
+        scored = score_predictions(validation, calibration["threshold"])[0]
+        results.append({"fold": fold, "train_groups": sorted(set(keys) - held),
+                        "validation_groups": sorted(held), "threshold": calibration["threshold"],
+                        "metrics": scored})
+    return results
