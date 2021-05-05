@@ -579,3 +579,13 @@ def test_grouped_calibration_folds():
     assert len(result) == 2
     for fold in result:
         assert not set(fold["train_groups"]) & set(fold["validation_groups"])
+
+
+def test_empirical_score_reliability():
+    from retrieval_lab.calibration import reliability_bins
+
+    rows = [metric_row(confidence=0.9), metric_row(query_id="wrong", raw_answer="wrong", confidence=0.9)]
+    result = reliability_bins(rows, bins=5)
+    assert result["ece"] == pytest.approx(0.4)
+    assert result["bins"][-1]["accuracy"] == 0.5 and result["bins"][0]["accuracy"] is None
+    assert sum(b["count"] for b in result["bins"]) == 2

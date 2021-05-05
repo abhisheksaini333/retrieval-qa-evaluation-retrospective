@@ -112,3 +112,22 @@ def cross_validate_calibration(rows, groups, *, folds=3, seed=0):
                         "validation_groups": sorted(held), "threshold": calibration["threshold"],
                         "metrics": scored})
     return results
+
+
+def reliability_bins(rows, *, bins=10):
+    _validate_rows(rows)
+    if type(bins) is not int or not 1 <= bins <= 100:
+        raise ValueError("reliability bin count must be in [1,100]")
+    groups = [[] for _ in range(bins)]
+    for row in rows:
+        groups[min(bins - 1, int(row["confidence"] * bins))].append(row)
+    result, ece = [], 0.0
+    for index, group in enumerate(groups):
+        score = sum(r["confidence"] for r in group) / len(group) if group else None
+        accuracy = (sum(answer_scores(r["raw_answer"], r["answers"])[0] for r in group) / len(group)
+                    if group else None)
+        if group:
+            ece += len(group) / len(rows) * abs(score - accuracy)
+        result.append({"lower": index / bins, "upper": (index + 1) / bins, "count": len(group),
+                       "mean_score": score, "accuracy": accuracy})
+    return {"bins": result, "ece": ece, "target": "raw-answer exact match"}
