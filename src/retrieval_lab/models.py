@@ -51,6 +51,8 @@ class Encoder:
         self.dimension = self.model.config.hidden_size
 
     def encode(self, texts):
+        from .config import validate_encoder_texts
+        texts = validate_encoder_texts(texts)
         if not texts:
             return np.empty((0, self.dimension), dtype=np.float32)
         batches = []

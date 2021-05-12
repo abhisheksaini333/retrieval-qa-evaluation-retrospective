@@ -589,3 +589,13 @@ def test_empirical_score_reliability():
     assert result["ece"] == pytest.approx(0.4)
     assert result["bins"][-1]["accuracy"] == 0.5 and result["bins"][0]["accuracy"] is None
     assert sum(b["count"] for b in result["bins"]) == 2
+
+
+def test_encoder_batch_boundary():
+    from retrieval_lab.config import validate_encoder_texts
+
+    assert validate_encoder_texts([]) == []
+    assert validate_encoder_texts(("one", "two")) == ["one", "two"]
+    for value in ["a string", None, ["ok", None], [""]]:
+        with pytest.raises(ValueError):
+            validate_encoder_texts(value)
