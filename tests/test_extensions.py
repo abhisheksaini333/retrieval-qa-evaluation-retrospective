@@ -599,3 +599,17 @@ def test_encoder_batch_boundary():
     for value in ["a string", None, ["ok", None], [""]]:
         with pytest.raises(ValueError):
             validate_encoder_texts(value)
+
+
+def test_encoder_config_and_cache_identity():
+    from retrieval_lab.config import EncoderConfig
+    from retrieval_lab.core import BM25, Document
+    from retrieval_lab.retrieval import CachedRetriever
+
+    assert EncoderConfig().fingerprint != EncoderConfig(max_tokens=64).fingerprint
+    with pytest.raises(ValueError):
+        EncoderConfig(pooling="unknown")
+    docs = [Document("a", "Title", "archive")]
+    index = BM25(docs)
+    assert CachedRetriever(index).search("archive") == index.search("archive")
+    assert index.fingerprint != BM25(docs, title_weight=2).fingerprint

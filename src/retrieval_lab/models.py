@@ -40,7 +40,11 @@ def directory_fingerprint(path):
 
 
 class Encoder:
-    def __init__(self, path, threads=2):
+    def __init__(self, path, threads=2, config=None):
+        from .config import EncoderConfig
+        self.config = config if config is not None else EncoderConfig()
+        if not isinstance(self.config, EncoderConfig):
+            raise ValueError("encoder config must be EncoderConfig")
         self.path = Path(path)
         torch.set_num_threads(threads)
         self.fingerprint = directory_fingerprint(self.path)
@@ -49,6 +53,8 @@ class Encoder:
         self.model = AutoModel.from_pretrained(path, local_files_only=True, trust_remote_code=False,
                                               use_safetensors=True).cpu().eval()
         self.dimension = self.model.config.hidden_size
+        if self.config.max_tokens > self.model.config.max_position_embeddings:
+            raise ValueError("encoder token limit exceeds model positions")
 
     def encode(self, texts):
         from .config import validate_encoder_texts
@@ -56,19 +62,26 @@ class Encoder:
         if not texts:
             return np.empty((0, self.dimension), dtype=np.float32)
         batches = []
-        for start in range(0, len(texts), 16):
-            encoded = self.tokenizer(texts[start:start + 16], padding=True, truncation=True,
-                                     max_length=128, return_tensors="pt")
+        for start in range(0, len(texts), self.config.batch_size):
+            encoded = self.tokenizer(texts[start:start + self.config.batch_size], padding=True, truncation=True,
+                                     max_length=self.config.max_tokens, return_tensors="pt")
             with torch.inference_mode():
                 hidden = self.model(**encoded).last_hidden_state
                 mask = encoded["attention_mask"].unsqueeze(-1)
-                pooled = (hidden * mask).sum(1) / mask.sum(1).clamp(min=1)
+                pooled = (hidden[:, 0] if self.config.pooling == "cls" else
+                          (hidden * mask).sum(1) / mask.sum(1).clamp(min=1))
                 normalized = torch.nn.functional.normalize(pooled, p=2, dim=1)
             batches.append(normalized.numpy())
         return np.concatenate(batches).astype(np.float32)
 
 
 class DenseIndex:
+    @property
+    def fingerprint(self):
+        return canonical_hash({"corpus": corpus_hash(self.documents), "encoder": self.encoder.fingerprint,
+                               "config": self.encoder.config.fingerprint,
+                               "vectors": hashlib.sha256(self.embeddings.tobytes()).hexdigest()})
+
     def __init__(self, documents, encoder, embeddings=None):
         self.documents, self.encoder = list(documents), encoder
         if len({d.doc_id for d in self.documents}) != len(self.documents):

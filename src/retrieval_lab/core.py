@@ -204,6 +204,15 @@ class BM25:
             for word in counts:
                 self.postings.setdefault(word, set()).add(index)
 
+    @property
+    def fingerprint(self):
+        tokenizer = ("word-lower-v1" if self.tokenizer is tokens else
+                     getattr(self.tokenizer, "fingerprint", None))
+        if tokenizer is None:
+            raise ValueError("custom tokenizer needs a stable fingerprint")
+        return canonical_hash({"corpus": corpus_hash(self.documents), "k1": self.k1,
+                               "b": self.b, "title_weight": self.title_weight, "tokenizer": tokenizer})
+
     def candidate_ids(self, question):
         validate_request(question, 1)
         indices = set().union(*(self.postings.get(word, set()) for word in self.tokenizer(question)))
