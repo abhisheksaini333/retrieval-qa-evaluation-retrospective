@@ -17,3 +17,18 @@ def answer_spans(text, answer):
         raise ValueError("nonempty answer required")
     return [(match.start(), match.start() + len(answer))
             for match in re.finditer(f"(?={re.escape(answer)})", text)]
+
+
+def audit_truncation(tokenizer, texts, max_tokens):
+    if type(max_tokens) is not int or max_tokens < 2:
+        raise ValueError("token budget must be at least two")
+    results = []
+    for identifier, text in texts.items():
+        if not isinstance(text, str):
+            raise ValueError("truncation audit expects string texts")
+        full = tokenizer(text, truncation=False)
+        retained = tokenizer(text, truncation=True, max_length=max_tokens, return_offsets_mapping=True)
+        results.append({"id": identifier, "token_count": len(full["input_ids"]),
+                        "truncated": len(full["input_ids"]) > max_tokens,
+                        "retained_char_end": max((end for _, end in retained["offset_mapping"]), default=0)})
+    return results

@@ -613,3 +613,16 @@ def test_encoder_config_and_cache_identity():
     index = BM25(docs)
     assert CachedRetriever(index).search("archive") == index.search("archive")
     assert index.fingerprint != BM25(docs, title_weight=2).fingerprint
+
+
+def test_token_truncation_audit():
+    from retrieval_lab.annotations import audit_truncation
+
+    class TokenizerDouble:
+        def __call__(self, text, **kwargs):
+            n = min(len(text), kwargs.get("max_length", len(text))) if kwargs.get("truncation") else len(text)
+            return {"input_ids": list(range(n)), "offset_mapping": [(i, i + 1) for i in range(n)]}
+
+    result = audit_truncation(TokenizerDouble(), {"short": "cat", "long": "longer"}, 4)
+    assert result[0]["truncated"] is False and result[1]["truncated"] is True
+    assert result[1]["retained_char_end"] == 4 and result[1]["token_count"] == 6
