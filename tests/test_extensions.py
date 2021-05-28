@@ -626,3 +626,16 @@ def test_token_truncation_audit():
     result = audit_truncation(TokenizerDouble(), {"short": "cat", "long": "longer"}, 4)
     assert result[0]["truncated"] is False and result[1]["truncated"] is True
     assert result[1]["retained_char_end"] == 4 and result[1]["token_count"] == 6
+
+
+def test_document_chunk_coverage():
+    from retrieval_lab.annotations import chunk_document
+    from retrieval_lab.core import Document
+
+    doc = Document("a", "Title", "abcdefghijk")
+    chunks = chunk_document(doc, max_chars=5, overlap=2)
+    assert [(c.start, c.end) for c in chunks] == [(0, 5), (3, 8), (6, 11)]
+    assert all(c.document.text == doc.text[c.start : c.end] and c.parent_id == "a" for c in chunks)
+    assert len({c.document.doc_id for c in chunks}) == 3
+    with pytest.raises(ValueError):
+        chunk_document(doc, max_chars=5, overlap=5)
