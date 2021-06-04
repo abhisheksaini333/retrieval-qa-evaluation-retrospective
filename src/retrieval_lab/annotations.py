@@ -61,3 +61,25 @@ def chunk_document(document, *, max_chars=512, overlap=64):
             break
         start = end - overlap
     return result
+
+
+def aggregate_chunks(ranked, chunks, *, policy="max", k=5):
+    from .retrieval import stable_top_k, validate_ranked
+    if policy not in {"max", "sum"}:
+        raise ValueError("chunk score policy must be max or sum")
+    lookup = {chunk.document.doc_id: chunk for chunk in chunks}
+    if len(lookup) != len(chunks):
+        raise ValueError("duplicate chunk IDs")
+    ranked = validate_ranked(ranked, lookup, 100)
+    groups, traces = {}, {}
+    for identifier, score in ranked:
+        chunk = lookup[identifier]
+        groups.setdefault(chunk.parent_id, []).append((identifier, score))
+    scores = []
+    for parent, values in groups.items():
+        best = min(values, key=lambda pair: (-pair[1], pair[0]))
+        scores.append((parent, best[1] if policy == "max" else sum(score for _, score in values)))
+        traces[parent] = {"best_chunk_id": best[0], "chunk_ids": [identifier for identifier, _ in values],
+                          "start": lookup[best[0]].start, "end": lookup[best[0]].end}
+    selected = stable_top_k(scores, k)
+    return selected, {identifier: traces[identifier] for identifier, _ in selected}

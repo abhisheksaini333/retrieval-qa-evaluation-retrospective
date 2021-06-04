@@ -639,3 +639,16 @@ def test_document_chunk_coverage():
     assert len({c.document.doc_id for c in chunks}) == 3
     with pytest.raises(ValueError):
         chunk_document(doc, max_chars=5, overlap=5)
+
+
+def test_parent_chunk_aggregation():
+    from retrieval_lab.annotations import chunk_document, aggregate_chunks
+    from retrieval_lab.core import Document
+
+    chunks = chunk_document(Document("a", "Title", "abcdefgh"), max_chars=4, overlap=0)
+    ranked = [(chunks[0].document.doc_id, 0.5), (chunks[1].document.doc_id, 0.9)]
+    parents, trace = aggregate_chunks(ranked, chunks)
+    assert parents == [("a", 0.9)] and trace["a"]["best_chunk_id"] == ranked[1][0]
+    assert aggregate_chunks(ranked, chunks, policy="sum")[0] == [("a", 1.4)]
+    with pytest.raises(ValueError):
+        aggregate_chunks([("unknown", 1)], chunks)
