@@ -32,3 +32,16 @@ class EncoderConfig:
     @property
     def fingerprint(self):
         return canonical_hash(asdict(self))
+
+
+def validate_embeddings(embeddings, count, dimension):
+    import numpy as np
+    if (not isinstance(embeddings, np.ndarray) or embeddings.shape != (count, dimension)
+            or not np.issubdtype(embeddings.dtype, np.floating)
+            or not np.isfinite(embeddings).all()):
+        raise ValueError("index mismatch: embedding shape, dtype or finite values")
+    if count and not np.allclose(np.linalg.norm(embeddings, axis=1), 1.0, atol=1e-4):
+        raise ValueError("index mismatch: embeddings must have unit norm")
+    result = np.array(embeddings, dtype=np.float32, copy=True)
+    result.setflags(write=False)
+    return result

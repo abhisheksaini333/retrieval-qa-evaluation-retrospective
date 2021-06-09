@@ -652,3 +652,21 @@ def test_parent_chunk_aggregation():
     assert aggregate_chunks(ranked, chunks, policy="sum")[0] == [("a", 1.4)]
     with pytest.raises(ValueError):
         aggregate_chunks([("unknown", 1)], chunks)
+
+
+def test_embedding_matrix_ownership():
+    from retrieval_lab.config import validate_embeddings
+    import numpy as np
+
+    source = np.array([[1.0, 0.0]], dtype=np.float64)
+    result = validate_embeddings(source, 1, 2)
+    source[0, 0] = 9
+    assert result[0, 0] == 1 and not result.flags.writeable
+    for invalid in [
+        np.array([[0.0, 0.0]]),
+        np.array([[2.0, 0.0]]),
+        np.array([[1, 0]]),
+        np.array([[float("nan"), 0.0]]),
+    ]:
+        with pytest.raises(ValueError):
+            validate_embeddings(invalid, 1, 2)

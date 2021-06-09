@@ -88,10 +88,8 @@ class DenseIndex:
             raise ValueError("duplicate document ID")
         self.embeddings = (encoder.encode([d.title + " " + d.text for d in self.documents])
                            if embeddings is None else embeddings)
-        if self.embeddings.shape != (len(self.documents), encoder.dimension):
-            raise ValueError("index mismatch: embedding shape")
-        if not np.isfinite(self.embeddings).all():
-            raise ValueError("index mismatch: nonfinite embeddings")
+        from .config import validate_embeddings
+        self.embeddings = validate_embeddings(self.embeddings, len(self.documents), encoder.dimension)
 
     def search(self, question, k=5):
         validate_request(question, k)
