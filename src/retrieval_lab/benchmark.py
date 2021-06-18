@@ -43,7 +43,8 @@ def download_models(path):
 
 def machine_info():
     info = {"platform": platform.platform(), "machine": platform.machine(), "python": platform.python_version(),
-            "cpu_count": os.cpu_count(), "device": "cpu", "torch_threads": 2, "gpu_used": False}
+            "cpu_count": os.cpu_count(), "device": "cpu",
+            "torch_threads": __import__("torch").get_num_threads(), "gpu_used": False}
     if sys.platform == "darwin":
         for field, name in [("cpu_model", "machdep.cpu.brand_string"), ("memory_bytes", "hw.memsize")]:
             info[field] = subprocess.check_output(["sysctl", "-n", name], text=True).strip()

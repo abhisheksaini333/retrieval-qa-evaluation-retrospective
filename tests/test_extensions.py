@@ -670,3 +670,18 @@ def test_embedding_matrix_ownership():
     ]:
         with pytest.raises(ValueError):
             validate_embeddings(invalid, 1, 2)
+
+
+def test_scoped_cpu_threads():
+    from retrieval_lab.runtime import cpu_threads
+    import torch
+
+    before = torch.get_num_threads()
+    with pytest.raises(RuntimeError):
+        with cpu_threads(1):
+            assert torch.get_num_threads() == 1
+            raise RuntimeError("stop")
+    assert torch.get_num_threads() == before
+    with pytest.raises(ValueError):
+        with cpu_threads(0):
+            pass

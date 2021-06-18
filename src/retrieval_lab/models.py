@@ -46,7 +46,8 @@ class Encoder:
         if not isinstance(self.config, EncoderConfig):
             raise ValueError("encoder config must be EncoderConfig")
         self.path = Path(path)
-        torch.set_num_threads(threads)
+        from .runtime import validate_threads
+        self.threads = validate_threads(threads)
         self.fingerprint = directory_fingerprint(self.path)
         self.tokenizer = AutoTokenizer.from_pretrained(path, local_files_only=True, trust_remote_code=False,
                                                          clean_up_tokenization_spaces=True)
@@ -65,7 +66,8 @@ class Encoder:
         for start in range(0, len(texts), self.config.batch_size):
             encoded = self.tokenizer(texts[start:start + self.config.batch_size], padding=True, truncation=True,
                                      max_length=self.config.max_tokens, return_tensors="pt")
-            with torch.inference_mode():
+            from .runtime import cpu_threads
+            with cpu_threads(self.threads), torch.inference_mode():
                 hidden = self.model(**encoded).last_hidden_state
                 mask = encoded["attention_mask"].unsqueeze(-1)
                 pooled = (hidden[:, 0] if self.config.pooling == "cls" else
@@ -111,7 +113,9 @@ class DenseIndex:
 
 
 class Reader:
-    def __init__(self, path):
+    def __init__(self, path, threads=2):
+        from .runtime import validate_threads
+        self.threads = validate_threads(threads)
         self.path = Path(path)
         self.fingerprint = directory_fingerprint(path)
         tokenizer = AutoTokenizer.from_pretrained(path, local_files_only=True, trust_remote_code=False,
@@ -125,7 +129,8 @@ class Reader:
             return {"raw_answer": "", "confidence": 0.0, "document_id": None, "start": None, "end": None}
         candidates = []
         for document in documents:
-            with torch.inference_mode():
+            from .runtime import cpu_threads
+            with cpu_threads(self.threads), torch.inference_mode():
                 result = self.pipeline(question=question, context=document.text, top_k=1,
                                        max_answer_len=40, max_seq_len=384, handle_impossible_answer=False)
             candidates.append({"raw_answer": result["answer"], "confidence": float(result["score"]),
