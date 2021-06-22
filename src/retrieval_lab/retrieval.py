@@ -114,5 +114,8 @@ def retrieve_batch(retriever, queries, k=5):
         if identifier in seen:
             raise ValueError("duplicate batch query ID")
         seen.add(identifier)
-    return [{"query_id": identifier, "ranked": retriever.search(question, k)}
-            for identifier, question in queries]
+    rankings = (retriever.search_batch([question for _, question in queries], k)
+                if hasattr(retriever, "search_batch") else [retriever.search(question, k) for _, question in queries])
+    if len(rankings) != len(queries):
+        raise ValueError("batch retriever changed query cardinality")
+    return [{"query_id": identifier, "ranked": ranked} for (identifier, _), ranked in zip(queries, rankings)]

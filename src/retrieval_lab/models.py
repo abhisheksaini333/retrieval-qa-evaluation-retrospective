@@ -103,6 +103,19 @@ class DenseIndex:
         return stable_top_k(ranked, k)
 
 
+    def search_batch(self, questions, k=5):
+        from .config import validate_encoder_texts
+        from .retrieval import stable_top_k
+        questions = validate_encoder_texts(questions)
+        for question in questions:
+            validate_request(question, k)
+        if not self.documents:
+            return [[] for _ in questions]
+        encoded = self.encoder.encode(questions)
+        return [stable_top_k(((document.doc_id, float(score))
+                              for document, score in zip(self.documents, self.embeddings @ vector)), k)
+                for vector in encoded]
+
     def search_diverse(self, question, k=5, relevance_weight=0.5):
         from .retrieval import mmr_select
         validate_request(question, k)

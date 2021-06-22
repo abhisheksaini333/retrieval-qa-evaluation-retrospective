@@ -685,3 +685,24 @@ def test_scoped_cpu_threads():
     with pytest.raises(ValueError):
         with cpu_threads(0):
             pass
+
+
+def test_dense_batch_query_parity():
+    from retrieval_lab.models import DenseIndex
+    from retrieval_lab.core import Document
+    import numpy as np
+
+    class EncoderDouble:
+        dimension = 2
+        calls = 0
+
+        def encode(self, texts):
+            self.calls += 1
+            return np.array([[1.0, 0.0] if "cat" in t else [0.0, 1.0] for t in texts])
+
+    encoder = EncoderDouble()
+    index = DenseIndex([Document("cat", "Title", "cat"), Document("dog", "Title", "dog")], encoder)
+    before = encoder.calls
+    result = index.search_batch(["cat", "dog"], 1)
+    assert encoder.calls == before + 1 and [r[0][0] for r in result] == ["cat", "dog"]
+    assert result == [index.search("cat", 1), index.search("dog", 1)]
