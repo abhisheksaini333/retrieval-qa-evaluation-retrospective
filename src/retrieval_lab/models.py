@@ -146,9 +146,8 @@ class Reader:
             with cpu_threads(self.threads), torch.inference_mode():
                 result = self.pipeline(question=question, context=document.text, top_k=1,
                                        max_answer_len=40, max_seq_len=384, handle_impossible_answer=False)
-            candidates.append({"raw_answer": result["answer"], "confidence": float(result["score"]),
-                               "document_id": document.doc_id, "start": int(result["start"]),
-                               "end": int(result["end"])})
+            from .reading import validate_reader_result
+            candidates.append(validate_reader_result(document, result))
         return sorted(candidates, key=lambda r: (-r["confidence"], r["document_id"]))[0]
 
 

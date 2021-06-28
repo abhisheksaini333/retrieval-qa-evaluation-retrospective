@@ -706,3 +706,15 @@ def test_dense_batch_query_parity():
     result = index.search_batch(["cat", "dog"], 1)
     assert encoder.calls == before + 1 and [r[0][0] for r in result] == ["cat", "dog"]
     assert result == [index.search("cat", 1), index.search("dog", 1)]
+
+
+def test_reader_output_boundaries():
+    from retrieval_lab.reading import validate_reader_result
+    from retrieval_lab.core import Document
+
+    doc = Document("d", "Title", "red car")
+    base = {"answer": "red", "score": 0.8, "start": 0, "end": 3}
+    assert validate_reader_result(doc, base)["document_id"] == "d"
+    for changes in [{"score": float("nan")}, {"start": 1}, {"end": 50}, {"answer": "blue"}, {"start": True}]:
+        with pytest.raises(ValueError):
+            validate_reader_result(doc, {**base, **changes})
