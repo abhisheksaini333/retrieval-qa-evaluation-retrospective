@@ -138,16 +138,27 @@ class Reader:
         self.pipeline = pipeline("question-answering", model=model, tokenizer=tokenizer, device=-1)
 
     def answer(self, question, documents):
+        return self.answer_batch(question, documents)
+
+    def answer_batch(self, question, documents, batch_size=8):
+        from .runtime import cpu_threads
+        from .reading import validate_reader_result
+        validate_request(question, 1)
+        if type(batch_size) is not int or not 1 <= batch_size <= 128:
+            raise ValueError("reader batch size must be in [1,128]")
+        documents = list(documents)
         if not documents:
             return {"raw_answer": "", "confidence": 0.0, "document_id": None, "start": None, "end": None}
         candidates = []
-        for document in documents:
-            from .runtime import cpu_threads
+        for start in range(0, len(documents), batch_size):
+            batch = documents[start:start + batch_size]
             with cpu_threads(self.threads), torch.inference_mode():
-                result = self.pipeline(question=question, context=document.text, top_k=1,
-                                       max_answer_len=40, max_seq_len=384, handle_impossible_answer=False)
-            from .reading import validate_reader_result
-            candidates.append(validate_reader_result(document, result))
+                outputs = self.pipeline([{"question": question, "context": doc.text} for doc in batch],
+                                        top_k=1, max_answer_len=40, max_seq_len=384,
+                                        handle_impossible_answer=False, batch_size=batch_size)
+            if not isinstance(outputs, list) or len(outputs) != len(batch):
+                raise ValueError("reader output batch cardinality mismatch")
+            candidates.extend(validate_reader_result(doc, result) for doc, result in zip(batch, outputs))
         return sorted(candidates, key=lambda r: (-r["confidence"], r["document_id"]))[0]
 
 

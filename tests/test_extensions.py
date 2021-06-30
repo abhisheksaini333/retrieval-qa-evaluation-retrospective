@@ -718,3 +718,25 @@ def test_reader_output_boundaries():
     for changes in [{"score": float("nan")}, {"start": 1}, {"end": 50}, {"answer": "blue"}, {"start": True}]:
         with pytest.raises(ValueError):
             validate_reader_result(doc, {**base, **changes})
+
+
+def test_batched_reader_attribution():
+    from retrieval_lab.models import Reader
+    from retrieval_lab.core import Document
+
+    reader = Reader.__new__(Reader)
+    reader.threads = 1
+    calls = []
+
+    def pipeline_double(inputs, **kwargs):
+        calls.append(len(inputs))
+        return [
+            {"answer": item["context"], "score": 0.8, "start": 0, "end": len(item["context"])}
+            for item in inputs
+        ]
+
+    reader.pipeline = pipeline_double
+    docs = [Document("b", "Title", "blue"), Document("a", "Title", "red")]
+    result = reader.answer_batch("Color?", docs, batch_size=2)
+    assert calls == [2] and result["document_id"] == "a"
+    assert result == reader.answer_batch("Color?", docs, batch_size=1)
