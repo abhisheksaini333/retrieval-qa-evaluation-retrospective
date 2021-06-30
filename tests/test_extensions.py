@@ -740,3 +740,22 @@ def test_batched_reader_attribution():
     result = reader.answer_batch("Color?", docs, batch_size=2)
     assert calls == [2] and result["document_id"] == "a"
     assert result == reader.answer_batch("Color?", docs, batch_size=1)
+
+
+def test_oracle_reader_uses_only_gold_context():
+    from retrieval_lab.reading import oracle_evaluate
+    from retrieval_lab.core import Document, Query
+
+    calls = []
+
+    class ReaderDouble:
+        def answer(self, q, docs):
+            calls.append([d.doc_id for d in docs])
+            return {"raw_answer": docs[0].text if docs else ""}
+
+    rows = oracle_evaluate(
+        ReaderDouble(),
+        [Query("q", "Color?", ("gold",), ("red",))],
+        [Document("bad", "Title", "blue"), Document("gold", "Title", "red")],
+    )
+    assert calls == [["gold"]] and rows[0]["oracle_em"] == 1
