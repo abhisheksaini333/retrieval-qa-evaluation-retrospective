@@ -759,3 +759,13 @@ def test_oracle_reader_uses_only_gold_context():
         [Document("bad", "Title", "blue"), Document("gold", "Title", "red")],
     )
     assert calls == [["gold"]] and rows[0]["oracle_em"] == 1
+
+
+def test_answer_selection_strategies():
+    from retrieval_lab.reading import select_answer
+
+    candidates = [{"document_id": "first", "confidence": 0.6}, {"document_id": "second", "confidence": 0.9}]
+    assert select_answer(candidates, ["first", "second"], "max_score")["document_id"] == "second"
+    assert select_answer(candidates, ["first", "second"], "top_ranked")["document_id"] == "first"
+    with pytest.raises(ValueError):
+        select_answer(candidates, ["first"], "max_score")

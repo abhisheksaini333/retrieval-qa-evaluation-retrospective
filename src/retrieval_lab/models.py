@@ -140,7 +140,7 @@ class Reader:
     def answer(self, question, documents):
         return self.answer_batch(question, documents)
 
-    def answer_batch(self, question, documents, batch_size=8):
+    def answer_batch(self, question, documents, batch_size=8, strategy="max_score"):
         from .runtime import cpu_threads
         from .reading import validate_reader_result
         validate_request(question, 1)
@@ -159,7 +159,8 @@ class Reader:
             if not isinstance(outputs, list) or len(outputs) != len(batch):
                 raise ValueError("reader output batch cardinality mismatch")
             candidates.extend(validate_reader_result(doc, result) for doc, result in zip(batch, outputs))
-        return sorted(candidates, key=lambda r: (-r["confidence"], r["document_id"]))[0]
+        from .reading import select_answer
+        return select_answer(candidates, [d.doc_id for d in documents], strategy)
 
 
 class QABundle:

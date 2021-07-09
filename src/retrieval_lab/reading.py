@@ -26,3 +26,16 @@ def oracle_evaluate(reader, queries, documents):
         result.append({"query_id": query.query_id, "oracle_answer": predicted["raw_answer"],
                        "oracle_em": em, "oracle_f1": f1, "gold_context_ids": list(query.relevant_ids)})
     return result
+
+
+def select_answer(candidates, ranked_ids, strategy="max_score"):
+    if strategy not in {"max_score", "top_ranked"}:
+        raise ValueError("unknown answer-selection strategy")
+    candidates, ranked_ids = list(candidates), list(ranked_ids)
+    if len(set(ranked_ids)) != len(ranked_ids) or any(r["document_id"] not in ranked_ids for r in candidates):
+        raise ValueError("candidate document attribution does not match retrieved contexts")
+    if not candidates:
+        return {"raw_answer": "", "confidence": 0.0, "document_id": None, "start": None, "end": None}
+    key = ((lambda r: (-r["confidence"], r["document_id"])) if strategy == "max_score" else
+           (lambda r: (ranked_ids.index(r["document_id"]), -r["confidence"])))
+    return dict(min(candidates, key=key))
