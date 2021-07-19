@@ -141,6 +141,9 @@ class Reader:
         return self.answer_batch(question, documents)
 
     def answer_batch(self, question, documents, batch_size=8, strategy="max_score"):
+        return self.trace(question, documents, batch_size, strategy)["selected"]
+
+    def trace(self, question, documents, batch_size=8, strategy="max_score"):
         from .runtime import cpu_threads
         from .reading import validate_reader_result
         validate_request(question, 1)
@@ -148,7 +151,8 @@ class Reader:
             raise ValueError("reader batch size must be in [1,128]")
         documents = list(documents)
         if not documents:
-            return {"raw_answer": "", "confidence": 0.0, "document_id": None, "start": None, "end": None}
+            from .reading import select_answer
+            return {"selected": select_answer([], [], strategy), "candidates": []}
         candidates = []
         for start in range(0, len(documents), batch_size):
             batch = documents[start:start + batch_size]
@@ -160,7 +164,11 @@ class Reader:
                 raise ValueError("reader output batch cardinality mismatch")
             candidates.extend(validate_reader_result(doc, result) for doc, result in zip(batch, outputs))
         from .reading import select_answer
-        return select_answer(candidates, [d.doc_id for d in documents], strategy)
+        selected = select_answer(candidates, [d.doc_id for d in documents], strategy)
+        return {"selected": selected,
+                "candidates": [{**row, "retrieval_rank": rank,
+                                "selected": row["document_id"] == selected["document_id"]}
+                               for rank, row in enumerate(candidates, 1)]}
 
 
 class QABundle:

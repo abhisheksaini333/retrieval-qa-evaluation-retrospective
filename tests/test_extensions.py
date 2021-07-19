@@ -769,3 +769,18 @@ def test_answer_selection_strategies():
     assert select_answer(candidates, ["first", "second"], "top_ranked")["document_id"] == "first"
     with pytest.raises(ValueError):
         select_answer(candidates, ["first"], "max_score")
+
+
+def test_reader_candidate_trace():
+    from retrieval_lab.models import Reader
+    from retrieval_lab.core import Document
+
+    reader = Reader.__new__(Reader)
+    reader.threads = 1
+    reader.pipeline = lambda inputs, **kwargs: [
+        {"answer": v["context"], "score": 0.7, "start": 0, "end": len(v["context"])} for v in inputs
+    ]
+    trace = reader.trace("Color?", [Document("a", "Title", "red"), Document("b", "Title", "blue")])
+    assert trace["selected"]["document_id"] == "a"
+    assert [r["document_id"] for r in trace["candidates"]] == ["a", "b"]
+    assert sum(r["selected"] for r in trace["candidates"]) == 1
