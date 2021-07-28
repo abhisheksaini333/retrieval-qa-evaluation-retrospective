@@ -784,3 +784,21 @@ def test_reader_candidate_trace():
     assert trace["selected"]["document_id"] == "a"
     assert [r["document_id"] for r in trace["candidates"]] == ["a", "b"]
     assert sum(r["selected"] for r in trace["candidates"]) == 1
+
+
+def test_cached_mutable_pairs_cannot_be_poisoned():
+    from retrieval_lab.retrieval import CachedRetriever
+
+    class Engine:
+        fingerprint = "fixed"
+
+        def search(self, question, k=5):
+            return [["a", 1.0]]
+
+    cache = CachedRetriever(Engine())
+    first = cache.search("question")
+    try:
+        first[0][1] = 999.0
+    except TypeError:
+        pass
+    assert cache.search("question")[0][1] == 1.0

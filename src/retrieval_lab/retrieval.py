@@ -98,7 +98,7 @@ class CachedRetriever:
             raise ValueError("cached retriever requires a current fingerprint")
         key = (identity, question, k)
         if key not in self.cache:
-            self.cache[key] = tuple(self.retriever.search(question, k))
+            self.cache[key] = tuple((identifier, score) for identifier, score in self.retriever.search(question, k))
             if len(self.cache) > self.capacity:
                 self.cache.popitem(last=False)
         self.cache.move_to_end(key)
