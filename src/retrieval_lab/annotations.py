@@ -1,5 +1,7 @@
 """Extractive annotation utilities using Python character offsets."""
 import re
+from dataclasses import dataclass
+from .core import Document, canonical_hash
 
 
 def validate_span(text, answer, start, end):
@@ -34,8 +36,6 @@ def audit_truncation(tokenizer, texts, max_tokens):
     return results
 
 
-from dataclasses import dataclass
-from .core import Document, canonical_hash
 
 
 @dataclass(frozen=True)

@@ -1,4 +1,6 @@
 """Validated model execution configuration and input boundaries."""
+from dataclasses import asdict, dataclass
+from .core import canonical_hash
 
 
 def validate_encoder_texts(texts):
@@ -13,8 +15,6 @@ def validate_encoder_texts(texts):
     return texts
 
 
-from dataclasses import asdict, dataclass
-from .core import canonical_hash
 
 
 @dataclass(frozen=True)

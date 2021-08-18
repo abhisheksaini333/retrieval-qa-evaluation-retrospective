@@ -802,3 +802,13 @@ def test_cached_mutable_pairs_cannot_be_poisoned():
     except TypeError:
         pass
     assert cache.search("question")[0][1] == 1.0
+
+
+def test_reader_singleton_pipeline_result():
+    from retrieval_lab.models import Reader
+    from retrieval_lab.core import Document
+
+    reader = Reader.__new__(Reader)
+    reader.threads = 1
+    reader.pipeline = lambda *a, **kw: {"answer": "cat", "score": 0.9, "start": 0, "end": 3}
+    assert reader.answer("Which animal?", [Document("a", "Animal", "cat")])["raw_answer"] == "cat"

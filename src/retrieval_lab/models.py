@@ -160,6 +160,8 @@ class Reader:
                 outputs = self.pipeline([{"question": question, "context": doc.text} for doc in batch],
                                         top_k=1, max_answer_len=40, max_seq_len=384,
                                         handle_impossible_answer=False, batch_size=batch_size)
+            if isinstance(outputs, dict) and len(batch) == 1:
+                outputs = [outputs]
             if not isinstance(outputs, list) or len(outputs) != len(batch):
                 raise ValueError("reader output batch cardinality mismatch")
             candidates.extend(validate_reader_result(doc, result) for doc, result in zip(batch, outputs))
