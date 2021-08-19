@@ -812,3 +812,25 @@ def test_reader_singleton_pipeline_result():
     reader.threads = 1
     reader.pipeline = lambda *a, **kw: {"answer": "cat", "score": 0.9, "start": 0, "end": 3}
     assert reader.answer("Which animal?", [Document("a", "Animal", "cat")])["raw_answer"] == "cat"
+
+
+def test_manifest_rejects_bad_configuration():
+    from retrieval_lab.bundle_io import validate_manifest
+
+    valid = {
+        "schema_version": 1,
+        "doc_ids": ["a"],
+        "threshold": 0.5,
+        "reader_k": 3,
+        "encoder_max_tokens": 128,
+        "reader_max_tokens": 384,
+        **{
+            k: "0" * 64
+            for k in ["corpus_sha256", "encoder_fingerprint", "reader_fingerprint", "embeddings_sha256"]
+        },
+        **{k: "local" for k in ["encoder_id", "reader_id", "encoder_revision", "reader_revision"]},
+    }
+    assert validate_manifest(valid) == valid
+    for key, value in [("threshold", True), ("reader_k", 0), ("doc_ids", ["a", "a"]), ("corpus_sha256", "x")]:
+        with pytest.raises(ValueError):
+            validate_manifest({**valid, key: value})

@@ -227,9 +227,8 @@ class QABundle:
     @classmethod
     def load(cls, path):
         path = Path(path)
-        manifest = json.loads((path / "manifest.json").read_text())
-        if manifest.get("schema_version") != 1:
-            raise ValueError("unsupported bundle schema")
+        from .bundle_io import read_manifest
+        manifest = read_manifest(path)
         documents = load_corpus(path / "corpus.jsonl")
         encoder_hash = directory_fingerprint(path / "encoder")
         validate_index(manifest, documents, encoder_hash)
