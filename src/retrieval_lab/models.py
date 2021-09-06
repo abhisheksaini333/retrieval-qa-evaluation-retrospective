@@ -213,12 +213,13 @@ class QABundle:
         np.save(path / "embeddings.npy", self.index.embeddings, allow_pickle=False)
         for role, model in [("encoder", self.encoder), ("reader", self.reader)]:
             shutil.copytree(model.path, path / role, ignore=shutil.ignore_patterns(".cache"))
-        manifest = {"schema_version": 1, "corpus_sha256": corpus_hash(self.documents),
+        manifest = {"schema_version": 2, "corpus_sha256": corpus_hash(self.documents),
                     "doc_ids": [d.doc_id for d in self.documents], "encoder_fingerprint": self.encoder.fingerprint,
                     "reader_fingerprint": self.reader.fingerprint,
                     "embeddings_sha256": sha256_file(path / "embeddings.npy"),
                     "threshold": self.threshold, "reader_k": self.reader_k,
-                    "encoder_max_tokens": 128, "reader_max_tokens": 384,
+                    "encoder_max_tokens": self.encoder.config.max_tokens, "reader_max_tokens": 384,
+                    "encoder_config": asdict(self.encoder.config),
                     "encoder_id": ENCODER_ID, "encoder_revision": ENCODER_REVISION,
                     "reader_id": READER_ID, "reader_revision": READER_REVISION}
         (path / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
@@ -236,6 +237,8 @@ class QABundle:
             raise ValueError("reader model mismatch")
         if sha256_file(path / "embeddings.npy") != manifest["embeddings_sha256"]:
             raise ValueError("index mismatch: embedding file hash")
-        encoder, reader = Encoder(path / "encoder"), Reader(path / "reader")
+        from .bundle_io import encoder_configuration
+        config = encoder_configuration(manifest)
+        encoder, reader = Encoder(path / "encoder", config=config), Reader(path / "reader")
         embeddings = np.load(path / "embeddings.npy", allow_pickle=False)
         return cls(documents, encoder, reader, manifest["threshold"], manifest["reader_k"], embeddings)

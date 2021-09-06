@@ -38,3 +38,20 @@ def read_manifest(path):
     if source.stat().st_size > 4 * 1024 * 1024:
         raise ValueError("manifest exceeds size limit")
     return validate_manifest(json.loads(source.read_text(encoding="utf-8"), object_pairs_hook=unique))
+
+
+def encoder_configuration(manifest):
+    from .config import EncoderConfig
+    if manifest["reader_max_tokens"] != 384:
+        raise ValueError("unsupported reader token configuration")
+    if manifest["schema_version"] == 1:
+        if manifest["encoder_max_tokens"] != 128:
+            raise ValueError("unsupported legacy encoder token configuration")
+        return EncoderConfig()
+    values = manifest.get("encoder_config")
+    if not isinstance(values, dict) or set(values) != {"max_tokens", "batch_size", "pooling"}:
+        raise ValueError("invalid encoder configuration")
+    config = EncoderConfig(**values)
+    if config.max_tokens != manifest["encoder_max_tokens"]:
+        raise ValueError("encoder token configuration mismatch")
+    return config

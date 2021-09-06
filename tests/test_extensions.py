@@ -834,3 +834,23 @@ def test_manifest_rejects_bad_configuration():
     for key, value in [("threshold", True), ("reader_k", 0), ("doc_ids", ["a", "a"]), ("corpus_sha256", "x")]:
         with pytest.raises(ValueError):
             validate_manifest({**valid, key: value})
+
+
+def test_manifest_restores_encoder_configuration():
+    from retrieval_lab.bundle_io import encoder_configuration
+
+    assert (
+        encoder_configuration(
+            {"schema_version": 1, "encoder_max_tokens": 128, "reader_max_tokens": 384}
+        ).max_tokens
+        == 128
+    )
+    custom = {
+        "schema_version": 2,
+        "encoder_max_tokens": 96,
+        "reader_max_tokens": 384,
+        "encoder_config": {"max_tokens": 96, "batch_size": 4, "pooling": "cls"},
+    }
+    assert encoder_configuration(custom).pooling == "cls"
+    with pytest.raises(ValueError, match="mismatch"):
+        encoder_configuration({**custom, "encoder_max_tokens": 128})
