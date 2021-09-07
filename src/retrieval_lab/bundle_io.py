@@ -55,3 +55,16 @@ def encoder_configuration(manifest):
     if config.max_tokens != manifest["encoder_max_tokens"]:
         raise ValueError("encoder token configuration mismatch")
     return config
+
+
+def model_inventory(path):
+    root = Path(path)
+    files = sorted(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file() and ".cache" not in p.relative_to(root).parts)
+    required = {"config.json", "model.safetensors", "tokenizer_config.json", "tokenizer.json"}
+    if not required.issubset(files):
+        raise ValueError(f"missing required model files: {sorted(required - set(files))}")
+    for name in files:
+        p = Path(name)
+        if p.suffix not in {".json", ".txt", ".safetensors"} and p.name not in {"README.md", "LICENSE", "LICENSE.md"}:
+            raise ValueError(f"unsupported model file: {name}")
+    return files

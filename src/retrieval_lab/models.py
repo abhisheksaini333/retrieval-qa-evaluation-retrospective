@@ -48,6 +48,8 @@ class Encoder:
         self.path = Path(path)
         from .runtime import validate_threads
         self.threads = validate_threads(threads)
+        from .bundle_io import model_inventory
+        model_inventory(self.path)
         self.fingerprint = directory_fingerprint(self.path)
         self.tokenizer = AutoTokenizer.from_pretrained(path, local_files_only=True, trust_remote_code=False,
                                                          clean_up_tokenization_spaces=True)
@@ -130,6 +132,8 @@ class Reader:
         from .runtime import validate_threads
         self.threads = validate_threads(threads)
         self.path = Path(path)
+        from .bundle_io import model_inventory
+        model_inventory(path)
         self.fingerprint = directory_fingerprint(path)
         tokenizer = AutoTokenizer.from_pretrained(path, local_files_only=True, trust_remote_code=False,
                                                          clean_up_tokenization_spaces=True)

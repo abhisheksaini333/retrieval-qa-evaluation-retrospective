@@ -854,3 +854,18 @@ def test_manifest_restores_encoder_configuration():
     assert encoder_configuration(custom).pooling == "cls"
     with pytest.raises(ValueError, match="mismatch"):
         encoder_configuration({**custom, "encoder_max_tokens": 128})
+
+
+def test_model_inventory_requires_weights_and_tokenizer(tmp_path):
+    from retrieval_lab.bundle_io import model_inventory
+
+    for name in ["config.json", "model.safetensors", "tokenizer_config.json", "tokenizer.json"]:
+        (tmp_path / name).write_text("{}")
+    assert "model.safetensors" in model_inventory(tmp_path)
+    (tmp_path / "model.py").write_text("pass")
+    with pytest.raises(ValueError, match="unsupported"):
+        model_inventory(tmp_path)
+    (tmp_path / "model.py").unlink()
+    (tmp_path / "model.safetensors").unlink()
+    with pytest.raises(ValueError, match="missing"):
+        model_inventory(tmp_path)
