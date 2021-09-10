@@ -211,8 +211,11 @@ class QABundle:
                 "retrieved_ids": json.dumps(raw["ranked_ids"])}
 
     def save(self, path):
-        path = Path(path)
-        path.mkdir(parents=True, exist_ok=False)
+        from .bundle_io import atomic_directory
+        with atomic_directory(path) as staging:
+            return self._write_bundle(staging)
+
+    def _write_bundle(self, path):
         (path / "corpus.jsonl").write_text("".join(json.dumps(asdict(d)) + "\n" for d in self.documents))
         np.save(path / "embeddings.npy", self.index.embeddings, allow_pickle=False)
         for role, model in [("encoder", self.encoder), ("reader", self.reader)]:

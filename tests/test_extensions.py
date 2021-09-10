@@ -869,3 +869,21 @@ def test_model_inventory_requires_weights_and_tokenizer(tmp_path):
     (tmp_path / "model.safetensors").unlink()
     with pytest.raises(ValueError, match="missing"):
         model_inventory(tmp_path)
+
+
+def test_atomic_bundle_directory_cleanup(tmp_path):
+    from retrieval_lab.bundle_io import atomic_directory
+
+    target = tmp_path / "bundle"
+    with pytest.raises(RuntimeError):
+        with atomic_directory(target) as staging:
+            (staging / "partial").write_text("x")
+            raise RuntimeError("failed")
+    assert not target.exists()
+    assert not list(tmp_path.iterdir())
+    with atomic_directory(target) as staging:
+        (staging / "complete").write_text("ok")
+    assert (target / "complete").read_text() == "ok"
+    with pytest.raises(FileExistsError):
+        with atomic_directory(target):
+            pass

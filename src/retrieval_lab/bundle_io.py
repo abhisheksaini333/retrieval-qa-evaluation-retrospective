@@ -1,4 +1,7 @@
 """Bundle validation without loading transformer weights."""
+from contextlib import contextmanager
+import shutil
+import tempfile
 import json
 import math
 import re
@@ -68,3 +71,25 @@ def model_inventory(path):
         if p.suffix not in {".json", ".txt", ".safetensors"} and p.name not in {"README.md", "LICENSE", "LICENSE.md"}:
             raise ValueError(f"unsupported model file: {name}")
     return files
+
+
+@contextmanager
+def atomic_directory(path):
+    target = Path(path).absolute()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    lock = target.with_name(target.name + ".lock")
+    lock.mkdir()
+    staging = None
+    try:
+        if target.exists() or target.is_symlink():
+            raise FileExistsError(f"output already exists: {target}")
+        staging = Path(tempfile.mkdtemp(prefix=f".{target.name}-", dir=target.parent))
+        yield staging
+        if target.exists() or target.is_symlink():
+            raise FileExistsError(f"output appeared during save: {target}")
+        staging.rename(target)
+        staging = None
+    finally:
+        if staging is not None:
+            shutil.rmtree(staging)
+        lock.rmdir()
