@@ -93,3 +93,12 @@ def atomic_directory(path):
         if staging is not None:
             shutil.rmtree(staging)
         lock.rmdir()
+
+
+def validate_output_location(output, sources):
+    target = Path(output).resolve()
+    for source in sources:
+        source = Path(source).resolve()
+        if target == source or target in source.parents or source in target.parents:
+            raise ValueError("output path overlaps an input path")
+    return target

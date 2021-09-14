@@ -887,3 +887,14 @@ def test_atomic_bundle_directory_cleanup(tmp_path):
     with pytest.raises(FileExistsError):
         with atomic_directory(target):
             pass
+
+
+def test_bundle_source_destination_overlap(tmp_path):
+    from retrieval_lab.bundle_io import validate_output_location
+
+    source = tmp_path / "models"
+    source.mkdir()
+    for target in [source, source / "bundle", tmp_path]:
+        with pytest.raises(ValueError, match="overlap"):
+            validate_output_location(target, [source])
+    validate_output_location(tmp_path / "separate", [source])

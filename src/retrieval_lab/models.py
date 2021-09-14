@@ -211,7 +211,8 @@ class QABundle:
                 "retrieved_ids": json.dumps(raw["ranked_ids"])}
 
     def save(self, path):
-        from .bundle_io import atomic_directory
+        from .bundle_io import atomic_directory, validate_output_location
+        validate_output_location(path, [self.encoder.path, self.reader.path])
         with atomic_directory(path) as staging:
             return self._write_bundle(staging)
 
