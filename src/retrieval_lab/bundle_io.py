@@ -37,6 +37,7 @@ def read_manifest(path):
                 raise ValueError(f"duplicate manifest key: {key}")
             result[key] = value
         return result
+    validate_tree(path)
     source = Path(path) / "manifest.json"
     if source.stat().st_size > 4 * 1024 * 1024:
         raise ValueError("manifest exceeds size limit")
@@ -62,6 +63,7 @@ def encoder_configuration(manifest):
 
 def model_inventory(path):
     root = Path(path)
+    validate_tree(root)
     files = sorted(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file() and ".cache" not in p.relative_to(root).parts)
     required = {"config.json", "model.safetensors", "tokenizer_config.json", "tokenizer.json"}
     if not required.issubset(files):
@@ -102,3 +104,17 @@ def validate_output_location(output, sources):
         if target == source or target in source.parents or source in target.parents:
             raise ValueError("output path overlaps an input path")
     return target
+
+
+def validate_tree(path):
+    root = Path(path)
+    if root.is_symlink() or not root.is_dir():
+        raise ValueError("artifact root must be a directory, not a symlink")
+    resolved = root.resolve()
+    for item in root.rglob("*"):
+        if ".cache" in item.relative_to(root).parts:
+            continue
+        if item.is_symlink() or resolved not in item.resolve().parents:
+            raise ValueError(f"artifact symlink or containment violation: {item.name}")
+        if not item.is_file() and not item.is_dir():
+            raise ValueError("unsupported special artifact file")

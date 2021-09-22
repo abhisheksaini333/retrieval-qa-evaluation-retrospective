@@ -898,3 +898,17 @@ def test_bundle_source_destination_overlap(tmp_path):
         with pytest.raises(ValueError, match="overlap"):
             validate_output_location(target, [source])
     validate_output_location(tmp_path / "separate", [source])
+
+
+def test_bundle_symlink_escape_rejected(tmp_path):
+    from retrieval_lab.bundle_io import validate_tree
+
+    root = tmp_path / "bundle"
+    root.mkdir()
+    (tmp_path / "external").write_text("secret")
+    (root / "weights").symlink_to(tmp_path / "external")
+    with pytest.raises(ValueError, match="symlink"):
+        validate_tree(root)
+    (root / "weights").unlink()
+    (root / "regular").write_text("ok")
+    validate_tree(root)
