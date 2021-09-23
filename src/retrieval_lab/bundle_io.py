@@ -118,3 +118,11 @@ def validate_tree(path):
             raise ValueError(f"artifact symlink or containment violation: {item.name}")
         if not item.is_file() and not item.is_dir():
             raise ValueError("unsupported special artifact file")
+
+
+def copy_verified_model(source, destination, expected_fingerprint):
+    from .models import directory_fingerprint
+    validate_tree(source)
+    shutil.copytree(source, destination, ignore=shutil.ignore_patterns(".cache"))
+    if directory_fingerprint(destination) != expected_fingerprint:
+        raise ValueError("model source changed since it was loaded")

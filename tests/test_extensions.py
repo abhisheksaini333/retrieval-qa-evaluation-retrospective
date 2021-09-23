@@ -912,3 +912,16 @@ def test_bundle_symlink_escape_rejected(tmp_path):
     (root / "weights").unlink()
     (root / "regular").write_text("ok")
     validate_tree(root)
+
+
+def test_copy_rejects_changed_model_source(tmp_path):
+    from retrieval_lab.bundle_io import copy_verified_model
+    from retrieval_lab.models import directory_fingerprint
+
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "model.safetensors").write_bytes(b"original")
+    fingerprint = directory_fingerprint(source)
+    (source / "model.safetensors").write_bytes(b"modified")
+    with pytest.raises(ValueError, match="changed"):
+        copy_verified_model(source, tmp_path / "copy", fingerprint)

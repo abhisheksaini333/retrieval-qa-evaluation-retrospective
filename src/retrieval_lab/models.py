@@ -3,7 +3,6 @@ from dataclasses import asdict
 import hashlib
 import json
 from pathlib import Path
-import shutil
 import time
 
 import numpy as np
@@ -220,7 +219,8 @@ class QABundle:
         (path / "corpus.jsonl").write_text("".join(json.dumps(asdict(d)) + "\n" for d in self.documents))
         np.save(path / "embeddings.npy", self.index.embeddings, allow_pickle=False)
         for role, model in [("encoder", self.encoder), ("reader", self.reader)]:
-            shutil.copytree(model.path, path / role, ignore=shutil.ignore_patterns(".cache"))
+            from .bundle_io import copy_verified_model
+            copy_verified_model(model.path, path / role, model.fingerprint)
         manifest = {"schema_version": 2, "corpus_sha256": corpus_hash(self.documents),
                     "doc_ids": [d.doc_id for d in self.documents], "encoder_fingerprint": self.encoder.fingerprint,
                     "reader_fingerprint": self.reader.fingerprint,
