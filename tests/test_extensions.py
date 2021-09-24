@@ -925,3 +925,17 @@ def test_copy_rejects_changed_model_source(tmp_path):
     (source / "model.safetensors").write_bytes(b"modified")
     with pytest.raises(ValueError, match="changed"):
         copy_verified_model(source, tmp_path / "copy", fingerprint)
+
+
+def test_embedding_header_rejects_object_and_size(tmp_path):
+    import numpy as np
+    from retrieval_lab.bundle_io import inspect_embeddings
+
+    path = tmp_path / "embeddings.npy"
+    np.save(path, np.ones((2, 3), dtype=np.float32))
+    assert inspect_embeddings(path, 2)["shape"] == [2, 3]
+    with pytest.raises(ValueError, match="limit"):
+        inspect_embeddings(path, 2, max_bytes=4)
+    np.save(path, np.array([{}], dtype=object))
+    with pytest.raises(ValueError, match="dtype|shape"):
+        inspect_embeddings(path, 1)

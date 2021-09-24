@@ -126,3 +126,26 @@ def copy_verified_model(source, destination, expected_fingerprint):
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns(".cache"))
     if directory_fingerprint(destination) != expected_fingerprint:
         raise ValueError("model source changed since it was loaded")
+
+
+def inspect_embeddings(path, count, dimension=None, max_bytes=512 * 1024 * 1024):
+    import numpy as np
+    with Path(path).open("rb") as stream:
+        version = np.lib.format.read_magic(stream)
+        if version == (1, 0):
+            shape, fortran, dtype = np.lib.format.read_array_header_1_0(stream)
+        elif version == (2, 0):
+            shape, fortran, dtype = np.lib.format.read_array_header_2_0(stream)
+        else:
+            raise ValueError("unsupported numpy array version")
+        header_size = stream.tell()
+    if len(shape) != 2 or shape[0] != count or not 1 <= shape[1] <= 8192 or (dimension is not None and shape[1] != dimension):
+        raise ValueError("index mismatch: embedding shape")
+    if dtype not in (np.dtype("float32"), np.dtype("float64")) or fortran:
+        raise ValueError("unsupported embedding dtype or ordering")
+    size = math.prod(shape) * dtype.itemsize
+    if size > max_bytes:
+        raise ValueError("embedding allocation exceeds limit")
+    if Path(path).stat().st_size != header_size + size:
+        raise ValueError("embedding payload size mismatch")
+    return {"shape": list(shape), "dtype": str(dtype), "bytes": size}

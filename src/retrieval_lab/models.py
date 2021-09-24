@@ -247,6 +247,8 @@ class QABundle:
             raise ValueError("index mismatch: embedding file hash")
         from .bundle_io import encoder_configuration
         config = encoder_configuration(manifest)
+        from .bundle_io import inspect_embeddings
+        inspect_embeddings(path / "embeddings.npy", len(documents))
         encoder, reader = Encoder(path / "encoder", config=config), Reader(path / "reader")
         embeddings = np.load(path / "embeddings.npy", allow_pickle=False)
         return cls(documents, encoder, reader, manifest["threshold"], manifest["reader_k"], embeddings)
