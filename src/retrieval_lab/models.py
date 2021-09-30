@@ -9,7 +9,7 @@ import numpy as np
 import torch
 from transformers import AutoModel, AutoModelForQuestionAnswering, AutoTokenizer, pipeline
 
-from .core import canonical_hash, corpus_hash, load_corpus, validate_index, validate_request
+from .core import canonical_hash, corpus_hash, validate_request
 
 ENCODER_ID = "sentence-transformers/paraphrase-MiniLM-L6-v2"
 ENCODER_REVISION = "c9a2bfebc254878aee8c3aca9e6844d5bbb102d1"
@@ -17,25 +17,7 @@ READER_ID = "distilbert/distilbert-base-cased-distilled-squad"
 READER_REVISION = "564e9b582944a57a3e586bbb98fd6f0a4118db7f"
 
 
-def sha256_file(path):
-    digest = hashlib.sha256()
-    with Path(path).open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def directory_files(path):
-    path = Path(path)
-    return {str(p.relative_to(path)): sha256_file(p) for p in sorted(path.rglob("*"))
-            if p.is_file() and ".cache" not in p.parts}
-
-
-def directory_fingerprint(path):
-    files = directory_files(path)
-    if not files:
-        raise ValueError(f"model directory has no files: {path}")
-    return canonical_hash(files)
+from .bundle_io import sha256_file, directory_files, directory_fingerprint
 
 
 class Encoder:
@@ -236,19 +218,11 @@ class QABundle:
     @classmethod
     def load(cls, path):
         path = Path(path)
-        from .bundle_io import read_manifest
-        manifest = read_manifest(path)
+        from .bundle_io import inspect_bundle, encoder_configuration
+        from .core import load_corpus
+        manifest = inspect_bundle(path)["manifest"]
         documents = load_corpus(path / "corpus.jsonl")
-        encoder_hash = directory_fingerprint(path / "encoder")
-        validate_index(manifest, documents, encoder_hash)
-        if directory_fingerprint(path / "reader") != manifest["reader_fingerprint"]:
-            raise ValueError("reader model mismatch")
-        if sha256_file(path / "embeddings.npy") != manifest["embeddings_sha256"]:
-            raise ValueError("index mismatch: embedding file hash")
-        from .bundle_io import encoder_configuration
         config = encoder_configuration(manifest)
-        from .bundle_io import inspect_embeddings
-        inspect_embeddings(path / "embeddings.npy", len(documents))
         encoder, reader = Encoder(path / "encoder", config=config), Reader(path / "reader")
         embeddings = np.load(path / "embeddings.npy", allow_pickle=False)
         return cls(documents, encoder, reader, manifest["threshold"], manifest["reader_k"], embeddings)

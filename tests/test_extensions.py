@@ -939,3 +939,18 @@ def test_embedding_header_rejects_object_and_size(tmp_path):
     np.save(path, np.array([{}], dtype=object))
     with pytest.raises(ValueError, match="dtype|shape"):
         inspect_embeddings(path, 1)
+
+
+def test_inspection_does_not_import_transformers(tmp_path):
+    import subprocess, sys
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import sys; from retrieval_lab.bundle_io import inspect_bundle; assert 'torch' not in sys.modules; assert 'transformers' not in sys.modules",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr

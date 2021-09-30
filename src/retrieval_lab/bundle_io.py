@@ -2,10 +2,12 @@
 from contextlib import contextmanager
 import shutil
 import tempfile
+import hashlib
 import json
 import math
 import re
 from pathlib import Path
+from .core import canonical_hash
 
 
 def validate_manifest(manifest):
@@ -121,7 +123,6 @@ def validate_tree(path):
 
 
 def copy_verified_model(source, destination, expected_fingerprint):
-    from .models import directory_fingerprint
     validate_tree(source)
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns(".cache"))
     if directory_fingerprint(destination) != expected_fingerprint:
@@ -149,3 +150,41 @@ def inspect_embeddings(path, count, dimension=None, max_bytes=512 * 1024 * 1024)
     if Path(path).stat().st_size != header_size + size:
         raise ValueError("embedding payload size mismatch")
     return {"shape": list(shape), "dtype": str(dtype), "bytes": size}
+
+
+def sha256_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def directory_files(path):
+    path = Path(path)
+    return {str(p.relative_to(path)): sha256_file(p) for p in sorted(path.rglob("*"))
+            if p.is_file() and ".cache" not in p.parts}
+
+
+def directory_fingerprint(path):
+    files = directory_files(path)
+    if not files:
+        raise ValueError(f"model directory has no files: {path}")
+    return canonical_hash(files)
+
+
+def inspect_bundle(path):
+    from .core import load_corpus, validate_index
+    path = Path(path)
+    manifest = read_manifest(path)
+    encoder_configuration(manifest)
+    documents = load_corpus(path / "corpus.jsonl")
+    for role in ("encoder", "reader"):
+        model_inventory(path / role)
+        if directory_fingerprint(path / role) != manifest[f"{role}_fingerprint"]:
+            raise ValueError(f"{role} model fingerprint mismatch")
+    validate_index(manifest, documents, manifest["encoder_fingerprint"])
+    if sha256_file(path / "embeddings.npy") != manifest["embeddings_sha256"]:
+        raise ValueError("index mismatch: embedding file hash")
+    header = inspect_embeddings(path / "embeddings.npy", len(documents))
+    return {"valid": True, "manifest": manifest, "embeddings": header}

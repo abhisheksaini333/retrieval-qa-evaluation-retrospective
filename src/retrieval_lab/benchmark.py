@@ -129,6 +129,8 @@ def main():
     evaluate.add_argument("--models", type=Path, default=Path("artifacts/models"))
     evaluate.add_argument("--output", type=Path, default=Path("artifacts/run"))
     evaluate.add_argument("--evidence", type=Path, default=Path("evidence/benchmark.json"))
+    inspect = subparsers.add_parser("inspect")
+    inspect.add_argument("--bundle", type=Path, required=True)
     predict = subparsers.add_parser("predict")
     predict.add_argument("--bundle", type=Path, default=Path("artifacts/run/bundle"))
     predict.add_argument("question")
@@ -136,6 +138,9 @@ def main():
     try:
         if args.command == "audit":
             print(json.dumps(audit_data(args.data), indent=2))
+        elif args.command == "inspect":
+            from .bundle_io import inspect_bundle
+            print(json.dumps(inspect_bundle(args.bundle), indent=2))
         elif args.command == "download":
             download_models(args.models)
         elif args.command == "predict":
