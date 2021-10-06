@@ -954,3 +954,16 @@ def test_inspection_does_not_import_transformers(tmp_path):
         text=True,
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_archive_rejects_traversal_before_writing(tmp_path):
+    import zipfile
+    from retrieval_lab.bundle_io import import_bundle
+
+    archive = tmp_path / "bad.zip"
+    with zipfile.ZipFile(archive, "w") as stream:
+        stream.writestr("../escape", "oops")
+    with pytest.raises(ValueError, match="unsafe"):
+        import_bundle(archive, tmp_path / "destination")
+    assert not (tmp_path / "escape").exists()
+    assert not (tmp_path / "destination").exists()

@@ -2,6 +2,8 @@
 from contextlib import contextmanager
 import shutil
 import tempfile
+import stat
+import zipfile
 import hashlib
 import json
 import math
@@ -188,3 +190,52 @@ def inspect_bundle(path):
         raise ValueError("index mismatch: embedding file hash")
     header = inspect_embeddings(path / "embeddings.npy", len(documents))
     return {"valid": True, "manifest": manifest, "embeddings": header}
+
+
+def export_bundle(bundle, archive):
+    root, archive = Path(bundle), Path(archive)
+    inspect_bundle(root)
+    validate_output_location(archive, [root])
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    # Exclusive creation preserves existing archives; partial files are removed on failure.
+    created = False
+    try:
+        with archive.open("xb") as output:
+            created = True
+            with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as stream:
+                for file in sorted(root.rglob("*")):
+                    if file.is_file():
+                        stream.write(file, file.relative_to(root).as_posix())
+    except BaseException:
+        if created:
+            archive.unlink(missing_ok=True)
+        raise
+    return str(archive)
+
+
+def import_bundle(archive, destination, max_bytes=1024 * 1024 * 1024, max_files=4096):
+    with zipfile.ZipFile(archive) as stream:
+        members = stream.infolist()
+        names, total = set(), 0
+        if len(members) > max_files:
+            raise ValueError("archive file count exceeds limit")
+        for member in members:
+            name = member.filename
+            parts = name.rstrip("/").split("/")
+            if not name or name.startswith("/") or "\\" in name or ":" in name or any(p in {"", ".", ".."} for p in parts) or stat.S_ISLNK(member.external_attr >> 16) or name.rstrip("/") in names:
+                raise ValueError("unsafe archive member")
+            names.add(name.rstrip("/"))
+            total += member.file_size
+            if total > max_bytes:
+                raise ValueError("archive expanded size exceeds limit")
+        with atomic_directory(destination) as staging:
+            for member in members:
+                target = staging / member.filename
+                if member.is_dir():
+                    target.mkdir(parents=True, exist_ok=True)
+                else:
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    with stream.open(member) as source, target.open("xb") as output:
+                        shutil.copyfileobj(source, output, length=1024 * 1024)
+            report = inspect_bundle(staging)
+    return report
