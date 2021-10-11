@@ -967,3 +967,11 @@ def test_archive_rejects_traversal_before_writing(tmp_path):
         import_bundle(archive, tmp_path / "destination")
     assert not (tmp_path / "escape").exists()
     assert not (tmp_path / "destination").exists()
+
+
+def test_model_identity_is_bound_to_actual_fingerprint():
+    from retrieval_lab.bundle_io import model_identity
+
+    assert model_identity("a" * 64) == {"id": "local:sha256:" + "a" * 64, "revision": "a" * 64}
+    with pytest.raises(ValueError):
+        model_identity("not-a-hash")

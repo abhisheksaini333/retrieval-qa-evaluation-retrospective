@@ -239,3 +239,9 @@ def import_bundle(archive, destination, max_bytes=1024 * 1024 * 1024, max_files=
                         shutil.copyfileobj(source, output, length=1024 * 1024)
             report = inspect_bundle(staging)
     return report
+
+
+def model_identity(fingerprint):
+    if not isinstance(fingerprint, str) or not re.fullmatch(r"[a-f0-9]{64}", fingerprint):
+        raise ValueError("model identity requires a content fingerprint")
+    return {"id": "local:sha256:" + fingerprint, "revision": fingerprint}
