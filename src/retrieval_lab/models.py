@@ -10,6 +10,7 @@ import torch
 from transformers import AutoModel, AutoModelForQuestionAnswering, AutoTokenizer, pipeline
 
 from .core import canonical_hash, corpus_hash, validate_request
+from .bundle_io import sha256_file, directory_fingerprint, directory_files as directory_files
 
 ENCODER_ID = "sentence-transformers/paraphrase-MiniLM-L6-v2"
 ENCODER_REVISION = "c9a2bfebc254878aee8c3aca9e6844d5bbb102d1"
@@ -17,7 +18,6 @@ READER_ID = "distilbert/distilbert-base-cased-distilled-squad"
 READER_REVISION = "564e9b582944a57a3e586bbb98fd6f0a4118db7f"
 
 
-from .bundle_io import sha256_file, directory_files, directory_fingerprint
 
 
 class Encoder:

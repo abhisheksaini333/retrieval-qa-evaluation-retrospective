@@ -14,11 +14,15 @@ class RetrievalPythonModel(mlflow.pyfunc.PythonModel):
         self.bundle = QABundle.load(context.artifacts["bundle"])
 
     def predict(self, context, model_input, params=None):
-        if not isinstance(model_input, pd.DataFrame) or "question" not in model_input.columns:
+        if (not isinstance(model_input, pd.DataFrame) or not model_input.columns.is_unique
+                or set(model_input.columns) != {"question"}):
             raise ValueError("prediction input requires a dataframe with a question column")
         if model_input.empty:
             raise ValueError("prediction input cannot be empty")
-        return pd.DataFrame([self.bundle.predict(q) for q in model_input["question"]])
+        from .core import validate_request
+        for question in model_input["question"]:
+            validate_request(question, 1)
+        return pd.DataFrame([self.bundle.predict(q) for q in model_input["question"]], index=model_input.index)
 
 
 def log_and_reload(bundle, output, metrics, questions, artifact_files=()):

@@ -942,7 +942,8 @@ def test_embedding_header_rejects_object_and_size(tmp_path):
 
 
 def test_inspection_does_not_import_transformers(tmp_path):
-    import subprocess, sys
+    import subprocess
+    import sys
 
     result = subprocess.run(
         [
@@ -975,3 +976,25 @@ def test_model_identity_is_bound_to_actual_fingerprint():
     assert model_identity("a" * 64) == {"id": "local:sha256:" + "a" * 64, "revision": "a" * 64}
     with pytest.raises(ValueError):
         model_identity("not-a-hash")
+
+
+def test_pyfunc_preserves_indices_and_rejects_ambiguous_columns():
+    import pandas as pd
+    from retrieval_lab.tracking import RetrievalPythonModel
+
+    model = RetrievalPythonModel()
+
+    class Bundle:
+        def predict(self, question):
+            return {"answer": question}
+
+    model.bundle = Bundle()
+    frame = pd.DataFrame({"question": ["first", "second"]}, index=[9, 4])
+    assert model.predict(None, frame).index.tolist() == [9, 4]
+    for bad in [
+        pd.DataFrame([["a", "b"]], columns=["question", "question"]),
+        pd.DataFrame({"question": [None]}),
+        pd.DataFrame({"question": ["   "]}),
+    ]:
+        with pytest.raises(ValueError):
+            model.predict(None, bad)
