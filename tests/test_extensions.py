@@ -998,3 +998,34 @@ def test_pyfunc_preserves_indices_and_rejects_ambiguous_columns():
     ]:
         with pytest.raises(ValueError):
             model.predict(None, bad)
+
+
+def test_nullable_prediction_signature():
+    from retrieval_lab.tracking import prediction_frame, prediction_signature
+
+    rows = [
+        {
+            "answer": "cat",
+            "confidence": 0.9,
+            "abstained": False,
+            "document_id": "a",
+            "start": 0,
+            "end": 3,
+            "retrieved_ids": '["a"]',
+        },
+        {
+            "answer": "",
+            "confidence": 0.1,
+            "abstained": True,
+            "document_id": None,
+            "start": None,
+            "end": None,
+            "retrieved_ids": "[]",
+        },
+    ]
+    frame = prediction_frame(rows)
+    assert str(frame["start"].dtype) == "float64"
+    signature = prediction_signature()
+    offsets = {c.name: c for c in signature.outputs.inputs}
+    assert offsets["start"].type.name == "double"
+    assert offsets["document_id"].required is False

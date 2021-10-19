@@ -3,7 +3,8 @@ from pathlib import Path
 import importlib.metadata
 
 import mlflow
-from mlflow.models import infer_signature
+from mlflow.models import ModelSignature
+from mlflow.types import ColSpec, Schema
 import pandas as pd
 
 from .models import QABundle
@@ -22,7 +23,7 @@ class RetrievalPythonModel(mlflow.pyfunc.PythonModel):
         from .core import validate_request
         for question in model_input["question"]:
             validate_request(question, 1)
-        return pd.DataFrame([self.bundle.predict(q) for q in model_input["question"]], index=model_input.index)
+        return prediction_frame([self.bundle.predict(q) for q in model_input["question"]], index=model_input.index)
 
 
 def log_and_reload(bundle, output, metrics, questions, artifact_files=()):
@@ -30,7 +31,7 @@ def log_and_reload(bundle, output, metrics, questions, artifact_files=()):
     output.mkdir(parents=True, exist_ok=True)
     bundle_path = output / "bundle"
     bundle.save(bundle_path)
-    expected = pd.DataFrame([bundle.predict(q) for q in questions["question"]])
+    expected = prediction_frame([bundle.predict(q) for q in questions["question"]], index=questions.index)
     mlflow.set_tracking_uri((output / "mlruns").as_uri())
     mlflow.set_experiment("retrieval-qa-evaluation")
     with mlflow.start_run(run_name="dense-qa-cpu") as run:
@@ -47,7 +48,7 @@ def log_and_reload(bundle, output, metrics, questions, artifact_files=()):
             artifact_path="qa_model", python_model=RetrievalPythonModel(),
             artifacts={"bundle": str(bundle_path)},
             code_paths=[str(Path(__file__).resolve().parent)],
-            signature=infer_signature(questions, expected), input_example=questions,
+            signature=prediction_signature(), input_example=questions,
             pip_requirements=["numpy==1.26.4", "pandas==2.2.3", "torch==2.5.1",
                               "transformers==4.44.2", "huggingface-hub==0.26.2", "mlflow==2.17.2"],
         )
@@ -63,3 +64,19 @@ def log_and_reload(bundle, output, metrics, questions, artifact_files=()):
 
 def json_records(frame):
     return frame.astype(object).where(pd.notna(frame), None).to_dict(orient="records")
+
+
+def prediction_frame(rows, index=None):
+    frame = pd.DataFrame(rows, index=index)
+    for field in ("start", "end"):
+        if field in frame:
+            frame[field] = frame[field].astype("float64")
+    return frame
+
+
+def prediction_signature():
+    return ModelSignature(inputs=Schema([ColSpec("string", "question")]), outputs=Schema([
+        ColSpec("string", "answer"), ColSpec("double", "confidence"),
+        ColSpec("boolean", "abstained"), ColSpec("string", "document_id", required=False),
+        ColSpec("double", "start", required=False), ColSpec("double", "end", required=False),
+        ColSpec("string", "retrieved_ids")]))
