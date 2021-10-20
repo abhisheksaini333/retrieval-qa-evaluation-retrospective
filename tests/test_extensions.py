@@ -1029,3 +1029,16 @@ def test_nullable_prediction_signature():
     offsets = {c.name: c for c in signature.outputs.inputs}
     assert offsets["start"].type.name == "double"
     assert offsets["document_id"].required is False
+
+
+def test_tracking_context_restores_uri_on_failure(tmp_path):
+    import mlflow
+    from retrieval_lab.tracking import local_tracking
+
+    previous = mlflow.get_tracking_uri()
+    with pytest.raises(RuntimeError):
+        with local_tracking((tmp_path / "mlruns").as_uri()):
+            assert mlflow.get_tracking_uri() != previous
+            raise RuntimeError("failure")
+    assert mlflow.get_tracking_uri() == previous
+    assert mlflow.active_run() is None
