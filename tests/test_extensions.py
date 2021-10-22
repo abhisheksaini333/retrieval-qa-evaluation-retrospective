@@ -1042,3 +1042,28 @@ def test_tracking_context_restores_uri_on_failure(tmp_path):
             raise RuntimeError("failure")
     assert mlflow.get_tracking_uri() == previous
     assert mlflow.active_run() is None
+
+
+def test_final_benchmark_artifact_is_complete(tmp_path, monkeypatch):
+    import json
+    from retrieval_lab.tracking import log_final_benchmark
+    import mlflow
+
+    calls = []
+
+    class Client:
+        def __init__(self, **kwargs):
+            calls.append(kwargs)
+
+        def log_artifact(self, run_id, path, artifact_path):
+            calls.append((run_id, json.loads(open(path).read()), artifact_path))
+
+    monkeypatch.setattr(mlflow.tracking, "MlflowClient", Client)
+    report = {
+        "mlflow": {"tracking_uri": "file:///local", "run_id": "r", "prediction_parity": True},
+        "bundle_manifest": {"schema_version": 2},
+    }
+    file = tmp_path / "benchmark.json"
+    file.write_text(json.dumps(report))
+    log_final_benchmark(file, report["mlflow"])
+    assert calls[1] == ("r", report, "benchmark")

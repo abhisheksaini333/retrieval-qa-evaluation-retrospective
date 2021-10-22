@@ -110,10 +110,12 @@ def run(data, models, output, evidence):
     evidence.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n")
     questions = pd.DataFrame({"question": [q.question for q in test]})
     report["mlflow"] = log_and_reload(bundle, output, metrics_for_tracking, questions,
-                                      artifact_files=[evidence, data / "provenance.json"])
+                                      artifact_files=[data / "provenance.json"])
     report["bundle_manifest"] = json.loads((output / "bundle" / "manifest.json").read_text())
     evidence.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n")
     (output / "benchmark.json").write_text(evidence.read_text())
+    from .tracking import log_final_benchmark
+    log_final_benchmark(evidence, report["mlflow"])
     return report
 
 

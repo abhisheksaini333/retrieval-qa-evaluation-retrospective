@@ -97,3 +97,12 @@ def local_tracking(uri):
         yield experiment_id
     finally:
         mlflow.set_tracking_uri(previous)
+
+
+def log_final_benchmark(path, tracking):
+    import json
+    report = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not {"mlflow", "bundle_manifest"} <= report.keys() or report["mlflow"] != tracking:
+        raise ValueError("benchmark must include final reload evidence")
+    client = mlflow.tracking.MlflowClient(tracking_uri=tracking["tracking_uri"])
+    client.log_artifact(tracking["run_id"], str(path), artifact_path="benchmark")
