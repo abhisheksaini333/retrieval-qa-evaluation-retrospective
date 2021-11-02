@@ -1067,3 +1067,17 @@ def test_final_benchmark_artifact_is_complete(tmp_path, monkeypatch):
     file.write_text(json.dumps(report))
     log_final_benchmark(file, report["mlflow"])
     assert calls[1] == ("r", report, "benchmark")
+
+
+def test_dependency_lock_provenance_detects_changes(tmp_path):
+    from retrieval_lab.tracking import package_dependency_lock, verify_dependency_lock
+
+    source = tmp_path / "uv.lock"
+    source.write_text("version = 1\n")
+    target = tmp_path / "output"
+    target.mkdir()
+    metadata = package_dependency_lock(source, target)
+    assert verify_dependency_lock(target, metadata)
+    (target / "uv.lock").write_text("version = 2\n")
+    with pytest.raises(ValueError, match="mismatch"):
+        verify_dependency_lock(target, metadata)

@@ -27,11 +27,13 @@ class RetrievalPythonModel(mlflow.pyfunc.PythonModel):
         return prediction_frame([self.bundle.predict(q) for q in model_input["question"]], index=model_input.index)
 
 
-def log_and_reload(bundle, output, metrics, questions, artifact_files=()):
+def log_and_reload(bundle, output, metrics, questions, artifact_files=(), dependency_lock=None):
     if mlflow.active_run() is not None:
         raise ValueError("cannot start an evaluation inside an active MLflow run")
     output = Path(output).resolve()
     output.mkdir(parents=True, exist_ok=True)
+    dependency_lock = Path(dependency_lock) if dependency_lock else Path(__file__).resolve().parents[2] / "uv.lock"
+    lock_metadata = package_dependency_lock(dependency_lock, output)
     bundle_path = output / "bundle"
     bundle.save(bundle_path)
     expected = prediction_frame([bundle.predict(q) for q in questions["question"]], index=questions.index)
@@ -48,7 +50,7 @@ def log_and_reload(bundle, output, metrics, questions, artifact_files=()):
                 mlflow.log_artifact(str(file), artifact_path="benchmark")
             model = mlflow.pyfunc.log_model(
                 artifact_path="qa_model", python_model=RetrievalPythonModel(),
-                artifacts={"bundle": str(bundle_path)},
+                artifacts={"bundle": str(bundle_path), "dependency_lock": str(output / "uv.lock")},
                 code_paths=[str(Path(__file__).resolve().parent)],
                 signature=prediction_signature(), input_example=questions,
                 pip_requirements=["numpy==1.26.4", "pandas==2.2.3", "torch==2.5.1",
@@ -59,7 +61,7 @@ def log_and_reload(bundle, output, metrics, questions, artifact_files=()):
             pd.testing.assert_frame_equal(expected, observed, check_exact=True)
             mlflow.log_metric("reload_prediction_parity", 1.0)
             return {"tracking_uri": mlflow.get_tracking_uri(), "run_id": run.info.run_id,
-                    "model_uri": model.model_uri, "prediction_parity": True,
+                    "model_uri": model.model_uri, "prediction_parity": True, "dependency_lock": lock_metadata,
                     "comparison": "exact dataframe equality: answer, score, abstention, IDs, offsets",
                     "loaded_prediction": json_records(observed)}
 
@@ -106,3 +108,26 @@ def log_final_benchmark(path, tracking):
         raise ValueError("benchmark must include final reload evidence")
     client = mlflow.tracking.MlflowClient(tracking_uri=tracking["tracking_uri"])
     client.log_artifact(tracking["run_id"], str(path), artifact_path="benchmark")
+
+
+def package_dependency_lock(source, output):
+    import shutil
+    from .bundle_io import sha256_file
+    source, output = Path(source), Path(output)
+    if not source.is_file():
+        raise ValueError("dependency lock file is required for tracking")
+    destination = output / "uv.lock"
+    if destination.exists():
+        raise FileExistsError("dependency lock output already exists")
+    shutil.copyfile(source, destination)
+    return {"filename": "uv.lock", "sha256": sha256_file(destination), "bytes": destination.stat().st_size}
+
+
+def verify_dependency_lock(directory, metadata):
+    from .bundle_io import sha256_file
+    if metadata.get("filename") != "uv.lock":
+        raise ValueError("invalid dependency lock filename")
+    path = Path(directory) / "uv.lock"
+    if sha256_file(path) != metadata.get("sha256") or path.stat().st_size != metadata.get("bytes"):
+        raise ValueError("dependency lock provenance mismatch")
+    return True
