@@ -1081,3 +1081,37 @@ def test_dependency_lock_provenance_detects_changes(tmp_path):
     (target / "uv.lock").write_text("version = 2\n")
     with pytest.raises(ValueError, match="mismatch"):
         verify_dependency_lock(target, metadata)
+
+
+def test_fresh_process_isolates_imports_and_network(tmp_path, monkeypatch):
+    import json
+    import subprocess
+    from pathlib import Path
+    import pandas as pd
+    from retrieval_lab.tracking import verify_fresh_process
+
+    calls = []
+
+    def child(command, **kwargs):
+        calls.append((command, kwargs))
+        target = command[-1]
+        Path(target).write_text(
+            json.dumps(
+                {"predictions": [{"answer": "cat"}], "module": "/packaged/code/retrieval_lab/__init__.py"}
+            )
+        )
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(subprocess, "run", child)
+    result = verify_fresh_process(
+        "runs:/r/model",
+        "file:///local",
+        pd.DataFrame({"question": ["animal?"]}),
+        [{"answer": "cat"}],
+        tmp_path,
+    )
+    assert result["prediction_parity"]
+    command, options = calls[0]
+    assert command[1] == "-I"
+    assert options["env"]["HF_HUB_OFFLINE"] == "1"
+    assert "PYTHONPATH" not in options["env"]

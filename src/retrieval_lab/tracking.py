@@ -59,9 +59,11 @@ def log_and_reload(bundle, output, metrics, questions, artifact_files=(), depend
             loaded = mlflow.pyfunc.load_model(model.model_uri)
             observed = loaded.predict(questions)
             pd.testing.assert_frame_equal(expected, observed, check_exact=True)
+            fresh = verify_fresh_process(model.model_uri, mlflow.get_tracking_uri(), questions, json_records(expected), output)
             mlflow.log_metric("reload_prediction_parity", 1.0)
             return {"tracking_uri": mlflow.get_tracking_uri(), "run_id": run.info.run_id,
                     "model_uri": model.model_uri, "prediction_parity": True, "dependency_lock": lock_metadata,
+                    "fresh_process": fresh,
                     "comparison": "exact dataframe equality: answer, score, abstention, IDs, offsets",
                     "loaded_prediction": json_records(observed)}
 
@@ -131,3 +133,40 @@ def verify_dependency_lock(directory, metadata):
     if sha256_file(path) != metadata.get("sha256") or path.stat().st_size != metadata.get("bytes"):
         raise ValueError("dependency lock provenance mismatch")
     return True
+
+
+def verify_fresh_process(model_uri, tracking_uri, questions, expected, output, timeout=180):
+    import json
+    import os
+    import subprocess
+    import sys
+    import tempfile
+    script = """
+import json, sys
+from pathlib import Path
+import mlflow
+import pandas as pd
+mlflow.set_tracking_uri(sys.argv[1])
+model = mlflow.pyfunc.load_model(sys.argv[2])
+frame = pd.DataFrame(json.loads(Path(sys.argv[3]).read_text()))
+observed = model.predict(frame)
+from retrieval_lab.tracking import json_records
+import retrieval_lab
+Path(sys.argv[4]).write_text(json.dumps({"predictions": json_records(observed), "module": retrieval_lab.__file__}))
+"""
+    env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
+    env.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", PYTHONDONTWRITEBYTECODE="1", TOKENIZERS_PARALLELISM="false")
+    with tempfile.TemporaryDirectory(prefix="fresh-parity-", dir=output) as directory:
+        request, result = Path(directory) / "request.json", Path(directory) / "result.json"
+        request.write_text(json.dumps(questions.to_dict(orient="records")))
+        completed = subprocess.run([sys.executable, "-I", "-c", script, tracking_uri, model_uri, str(request), str(result)],
+                                   cwd=directory, env=env, capture_output=True, text=True, timeout=timeout)
+        if completed.returncode:
+            raise ValueError(f"fresh-process reload failed: {completed.stderr[-2000:]}")
+        observed = json.loads(result.read_text())
+    if observed["predictions"] != expected:
+        raise ValueError("fresh-process prediction parity mismatch")
+    module = Path(observed["module"]).resolve()
+    if module.parent == Path(__file__).resolve().parent:
+        raise ValueError("fresh-process reload imported checkout code")
+    return {"prediction_parity": True, "offline": True, "isolated_python": True, "module": str(module)}
