@@ -52,13 +52,17 @@ def machine_info():
 
 
 def run(data, models, output, evidence):
+    from .execution import reserve_run
+    with reserve_run(output, evidence, [data, models]):
+        return _run(data, models, output, evidence)
+
+
+def _run(data, models, output, evidence):
     import pandas as pd
     from .core import calibrate_threshold, score_predictions
     from .models import Encoder, Reader, QABundle, directory_files, sha256_file
     from .tracking import log_and_reload
 
-    if output.exists():
-        raise ValueError("output directory already exists; choose a new directory to preserve previous runs")
     audit = audit_data(data)
     documents = load_corpus(data / "corpus.jsonl")
     dev = load_queries(data / "dev.jsonl", documents)

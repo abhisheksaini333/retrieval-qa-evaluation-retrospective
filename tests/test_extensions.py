@@ -1115,3 +1115,24 @@ def test_fresh_process_isolates_imports_and_network(tmp_path, monkeypatch):
     assert command[1] == "-I"
     assert options["env"]["HF_HUB_OFFLINE"] == "1"
     assert "PYTHONPATH" not in options["env"]
+
+
+def test_run_reservation_prevents_collisions(tmp_path):
+    from retrieval_lab.execution import reserve_run
+
+    source = tmp_path / "data"
+    source.mkdir()
+    output, evidence = tmp_path / "run", tmp_path / "evidence.json"
+    with reserve_run(output, evidence, [source]):
+        assert output.is_dir()
+        with pytest.raises(FileExistsError):
+            with reserve_run(tmp_path / "other", evidence, [source]):
+                pass
+    evidence.write_text("preserve")
+    with pytest.raises(FileExistsError):
+        with reserve_run(tmp_path / "new", evidence, [source]):
+            pass
+    assert evidence.read_text() == "preserve"
+    with pytest.raises(ValueError, match="overlap"):
+        with reserve_run(source / "run", tmp_path / "x.json", [source]):
+            pass
