@@ -168,13 +168,14 @@ class QABundle:
         self.index = DenseIndex(self.documents, encoder, embeddings)
         self.lookup = {d.doc_id: d for d in self.documents}
 
-    def raw_predict(self, question, retriever=None):
+    def raw_predict(self, question, retriever=None, retrieval_k=5):
         validate_request(question, self.reader_k)
         started = time.perf_counter()
         from .retrieval import validate_ranked
         engine = self.index if retriever is None else retriever
-        ranked = validate_ranked(engine.search(question, max(5, self.reader_k)),
-                                 self.lookup, max(5, self.reader_k))
+        validate_request(question, retrieval_k)
+        depth = max(retrieval_k, self.reader_k)
+        ranked = validate_ranked(engine.search(question, depth), self.lookup, depth)
         retrieved = time.perf_counter()
         output = self.reader.answer(question, [self.lookup[d] for d, _ in ranked[:self.reader_k]])
         finished = time.perf_counter()

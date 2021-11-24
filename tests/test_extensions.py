@@ -1136,3 +1136,24 @@ def test_run_reservation_prevents_collisions(tmp_path):
     with pytest.raises(ValueError, match="overlap"):
         with reserve_run(source / "run", tmp_path / "x.json", [source]):
             pass
+
+
+def test_run_protocol_tracks_actual_counts_and_repeated_timings():
+    from retrieval_lab.execution import RunConfig, collect_predictions
+    from retrieval_lab.core import Query
+
+    config = RunConfig(repeats=3, include_fusion=True)
+    assert config.protocol(4, 7)["queries_per_split"] == {"dev": 4, "test": 7}
+
+    class Bundle:
+        calls = 0
+
+        def raw_predict(self, question, retriever, retrieval_k):
+            self.calls += 1
+            return {"raw_answer": "a", "retrieval_ms": self.calls, "reader_ms": 2, "total_ms": self.calls + 2}
+
+    rows = collect_predictions(Bundle(), [Query("q", "Question?", ("a",), ("d",))], None, config)
+    assert rows[0]["retrieval_ms"] == 2
+    assert len(rows[0]["timing_samples"]) == 3
+    with pytest.raises(ValueError):
+        RunConfig(reader_k=5, retrieval_k=2)

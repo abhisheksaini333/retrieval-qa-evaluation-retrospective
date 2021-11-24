@@ -23,13 +23,13 @@ def audit_data(path):
     overlap = sorted({d for q in dev for d in q.relevant_ids} & {d for q in test for d in q.relevant_ids})
     if overlap:
         raise ValueError("gold document overlap between development and held-out test")
-    from .datasets import validate_provenance
+    from .datasets import validate_provenance, dataset_manifest
     validate_provenance(json.loads((path / "provenance.json").read_text()),
                         {"documents": len(documents), "development_queries": len(dev),
                          "held_out_queries": len(test)})
     return {"document_count": len(documents), "dev_count": len(dev), "test_count": len(test),
             "corpus_sha256": corpus_hash(documents), "gold_doc_overlap": overlap,
-            "dataset_manifest": __import__("retrieval_lab.datasets", fromlist=["dataset_manifest"]).dataset_manifest(path)}
+            "dataset_manifest": dataset_manifest(path)}
 
 
 def download_models(path):
@@ -51,13 +51,16 @@ def machine_info():
     return info
 
 
-def run(data, models, output, evidence):
-    from .execution import reserve_run
+def run(data, models, output, evidence, config=None):
+    from .execution import reserve_run, RunConfig
+    config = config if config is not None else RunConfig()
+    if not isinstance(config, RunConfig):
+        raise ValueError("config must be RunConfig")
     with reserve_run(output, evidence, [data, models]):
-        return _run(data, models, output, evidence)
+        return _run(data, models, output, evidence, config)
 
 
-def _run(data, models, output, evidence):
+def _run(data, models, output, evidence, config):
     import pandas as pd
     from .core import calibrate_threshold, score_predictions
     from .models import Encoder, Reader, QABundle, directory_files, sha256_file
@@ -69,17 +72,12 @@ def _run(data, models, output, evidence):
     test = load_queries(data / "test.jsonl", documents)
     started = time.perf_counter()
     encoder, reader = Encoder(models / "encoder"), Reader(models / "reader")
-    bundle = QABundle(documents, encoder, reader, reader_k=3)
+    bundle = QABundle(documents, encoder, reader, reader_k=config.reader_k)
     build_seconds = time.perf_counter() - started
     report = {"schema_version": 1, "run_utc": datetime.now(timezone.utc).isoformat(),
               "data_audit": audit,
               "hardware": machine_info(), "build_seconds_excluding_download": build_seconds,
-              "latency_protocol": {"warmup_queries_per_retriever": 1, "measurement": "one sequential pass",
-                                   "queries_per_split": 12, "reader_k": 3, "retrieval_k": 5,
-                                   "includes_query_encoding_and_reader": True,
-                                   "excludes_download_load_index_warmup": True,
-                                   "percentile_method": "linear interpolation",
-                                   "limits": "12 samples per split; descriptive CPU measurements, no throughput claim"},
+              "latency_protocol": config.protocol(len(dev), len(test)),
               "data_file_sha256": {p.name: sha256_file(p) for p in sorted(data.glob("*.jsonl"))},
               "models": {"encoder": {"files": directory_files(models / "encoder"),
                                      "fingerprint": encoder.fingerprint},
@@ -89,23 +87,29 @@ def _run(data, models, output, evidence):
               "experiments": {}, "limitations": ["Original small synthetic English dataset, not production evidence",
                   "Dependency and model snapshots are recorded in this report",
                   "Extractive SQuAD 1 reader scores are not calibrated probabilities of answerability",
-                  "No test-set tuning, confidence intervals, significance claim, GPU, or public service"]}
+                  "No test-set tuning, significance claim, GPU, or public service"]}
     metrics_for_tracking = {}
-    for name, retriever in [("bm25", BM25(documents)), ("dense", bundle.index)]:
+    from .execution import collect_predictions
+    from .retrieval import FusionRetriever
+    from .metrics import bootstrap_mean
+    engines = [("bm25", BM25(documents)), ("dense", bundle.index)]
+    if config.include_fusion:
+        engines.append(("fusion", FusionRetriever([engine for _, engine in engines])))
+    for name, retriever in engines:
         print(f"Evaluating {name} on CPU", file=sys.stderr, flush=True)
-        bundle.raw_predict(dev[0].question, retriever)  # excluded warmup
-        def collect(queries):
-            return [{"query_id": query.query_id, "question": query.question,
-                     "answers": list(query.answers), "relevant_ids": list(query.relevant_ids),
-                     **bundle.raw_predict(query.question, retriever)} for query in queries]
-        dev_rows = collect(dev)
+        for index in range(config.warmups):
+            bundle.raw_predict(dev[index % len(dev)].question, retriever, retrieval_k=config.retrieval_k)
+        dev_rows = collect_predictions(bundle, dev, retriever, config)
         calibration = calibrate_threshold(dev_rows, split="dev")
         threshold = calibration["threshold"]  # frozen before any held-out predictions
-        test_rows = collect(test)
+        test_rows = collect_predictions(bundle, test, retriever, config)
         experiment = {"calibration": calibration}
         for split, rows in [("dev", dev_rows), ("test", test_rows)]:
-            metrics, scored = score_predictions(rows, threshold, reader_k=3)
-            experiment[split] = {"metrics": metrics, "predictions": scored}
+            metrics, scored = score_predictions(rows, threshold, reader_k=config.reader_k,
+                                               cutoffs=tuple(k for k in (1, 3, 5) if k <= config.retrieval_k))
+            experiment[split] = {"metrics": metrics, "predictions": scored,
+                                 "em_bootstrap": bootstrap_mean([row["answer_em"] for row in scored],
+                                                                 repetitions=1000, seed=config.seed)}
             metrics_for_tracking.update({f"{name}.{split}.{key}": value for key, value in metrics.items() if value is not None})
         report["experiments"][name] = experiment
         if name == "dense":
@@ -131,6 +135,9 @@ def main():
     download = subparsers.add_parser("download")
     download.add_argument("--models", type=Path, default=Path("artifacts/models"))
     evaluate = subparsers.add_parser("run")
+    for flag, default in [("reader-k", 3), ("retrieval-k", 5), ("warmups", 1), ("repeats", 1), ("seed", 0)]:
+        evaluate.add_argument("--" + flag, type=int, default=default)
+    evaluate.add_argument("--fusion", action="store_true")
     evaluate.add_argument("--data", type=Path, default=Path("data"))
     evaluate.add_argument("--models", type=Path, default=Path("artifacts/models"))
     evaluate.add_argument("--output", type=Path, default=Path("artifacts/run"))
@@ -162,7 +169,9 @@ def main():
             from .models import QABundle
             print(json.dumps(QABundle.load(args.bundle).predict(args.question), indent=2))
         elif args.command == "run":
-            report = run(args.data, args.models, args.output, args.evidence)
+            from .execution import RunConfig
+            config = RunConfig(args.reader_k, args.retrieval_k, args.warmups, args.repeats, args.seed, args.fusion)
+            report = run(args.data, args.models, args.output, args.evidence, config)
             print(json.dumps({name: value["test"]["metrics"]
                               for name, value in report["experiments"].items()}, indent=2))
     except (ValueError, OSError) as exc:
