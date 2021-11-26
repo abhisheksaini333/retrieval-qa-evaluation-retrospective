@@ -1157,3 +1157,18 @@ def test_run_protocol_tracks_actual_counts_and_repeated_timings():
     assert len(rows[0]["timing_samples"]) == 3
     with pytest.raises(ValueError):
         RunConfig(reader_k=5, retrieval_k=2)
+
+
+def test_run_status_records_failure_stage(tmp_path):
+    import json
+    from retrieval_lab.execution import run_status, set_stage
+
+    with pytest.raises(RuntimeError):
+        with run_status(tmp_path):
+            set_stage(tmp_path, "model_load")
+            raise RuntimeError("weights unavailable")
+    state = json.loads((tmp_path / "status.json").read_text())
+    assert state["state"] == "failed"
+    assert state["stage"] == "model_load"
+    assert state["error_type"] == "RuntimeError"
+    assert not list(tmp_path.glob("*.tmp"))

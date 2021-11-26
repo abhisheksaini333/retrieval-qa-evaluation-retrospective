@@ -52,11 +52,11 @@ def machine_info():
 
 
 def run(data, models, output, evidence, config=None):
-    from .execution import reserve_run, RunConfig
+    from .execution import reserve_run, RunConfig, run_status
     config = config if config is not None else RunConfig()
     if not isinstance(config, RunConfig):
         raise ValueError("config must be RunConfig")
-    with reserve_run(output, evidence, [data, models]):
+    with reserve_run(output, evidence, [data, models]), run_status(output):
         return _run(data, models, output, evidence, config)
 
 
@@ -70,6 +70,8 @@ def _run(data, models, output, evidence, config):
     documents = load_corpus(data / "corpus.jsonl")
     dev = load_queries(data / "dev.jsonl", documents)
     test = load_queries(data / "test.jsonl", documents)
+    from .execution import set_stage
+    set_stage(output, "model_load")
     started = time.perf_counter()
     encoder, reader = Encoder(models / "encoder"), Reader(models / "reader")
     bundle = QABundle(documents, encoder, reader, reader_k=config.reader_k)
@@ -96,6 +98,7 @@ def _run(data, models, output, evidence, config):
     if config.include_fusion:
         engines.append(("fusion", FusionRetriever([engine for _, engine in engines])))
     for name, retriever in engines:
+        set_stage(output, f"evaluate_{name}")
         print(f"Evaluating {name} on CPU", file=sys.stderr, flush=True)
         for index in range(config.warmups):
             bundle.raw_predict(dev[index % len(dev)].question, retriever, retrieval_k=config.retrieval_k)
@@ -117,6 +120,7 @@ def _run(data, models, output, evidence, config):
     evidence.parent.mkdir(parents=True, exist_ok=True)
     evidence.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n")
     questions = pd.DataFrame({"question": [q.question for q in test]})
+    set_stage(output, "tracking_and_reload")
     report["mlflow"] = log_and_reload(bundle, output, metrics_for_tracking, questions,
                                       artifact_files=[data / "provenance.json"])
     report["bundle_manifest"] = json.loads((output / "bundle" / "manifest.json").read_text())

@@ -2,6 +2,8 @@
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 import statistics
+import json
+from datetime import datetime, timezone
 from pathlib import Path
 from .bundle_io import validate_output_location
 
@@ -63,3 +65,24 @@ def collect_predictions(bundle, queries, retriever, config):
                      **{key: statistics.median(s[key] for s in samples) for key in timing_keys},
                      "timing_samples": [{key: sample[key] for key in sorted(timing_keys)} for sample in samples]})
     return rows
+
+
+def set_stage(output, stage, state="running", **details):
+    output = Path(output)
+    record = {"state": state, "stage": stage, "updated_at": datetime.now(timezone.utc).isoformat(), **details}
+    temporary = output / "status.json.tmp"
+    temporary.write_text(json.dumps(record, indent=2) + "\n")
+    temporary.replace(output / "status.json")
+
+
+@contextmanager
+def run_status(output):
+    set_stage(output, "audit")
+    try:
+        yield
+    except BaseException as error:
+        previous = json.loads((Path(output) / "status.json").read_text())
+        set_stage(output, previous["stage"], "failed", error_type=type(error).__name__, error=str(error)[:1000])
+        raise
+    else:
+        set_stage(output, "complete", "complete")
