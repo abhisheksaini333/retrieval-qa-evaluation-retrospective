@@ -1172,3 +1172,19 @@ def test_run_status_records_failure_stage(tmp_path):
     assert state["stage"] == "model_load"
     assert state["error_type"] == "RuntimeError"
     assert not list(tmp_path.glob("*.tmp"))
+
+
+def test_hardware_probe_timeout_is_nonfatal(monkeypatch):
+    import subprocess
+    import retrieval_lab.benchmark as benchmark
+
+    monkeypatch.setattr(benchmark.sys, "platform", "darwin")
+
+    def timeout(command, **kwargs):
+        assert kwargs["timeout"] == 2
+        raise subprocess.TimeoutExpired(command, 2)
+
+    monkeypatch.setattr(benchmark.subprocess, "check_output", timeout)
+    info = benchmark.machine_info()
+    assert info["cpu_model"] is None
+    assert info["probe_errors"]["memory_bytes"] == "TimeoutExpired"

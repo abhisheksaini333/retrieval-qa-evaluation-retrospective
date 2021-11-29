@@ -42,12 +42,18 @@ def download_models(path):
 
 
 def machine_info():
-    info = {"platform": platform.platform(), "machine": platform.machine(), "python": platform.python_version(),
+    info = {"platform": f"{platform.system()}-{platform.release()}-{platform.machine()}", "machine": platform.machine(), "python": platform.python_version(),
             "cpu_count": os.cpu_count(), "device": "cpu",
             "torch_threads": __import__("torch").get_num_threads(), "gpu_used": False}
     if sys.platform == "darwin":
         for field, name in [("cpu_model", "machdep.cpu.brand_string"), ("memory_bytes", "hw.memsize")]:
-            info[field] = subprocess.check_output(["sysctl", "-n", name], text=True).strip()
+            try:
+                value = subprocess.check_output(["sysctl", "-n", name], text=True, timeout=2,
+                                                stderr=subprocess.DEVNULL).strip()
+                info[field] = int(value) if field == "memory_bytes" else value
+            except (OSError, ValueError, subprocess.SubprocessError) as error:
+                info[field] = None
+                info.setdefault("probe_errors", {})[field] = type(error).__name__
     return info
 
 
