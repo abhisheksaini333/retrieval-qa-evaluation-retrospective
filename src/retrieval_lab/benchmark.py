@@ -152,6 +152,11 @@ def main():
     evaluate.add_argument("--models", type=Path, default=Path("artifacts/models"))
     evaluate.add_argument("--output", type=Path, default=Path("artifacts/run"))
     evaluate.add_argument("--evidence", type=Path, default=Path("evidence/benchmark.json"))
+    compare = subparsers.add_parser("compare")
+    compare.add_argument("left", type=Path)
+    compare.add_argument("right", type=Path)
+    compare.add_argument("--metric", choices=["answer_em", "answer_f1"], default="answer_em")
+    compare.add_argument("--seed", type=int, default=0)
     for command in ("export", "import"):
         archive = subparsers.add_parser(command)
         archive.add_argument("--bundle", type=Path, required=True)
@@ -165,6 +170,10 @@ def main():
     try:
         if args.command == "audit":
             print(json.dumps(audit_data(args.data), indent=2))
+        elif args.command == "compare":
+            from .comparison import compare_benchmarks
+            print(json.dumps(compare_benchmarks(json.loads(args.left.read_text()),
+                                               json.loads(args.right.read_text()), metric=args.metric, seed=args.seed), indent=2))
         elif args.command in {"export", "import"}:
             from .bundle_io import export_bundle, import_bundle
             result = (export_bundle(args.bundle, args.archive) if args.command == "export"

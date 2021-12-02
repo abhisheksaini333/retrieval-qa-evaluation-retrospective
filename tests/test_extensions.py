@@ -1188,3 +1188,31 @@ def test_hardware_probe_timeout_is_nonfatal(monkeypatch):
     info = benchmark.machine_info()
     assert info["cpu_model"] is None
     assert info["probe_errors"]["memory_bytes"] == "TimeoutExpired"
+
+
+def test_benchmark_comparison_requires_matching_evidence():
+    from retrieval_lab.comparison import compare_benchmarks
+
+    left = {
+        "schema_version": 1,
+        "data_file_sha256": {"test.jsonl": "a"},
+        "latency_protocol": {"reader_k": 3},
+        "models": {"encoder": {"fingerprint": "x"}, "reader": {"fingerprint": "y"}},
+        "hardware": {"machine": "one"},
+        "experiments": {
+            "dense": {"test": {"predictions": [{"query_id": "q", "answer_em": 1.0}], "metrics": {}}}
+        },
+    }
+    right = {
+        **left,
+        "experiments": {
+            "dense": {"test": {"predictions": [{"query_id": "q", "answer_em": 0.0}], "metrics": {}}}
+        },
+    }
+    result = compare_benchmarks(left, right, repetitions=20)
+    assert result["experiments"]["dense"]["estimate"] == 1
+    with pytest.raises(ValueError, match="data"):
+        compare_benchmarks(left, {**right, "data_file_sha256": {"test.jsonl": "b"}})
+    assert not compare_benchmarks(left, {**right, "hardware": {"machine": "two"}}, repetitions=20)[
+        "latency_comparable"
+    ]
