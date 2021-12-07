@@ -152,6 +152,11 @@ def main():
     evaluate.add_argument("--models", type=Path, default=Path("artifacts/models"))
     evaluate.add_argument("--output", type=Path, default=Path("artifacts/run"))
     evaluate.add_argument("--evidence", type=Path, default=Path("evidence/benchmark.json"))
+    batch = subparsers.add_parser("predict-batch")
+    batch.add_argument("--bundle", type=Path, required=True)
+    batch.add_argument("--input", type=Path, required=True)
+    batch.add_argument("--output", type=Path, required=True)
+    batch.add_argument("--continue-on-error", action="store_true")
     compare = subparsers.add_parser("compare")
     compare.add_argument("left", type=Path)
     compare.add_argument("right", type=Path)
@@ -170,6 +175,14 @@ def main():
     try:
         if args.command == "audit":
             print(json.dumps(audit_data(args.data), indent=2))
+        elif args.command == "predict-batch":
+            from .models import QABundle
+            from .prediction import load_prediction_requests, batch_predict
+            from .bundle_io import validate_output_location
+            validate_output_location(args.output, [args.input, args.bundle])
+            requests = load_prediction_requests(args.input)
+            print(json.dumps(batch_predict(QABundle.load(args.bundle), requests, args.output,
+                                           continue_on_error=args.continue_on_error), indent=2))
         elif args.command == "compare":
             from .comparison import compare_benchmarks
             print(json.dumps(compare_benchmarks(json.loads(args.left.read_text()),

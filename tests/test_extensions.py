@@ -1216,3 +1216,29 @@ def test_benchmark_comparison_requires_matching_evidence():
     assert not compare_benchmarks(left, {**right, "hardware": {"machine": "two"}}, repetitions=20)[
         "latency_comparable"
     ]
+
+
+def test_batch_prediction_preserves_order_and_failed_output(tmp_path):
+    import json
+    from retrieval_lab.prediction import batch_predict, load_prediction_requests
+
+    requests = tmp_path / "requests.jsonl"
+    requests.write_text('{"query_id":"b","question":"cat?"}\n{"query_id":"a","question":"dog?"}\n')
+    rows = load_prediction_requests(requests)
+
+    class Bundle:
+        def predict(self, question):
+            if question == "dog?":
+                raise ValueError("inference failed")
+            return {"answer": "cat"}
+
+    output = tmp_path / "output.jsonl"
+    with pytest.raises(ValueError, match="inference"):
+        batch_predict(Bundle(), rows, output)
+    assert not output.exists()
+    batch_predict(Bundle(), rows, output, continue_on_error=True)
+    result = [json.loads(line) for line in output.read_text().splitlines()]
+    assert [row["query_id"] for row in result] == ["b", "a"]
+    assert result[1]["error"]["type"] == "ValueError"
+    with pytest.raises(FileExistsError):
+        batch_predict(Bundle(), rows, output)
