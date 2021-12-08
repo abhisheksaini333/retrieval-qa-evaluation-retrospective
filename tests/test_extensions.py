@@ -1242,3 +1242,14 @@ def test_batch_prediction_preserves_order_and_failed_output(tmp_path):
     assert result[1]["error"]["type"] == "ValueError"
     with pytest.raises(FileExistsError):
         batch_predict(Bundle(), rows, output)
+
+
+def test_wheel_requires_console_entry_point(tmp_path):
+    import zipfile
+    from retrieval_lab.packaging import verify_wheel
+
+    wheel = tmp_path / "broken.whl"
+    with zipfile.ZipFile(wheel, "w") as archive:
+        archive.writestr("retrieval_lab/benchmark.py", "pass")
+    with pytest.raises(ValueError, match="entry point"):
+        verify_wheel(wheel)

@@ -97,3 +97,5 @@ The [hosted Ubuntu CI run](https://github.com/abhisheksaini333/retrieval-qa-eval
 ## Attribution
 
 The corpus, evaluation harness, failure taxonomy, threshold policy, persistence checks, and integration adapters were written for this project. The pretrained models and libraries retain their own licenses. Source code and synthetic data are [MIT licensed](LICENSE); model weights are downloaded separately and are not committed. [Sources](docs/sources.md) links the retrieval methods, model cards, library APIs, and archived model documentation.
+
+See [extended evaluation workflows](docs/extended-evaluation.md) for configurable experiments, bundle inspection/archives, paired comparison, and batch prediction.

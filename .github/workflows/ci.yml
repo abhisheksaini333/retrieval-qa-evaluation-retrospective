@@ -21,6 +21,8 @@ jobs:
       - run: uv run --no-sync ruff check src tests experiments/haystack1
       - run: uv run --no-sync pytest -m 'not integration' -q
       - run: uv run --no-sync retrieval-eval audit
+      - run: uv build --wheel --out-dir artifacts/wheels
+      - run: uv run --no-sync python scripts/verify_wheel.py artifacts/wheels/*.whl
   real-models:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
