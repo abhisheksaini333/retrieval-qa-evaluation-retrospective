@@ -16,11 +16,15 @@ def reserve_run(output, evidence, sources):
         raise FileExistsError("run output or evidence already exists")
     if evidence == output or evidence in output.parents:
         raise ValueError("evidence path cannot contain the run directory")
+    nested = output in evidence.parents
+    if nested:
+        output.mkdir(parents=True, exist_ok=False)
     evidence.parent.mkdir(parents=True, exist_ok=True)
     lock = evidence.with_name(evidence.name + ".lock")
     with lock.open("x"):
         try:
-            output.mkdir(parents=True, exist_ok=False)
+            if not nested:
+                output.mkdir(parents=True, exist_ok=False)
             yield output
         finally:
             lock.unlink()

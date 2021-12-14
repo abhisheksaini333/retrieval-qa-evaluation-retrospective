@@ -1253,3 +1253,14 @@ def test_wheel_requires_console_entry_point(tmp_path):
         archive.writestr("retrieval_lab/benchmark.py", "pass")
     with pytest.raises(ValueError, match="entry point"):
         verify_wheel(wheel)
+
+
+def test_run_evidence_can_live_inside_output(tmp_path):
+    from retrieval_lab.execution import reserve_run
+
+    output = tmp_path / "run"
+    evidence = output / "reports" / "benchmark.json"
+    with reserve_run(output, evidence, []):
+        evidence.write_text("complete")
+    assert evidence.read_text() == "complete"
+    assert not list(output.rglob("*.lock"))
