@@ -11,6 +11,8 @@ def compare_benchmarks(left, right, *, metric="answer_em", seed=0, repetitions=1
     for key in ("data_file_sha256", "latency_protocol"):
         if left[key] != right[key]:
             raise ValueError(f"benchmarks have incompatible {key}")
+    if left.get("execution") != right.get("execution"):
+        raise ValueError("benchmarks have incompatible inference settings")
     for role in ("encoder", "reader"):
         if left["models"][role]["fingerprint"] != right["models"][role]["fingerprint"]:
             raise ValueError(f"benchmarks have incompatible {role} models")

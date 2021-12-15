@@ -76,7 +76,7 @@ def _run(data, models, output, evidence, config):
     documents = load_corpus(data / "corpus.jsonl")
     dev = load_queries(data / "dev.jsonl", documents)
     test = load_queries(data / "test.jsonl", documents)
-    from .execution import set_stage
+    from .execution import set_stage, model_execution_info
     set_stage(output, "model_load")
     started = time.perf_counter()
     encoder, reader = Encoder(models / "encoder"), Reader(models / "reader")
@@ -84,6 +84,7 @@ def _run(data, models, output, evidence, config):
     build_seconds = time.perf_counter() - started
     report = {"schema_version": 1, "run_utc": datetime.now(timezone.utc).isoformat(),
               "data_audit": audit,
+              "execution": model_execution_info(encoder, reader),
               "hardware": machine_info(), "build_seconds_excluding_download": build_seconds,
               "latency_protocol": config.protocol(len(dev), len(test)),
               "data_file_sha256": {p.name: sha256_file(p) for p in sorted(data.glob("*.jsonl"))},

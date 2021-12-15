@@ -1264,3 +1264,26 @@ def test_run_evidence_can_live_inside_output(tmp_path):
         evidence.write_text("complete")
     assert evidence.read_text() == "complete"
     assert not list(output.rglob("*.lock"))
+
+
+def test_comparison_rejects_different_inference_settings():
+    from types import SimpleNamespace
+    from retrieval_lab.execution import model_execution_info
+    from retrieval_lab.config import EncoderConfig
+    from retrieval_lab.comparison import compare_benchmarks
+
+    execution = model_execution_info(
+        SimpleNamespace(threads=2, config=EncoderConfig()), SimpleNamespace(threads=3)
+    )
+    assert execution["reader"]["threads"] == 3
+    assert execution["encoder"]["max_tokens"] == 128
+    base = {
+        "schema_version": 1,
+        "data_file_sha256": {"test": "a"},
+        "latency_protocol": {"repeats": 1},
+        "models": {"encoder": {"fingerprint": "a"}, "reader": {"fingerprint": "b"}},
+        "experiments": {"dense": {}},
+        "execution": execution,
+    }
+    with pytest.raises(ValueError, match="inference"):
+        compare_benchmarks(base, {**base, "execution": {"encoder": {"pooling": "cls"}}})

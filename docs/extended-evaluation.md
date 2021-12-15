@@ -11,7 +11,7 @@ retrieval-eval import --archive artifacts/qa-bundle.zip --bundle artifacts/impor
 retrieval-eval compare evidence/experiment-a.json evidence/experiment-b.json
 ```
 
-Choose unused output and evidence paths. A run reserves both paths, records its current stage in `status.json`, and preserves failure diagnostics. Latency is the per-query median across repetitions; the raw timing samples remain in the predictions. The protocol records actual split sizes. Calibration uses development queries only. Held-out answer EM and F1, retrieval coverage, citation diagnostics, and failure classes retain explicit denominators. Undefined rates use JSON null. Small synthetic datasets support regression checks, not production performance claims.
+Choose unused output and evidence paths. A run reserves both paths, records its current stage in `status.json`, and preserves failure diagnostics. Latency is the per-query median across repetitions; the raw timing samples remain in the predictions. The protocol records actual split sizes. Calibration uses development queries only. Held-out answer EM and F1, retrieval coverage, and failure classes retain explicit denominators. Citation diagnostics are available through the Python metrics module. Undefined rates use JSON null. Small synthetic datasets support regression checks, not production performance claims.
 
 `compare` checks data hashes, inference protocol, model fingerprints, and query coverage before a paired bootstrap of left-minus-right answer scores. Different hardware disables latency comparability. Bootstrap intervals describe sampling variability in this fixed dataset; they do not establish external validity.
 

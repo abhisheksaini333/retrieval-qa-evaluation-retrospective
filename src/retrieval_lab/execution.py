@@ -90,3 +90,9 @@ def run_status(output):
         raise
     else:
         set_stage(output, "complete", "complete")
+
+
+def model_execution_info(encoder, reader):
+    return {"encoder": {"threads": encoder.threads, **asdict(encoder.config)},
+            "reader": {"threads": reader.threads, "max_tokens": 384, "batch_size": 8,
+                       "selection": "max_score", "max_answer_len": 40}}
