@@ -1287,3 +1287,53 @@ def test_comparison_rejects_different_inference_settings():
     }
     with pytest.raises(ValueError, match="inference"):
         compare_benchmarks(base, {**base, "execution": {"encoder": {"pooling": "cls"}}})
+
+
+def test_archive_excludes_cache_files_and_symlinks(tmp_path):
+    import hashlib
+    import zipfile
+    import numpy as np
+    from dataclasses import asdict
+    from retrieval_lab.core import Document, corpus_hash
+    from retrieval_lab.bundle_io import export_bundle, import_bundle, directory_fingerprint, sha256_file
+
+    root = tmp_path / "bundle"
+    root.mkdir()
+    document = Document("a", "Title", "A cat.")
+    (root / "corpus.jsonl").write_text(json.dumps(asdict(document)) + "\n")
+    np.save(root / "embeddings.npy", np.array([[1.0, 0.0]], dtype=np.float32))
+    for role in ["encoder", "reader"]:
+        model = root / role
+        model.mkdir()
+        for name in ["config.json", "model.safetensors", "tokenizer_config.json", "tokenizer.json"]:
+            (model / name).write_bytes(b"fixture-only")
+    manifest = {
+        "schema_version": 1,
+        "doc_ids": ["a"],
+        "threshold": 0.5,
+        "reader_k": 1,
+        "encoder_max_tokens": 128,
+        "reader_max_tokens": 384,
+        "corpus_sha256": corpus_hash([document]),
+        "embeddings_sha256": sha256_file(root / "embeddings.npy"),
+        **{f"{role}_fingerprint": directory_fingerprint(root / role) for role in ["encoder", "reader"]},
+        **{key: "fixture-only" for key in ["encoder_id", "encoder_revision", "reader_id", "reader_revision"]},
+    }
+    (root / "manifest.json").write_text(json.dumps(manifest))
+    external = tmp_path / "private"
+    external.write_text("PRIVATE-SENTINEL")
+    (root / ".cache").mkdir()
+    (root / ".cache" / "external").symlink_to(external)
+    (root / "encoder" / ".cache").mkdir()
+    (root / "encoder" / ".cache" / "private.json").write_text("CACHE-SENTINEL")
+    archive = tmp_path / "bundle.zip"
+    export_bundle(root, archive)
+    with zipfile.ZipFile(archive) as stream:
+        assert all(".cache" not in name.split("/") for name in stream.namelist())
+        assert all(
+            hashlib.sha256(stream.read(name)).digest() != hashlib.sha256(external.read_bytes()).digest()
+            for name in stream.namelist()
+        )
+    imported = tmp_path / "imported"
+    assert import_bundle(archive, imported)["valid"]
+    assert directory_fingerprint(imported) == directory_fingerprint(root)

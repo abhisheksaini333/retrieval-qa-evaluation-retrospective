@@ -204,7 +204,7 @@ def export_bundle(bundle, archive):
             created = True
             with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as stream:
                 for file in sorted(root.rglob("*")):
-                    if file.is_file():
+                    if file.is_file() and ".cache" not in file.relative_to(root).parts:
                         stream.write(file, file.relative_to(root).as_posix())
     except BaseException:
         if created:
