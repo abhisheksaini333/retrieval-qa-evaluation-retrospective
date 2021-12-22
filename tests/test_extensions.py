@@ -1337,3 +1337,15 @@ def test_archive_excludes_cache_files_and_symlinks(tmp_path):
     imported = tmp_path / "imported"
     assert import_bundle(archive, imported)["valid"]
     assert directory_fingerprint(imported) == directory_fingerprint(root)
+
+
+def test_fingerprint_allows_cache_named_ancestors(tmp_path):
+    from retrieval_lab.bundle_io import directory_fingerprint, directory_files
+
+    model = tmp_path / ".cache" / "model"
+    model.mkdir(parents=True)
+    (model / "weights.safetensors").write_bytes(b"weights")
+    (model / ".cache").mkdir()
+    (model / ".cache" / "ignored").write_bytes(b"cache")
+    assert set(directory_files(model)) == {"weights.safetensors"}
+    assert len(directory_fingerprint(model)) == 64

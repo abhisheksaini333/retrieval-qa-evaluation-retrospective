@@ -165,7 +165,7 @@ def sha256_file(path):
 def directory_files(path):
     path = Path(path)
     return {str(p.relative_to(path)): sha256_file(p) for p in sorted(path.rglob("*"))
-            if p.is_file() and ".cache" not in p.parts}
+            if p.is_file() and ".cache" not in p.relative_to(path).parts}
 
 
 def directory_fingerprint(path):
