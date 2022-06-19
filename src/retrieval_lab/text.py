@@ -15,6 +15,8 @@ class RetrievalTokenizer:
             raise ValueError("invalid retrieval tokenizer configuration")
 
     def __call__(self, text):
+        if not isinstance(text, str) or any(0xD800 <= ord(char) <= 0xDFFF for char in text):
+            raise ValueError("tokenizer expects Unicode text without surrogates")
         normalized = unicodedata.normalize(self.unicode_form, text).casefold()
         return [token for token in re.findall(r"\b\w+\b", normalized) if len(token) >= self.min_length]
 
