@@ -20,12 +20,22 @@ def _ranking(ranked, k):
     return ranked[:k]
 
 
+def _relevant(relevant):
+    if isinstance(relevant, (str, bytes)):
+        raise ValueError("relevant IDs must be a collection")
+    values = list(relevant)
+    if any(not isinstance(value, str) or not value.strip() for value in values) or len(set(values)) != len(values):
+        raise ValueError("relevant IDs must be nonempty and unique")
+    return set(values)
+
+
 def precision_at_k(ranked, relevant, k):
-    return len(set(_ranking(ranked, k)) & set(relevant)) / k
+    return len(set(_ranking(ranked, k)) & _relevant(relevant)) / k
 
 
 def ndcg_at_k(ranked, relevance, k):
     ranked = _ranking(ranked, k)
+    _relevant(relevance)
     if any(type(g) not in (int, float) or not math.isfinite(g) or not 0 <= g <= 32
            for g in relevance.values()):
         raise ValueError("relevance grades must be finite and in [0,32]")
@@ -36,7 +46,7 @@ def ndcg_at_k(ranked, relevance, k):
 
 
 def average_precision(ranked, relevant, k=5):
-    ranked, relevant = _ranking(ranked, k), set(relevant)
+    ranked, relevant = _ranking(ranked, k), _relevant(relevant)
     if not relevant:
         return None
     hits, total = 0, 0.0
