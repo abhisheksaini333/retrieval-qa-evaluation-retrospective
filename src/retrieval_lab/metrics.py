@@ -98,6 +98,9 @@ def bootstrap_mean(values, *, repetitions=1000, confidence=0.95, seed=0):
 
 def paired_comparison(left, right, metric="answer_em", **bootstrap_options):
     left, right = list(left), list(right)
+    for row in left + right:
+        if not isinstance(row, dict) or type(row.get(metric)) not in (int, float) or not math.isfinite(row[metric]):
+            raise ValueError("paired metric values must be finite numbers")
     first = {r["query_id"]: r[metric] for r in left}
     second = {r["query_id"]: r[metric] for r in right}
     if len(first) != len(left) or len(second) != len(right) or not first or first.keys() != second.keys():
