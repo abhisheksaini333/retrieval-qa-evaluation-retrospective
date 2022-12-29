@@ -101,6 +101,9 @@ def paired_comparison(left, right, metric="answer_em", **bootstrap_options):
     for row in left + right:
         if not isinstance(row, dict) or type(row.get(metric)) not in (int, float) or not math.isfinite(row[metric]):
             raise ValueError("paired metric values must be finite numbers")
+    for row in left + right:
+        if not isinstance(row.get("query_id"), str) or not row["query_id"].strip():
+            raise ValueError("paired query IDs must be nonempty strings")
     first = {r["query_id"]: r[metric] for r in left}
     second = {r["query_id"]: r[metric] for r in right}
     if len(first) != len(left) or len(second) != len(right) or not first or first.keys() != second.keys():

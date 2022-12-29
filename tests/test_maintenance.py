@@ -26,3 +26,9 @@ def test_paired_comparison_rejects_invalid_values_before_arithmetic():
     for value in (True,None,float('nan'),"1"):
         with pytest.raises(ValueError):paired_comparison([{"query_id":"q","answer_em":value}],[{"query_id":"q","answer_em":1}],repetitions=2)
     with pytest.raises(ValueError):paired_comparison([{"query_id":"q"}],[{"query_id":"q","answer_em":1}],repetitions=2)
+
+def test_paired_comparison_rejects_blank_query_identity():
+    from retrieval_lab.metrics import paired_comparison
+    for identifier in ("",None," ",1):
+        rows=[{"query_id":identifier,"answer_em":1}]
+        with pytest.raises(ValueError):paired_comparison(rows,rows,repetitions=2)
