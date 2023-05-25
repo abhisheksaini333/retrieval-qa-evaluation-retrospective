@@ -32,3 +32,9 @@ def test_paired_comparison_rejects_blank_query_identity():
     for identifier in ("",None," ",1):
         rows=[{"query_id":identifier,"answer_em":1}]
         with pytest.raises(ValueError):paired_comparison(rows,rows,repetitions=2)
+
+def test_reciprocal_rank_cutoff_and_unanswerable_semantics():
+    from retrieval_lab.metrics import reciprocal_rank
+    assert reciprocal_rank(["a","b"],["b"],2)==.5
+    assert reciprocal_rank(["a","b"],["b"],1)==0
+    assert reciprocal_rank(["a"],[],1) is None

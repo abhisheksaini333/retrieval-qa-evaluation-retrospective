@@ -57,6 +57,13 @@ def average_precision(ranked, relevant, k=5):
     return total / len(relevant)
 
 
+def reciprocal_rank(ranked, relevant, k=5):
+    ranked, relevant = _ranking(ranked, k), _relevant(relevant)
+    if not relevant:
+        return None
+    return next((1 / rank for rank, identifier in enumerate(ranked, 1) if identifier in relevant), 0.0)
+
+
 def mean_average_precision(examples, k=5):
     values = [average_precision(ranked, relevant, k) for ranked, relevant in examples]
     defined = [value for value in values if value is not None]

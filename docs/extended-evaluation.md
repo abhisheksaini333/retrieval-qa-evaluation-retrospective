@@ -35,3 +35,5 @@ MLflow output includes an explicit nullable schema, the exact dependency lock, e
 The Python modules also expose Unicode retrieval tokenization, BM25 explanations and title weighting, cached/batched retrieval, MMR selection, chunk provenance, oracle-context reader diagnostics, risk-constrained calibration, reliability bins, and grouped split helpers. These are opt-in experiments; the default benchmark still uses BM25 and the real dense encoder. `RunConfig` controls benchmark depth, repetition, warmup, seed, and fusion. Encoder pooling experiments use `EncoderConfig` and are persisted with the bundle.
 
 CI runs the lightweight suite without model downloads, builds a wheel, and exercises its CLI and BM25 implementation in isolated Python outside the checkout. The manually triggered real-model job additionally downloads the pinned models and checks inference, bundle reload, and MLflow parity.
+
+`metrics.reciprocal_rank(ranked, relevant, k=5)` returns the first relevant reciprocal rank, zero for no hit, and `None` for an unanswerable query. Duplicate ranking/relevance IDs are rejected.
