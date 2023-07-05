@@ -38,3 +38,8 @@ def test_reciprocal_rank_cutoff_and_unanswerable_semantics():
     assert reciprocal_rank(["a","b"],["b"],2)==.5
     assert reciprocal_rank(["a","b"],["b"],1)==0
     assert reciprocal_rank(["a"],[],1) is None
+
+def test_hit_rate_excludes_undefined_unanswerable_samples():
+    from retrieval_lab.metrics import hit_rate
+    assert hit_rate([(["a"],["a"]),(["a"],["b"]),(["a"],[])],1)=={"hit_rate":.5,"samples":2}
+    assert hit_rate([],1)=={"hit_rate":None,"samples":0}

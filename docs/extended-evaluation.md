@@ -37,3 +37,5 @@ The Python modules also expose Unicode retrieval tokenization, BM25 explanations
 CI runs the lightweight suite without model downloads, builds a wheel, and exercises its CLI and BM25 implementation in isolated Python outside the checkout. The manually triggered real-model job additionally downloads the pinned models and checks inference, bundle reload, and MLflow parity.
 
 `metrics.reciprocal_rank(ranked, relevant, k=5)` returns the first relevant reciprocal rank, zero for no hit, and `None` for an unanswerable query. Duplicate ranking/relevance IDs are rejected.
+
+`metrics.hit_rate([(ranked, relevant), ...], k=5)` reports the share of answerable examples with any retrieved evidence and the evaluated sample count. Unanswerable examples are excluded explicitly.

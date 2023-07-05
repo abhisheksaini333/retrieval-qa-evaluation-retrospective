@@ -64,6 +64,12 @@ def reciprocal_rank(ranked, relevant, k=5):
     return next((1 / rank for rank, identifier in enumerate(ranked, 1) if identifier in relevant), 0.0)
 
 
+def hit_rate(examples, k=5):
+    values = [reciprocal_rank(ranked, relevant, k) for ranked, relevant in examples]
+    defined = [value for value in values if value is not None]
+    return {"hit_rate": sum(value > 0 for value in defined) / len(defined) if defined else None, "samples": len(defined)}
+
+
 def mean_average_precision(examples, k=5):
     values = [average_precision(ranked, relevant, k) for ranked, relevant in examples]
     defined = [value for value in values if value is not None]
