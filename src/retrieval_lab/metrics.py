@@ -93,6 +93,16 @@ def risk_coverage_curve(rows):
     return {"points": points, "aurc": area, "integration": "right-step over attainable coverage"}
 
 
+def weighted_mean(values, weights):
+    values, weights = list(values), list(weights)
+    if not values or len(values) != len(weights) or any(type(v) not in (int, float) or not math.isfinite(v) for v in values) or any(type(w) not in (int, float) or not math.isfinite(w) or w < 0 for w in weights) or not any(weights):
+        raise ValueError("weighted mean requires finite values and nonnegative weights with positive total")
+    scale = max(weights)
+    normalized = [weight / scale for weight in weights]
+    total = math.fsum(normalized)
+    return math.fsum(value * (weight / total) for value, weight in zip(values, normalized))
+
+
 def bootstrap_mean(values, *, repetitions=1000, confidence=0.95, seed=0):
     import random
     from .core import percentile

@@ -43,3 +43,9 @@ def test_hit_rate_excludes_undefined_unanswerable_samples():
     from retrieval_lab.metrics import hit_rate
     assert hit_rate([(["a"],["a"]),(["a"],["b"]),(["a"],[])],1)=={"hit_rate":.5,"samples":2}
     assert hit_rate([],1)=={"hit_rate":None,"samples":0}
+
+def test_weighted_mean_validates_weights_and_preserves_scale():
+    from retrieval_lab.metrics import weighted_mean
+    assert weighted_mean([0,1],[1,3])==.75
+    for weights in ([0,0],[1,-1],[True,1],[1]):
+        with pytest.raises(ValueError):weighted_mean([0,1],weights)
