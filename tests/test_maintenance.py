@@ -49,3 +49,10 @@ def test_weighted_mean_validates_weights_and_preserves_scale():
     assert weighted_mean([0,1],[1,3])==.75
     for weights in ([0,0],[1,-1],[True,1],[1]):
         with pytest.raises(ValueError):weighted_mean([0,1],weights)
+
+def test_slice_labels_merge_normalized_equivalents():
+    from retrieval_lab.metrics import slice_metrics
+    from unittest.mock import patch
+    rows=[{"query_id":"q"}]
+    with patch("retrieval_lab.core._validate_rows"),patch("retrieval_lab.core.score_predictions",return_value=({"count":1},None)):
+        assert list(slice_metrics(rows,{"q":[" Café ","Cafe\u0301"]},.5))==["Café"]

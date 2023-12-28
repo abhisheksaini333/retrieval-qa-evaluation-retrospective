@@ -148,7 +148,8 @@ def slice_metrics(rows, annotations, threshold, **metric_options):
         labels = annotations.get(row["query_id"], [])
         if not isinstance(labels, (list, tuple)) or any(not isinstance(s, str) or not s.strip() for s in labels):
             raise ValueError("slice labels must be nonempty strings")
-        for label in set(labels):
+        import unicodedata
+        for label in {unicodedata.normalize("NFC", value.strip()) for value in labels}:
             groups.setdefault(label, []).append(row)
     return {label: score_predictions(group, threshold, **metric_options)[0]
             for label, group in sorted(groups.items())}
