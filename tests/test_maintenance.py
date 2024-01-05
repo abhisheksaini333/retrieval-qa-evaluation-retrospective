@@ -56,3 +56,8 @@ def test_slice_labels_merge_normalized_equivalents():
     rows=[{"query_id":"q"}]
     with patch("retrieval_lab.core._validate_rows"),patch("retrieval_lab.core.score_predictions",return_value=({"count":1},None)):
         assert list(slice_metrics(rows,{"q":[" Café ","Cafe\u0301"]},.5))==["Café"]
+
+def test_calibration_validation_handles_invalid_container_shapes():
+    from retrieval_lab.calibration import validate_calibration_artifact
+    for artifact in ([],{"schema_version":True},{"schema_version":1,"calibration":None}):
+        with pytest.raises(ValueError):validate_calibration_artifact(artifact)

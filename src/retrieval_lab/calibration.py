@@ -18,6 +18,7 @@ def bind_calibration(rows, dataset_fingerprint):
 
 
 def verify_binding(artifact, rows, dataset_fingerprint):
+    validate_calibration_artifact(artifact)
     if (artifact.get("schema_version") != 1 or artifact.get("dataset_fingerprint") != dataset_fingerprint
             or artifact.get("development_fingerprint") != development_fingerprint(rows)):
         raise ValueError("calibration development-data binding mismatch")
@@ -69,9 +70,11 @@ def save_calibration(path, artifact):
 
 def validate_calibration_artifact(artifact):
     import math
-    if not isinstance(artifact, dict) or artifact.get("schema_version") != 1:
+    if not isinstance(artifact, dict) or type(artifact.get("schema_version")) is not int or artifact["schema_version"] != 1:
         raise ValueError("unsupported calibration artifact schema")
     calibration = artifact.get("calibration", {})
+    if not isinstance(calibration, dict):
+        raise ValueError("calibration must be an object")
     threshold = calibration.get("threshold")
     if (calibration.get("split") != "dev" or type(threshold) not in (int, float)
             or not math.isfinite(threshold) or not 0 <= threshold <= 1.0000001):
