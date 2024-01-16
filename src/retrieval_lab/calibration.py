@@ -1,4 +1,5 @@
 """Development-only decision calibration and inspectable frozen artifacts."""
+import re
 from .core import _validate_rows, canonical_hash, calibrate_threshold, answer_scores, has_answer
 
 
@@ -10,7 +11,7 @@ def development_fingerprint(rows):
 
 
 def bind_calibration(rows, dataset_fingerprint):
-    if not isinstance(dataset_fingerprint, str) or not dataset_fingerprint:
+    if not isinstance(dataset_fingerprint, str) or not re.fullmatch(r"[a-f0-9]{64}", dataset_fingerprint):
         raise ValueError("dataset fingerprint required")
     return {"schema_version": 1, "dataset_fingerprint": dataset_fingerprint,
             "development_fingerprint": development_fingerprint(rows),
@@ -80,7 +81,7 @@ def validate_calibration_artifact(artifact):
             or not math.isfinite(threshold) or not 0 <= threshold <= 1.0000001):
         raise ValueError("invalid development threshold artifact")
     for field in ["dataset_fingerprint", "development_fingerprint"]:
-        if not isinstance(artifact.get(field), str) or not artifact[field]:
+        if not isinstance(artifact.get(field), str) or not re.fullmatch(r"[a-f0-9]{64}", artifact[field]):
             raise ValueError("calibration fingerprint required")
 
 

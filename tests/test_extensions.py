@@ -503,12 +503,12 @@ def test_calibration_dataset_binding():
     from retrieval_lab.calibration import bind_calibration, verify_binding
 
     rows = [metric_row(), metric_row(query_id="n", answers=[], relevant_ids=[], confidence=0.1)]
-    artifact = bind_calibration(rows, "dataset-a")
-    verify_binding(artifact, rows, "dataset-a")
+    artifact = bind_calibration(rows, "a" * 64)
+    verify_binding(artifact, rows, "a" * 64)
     with pytest.raises(ValueError):
-        verify_binding(artifact, rows, "dataset-b")
+        verify_binding(artifact, rows, "b" * 64)
     with pytest.raises(ValueError):
-        verify_binding(artifact, [{**rows[0], "query_id": "test"}, rows[1]], "dataset-a")
+        verify_binding(artifact, [{**rows[0], "query_id": "test"}, rows[1]], "a" * 64)
 
 
 def test_selective_risk_calibration():
@@ -550,7 +550,7 @@ def test_calibration_artifact_roundtrip(tmp_path):
     from retrieval_lab.calibration import bind_calibration, save_calibration, load_calibration
 
     rows = [metric_row(), metric_row(query_id="n", answers=[], relevant_ids=[], confidence=0.1)]
-    artifact = bind_calibration(rows, "data")
+    artifact = bind_calibration(rows, "a" * 64)
     path = tmp_path / "threshold.json"
     save_calibration(path, artifact)
     assert load_calibration(path) == artifact

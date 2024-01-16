@@ -61,3 +61,10 @@ def test_calibration_validation_handles_invalid_container_shapes():
     from retrieval_lab.calibration import validate_calibration_artifact
     for artifact in ([],{"schema_version":True},{"schema_version":1,"calibration":None}):
         with pytest.raises(ValueError):validate_calibration_artifact(artifact)
+
+def test_calibration_artifacts_require_content_hashes():
+    from retrieval_lab.calibration import validate_calibration_artifact
+    artifact={"schema_version":1,"calibration":{"split":"dev","threshold":.5},"dataset_fingerprint":"placeholder","development_fingerprint":"a"*64}
+    with pytest.raises(ValueError):validate_calibration_artifact(artifact)
+    artifact["dataset_fingerprint"]="b"*64
+    validate_calibration_artifact(artifact)

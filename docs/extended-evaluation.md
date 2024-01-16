@@ -41,3 +41,5 @@ CI runs the lightweight suite without model downloads, builds a wheel, and exerc
 `metrics.hit_rate([(ranked, relevant), ...], k=5)` reports the share of answerable examples with any retrieved evidence and the evaluated sample count. Unanswerable examples are excluded explicitly.
 
 `metrics.weighted_mean(values, weights)` supports explicit query weighting. Weights must be finite and nonnegative with positive total; values and weights must have equal cardinality. Report weighting choices alongside results.
+
+Calibration dataset and development fingerprints must be lowercase 64-character SHA-256 hex digests. Supply `dataset_manifest(path)["dataset_sha256"]`; placeholder names such as `dataset-a` are rejected.
