@@ -88,7 +88,8 @@ def validate_calibration_artifact(artifact):
 def load_calibration(path):
     import json
     from pathlib import Path
-    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    from .core import _unique_object, _reject_constant
+    payload = json.loads(Path(path).read_text(encoding="utf-8"), object_pairs_hook=_unique_object, parse_constant=_reject_constant)
     if not isinstance(payload, dict) or payload.get("sha256") != canonical_hash(payload.get("artifact")):
         raise ValueError("calibration checksum mismatch")
     validate_calibration_artifact(payload["artifact"])

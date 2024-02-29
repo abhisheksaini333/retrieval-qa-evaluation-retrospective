@@ -68,3 +68,11 @@ def test_calibration_artifacts_require_content_hashes():
     with pytest.raises(ValueError):validate_calibration_artifact(artifact)
     artifact["dataset_fingerprint"]="b"*64
     validate_calibration_artifact(artifact)
+
+def test_calibration_loader_rejects_duplicate_envelope_keys(tmp_path):
+    from retrieval_lab.calibration import load_calibration
+    from retrieval_lab.core import canonical_hash
+    artifact={"schema_version":1,"calibration":{"split":"dev","threshold":.5},"dataset_fingerprint":"a"*64,"development_fingerprint":"b"*64}
+    encoded=json.dumps({"artifact":artifact,"sha256":canonical_hash(artifact)})
+    path=tmp_path/"calibration.json";path.write_text(encoded[:-1]+',"sha256":'+json.dumps(canonical_hash(artifact))+'}')
+    with pytest.raises(ValueError,match="duplicate"):load_calibration(path)
