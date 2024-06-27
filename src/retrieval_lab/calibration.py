@@ -100,7 +100,7 @@ def cross_validate_calibration(rows, groups, *, folds=3, seed=0):
     import random
     from .core import score_predictions
     _validate_rows(rows)
-    if set(groups) != {r["query_id"] for r in rows} or any(not isinstance(g, str) for g in groups.values()):
+    if not isinstance(groups, dict) or set(groups) != {r["query_id"] for r in rows} or any(not isinstance(g, str) or not g.strip() or g != g.strip() for g in groups.values()):
         raise ValueError("calibration groups must cover every development query")
     keys = sorted(set(groups.values()))
     if type(folds) is not int or not 2 <= folds <= len(keys) or type(seed) is not int:

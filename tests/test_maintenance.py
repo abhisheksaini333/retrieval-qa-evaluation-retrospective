@@ -76,3 +76,8 @@ def test_calibration_loader_rejects_duplicate_envelope_keys(tmp_path):
     encoded=json.dumps({"artifact":artifact,"sha256":canonical_hash(artifact)})
     path=tmp_path/"calibration.json";path.write_text(encoded[:-1]+',"sha256":'+json.dumps(canonical_hash(artifact))+'}')
     with pytest.raises(ValueError,match="duplicate"):load_calibration(path)
+
+def test_grouped_calibration_rejects_blank_labels():
+    from retrieval_lab.calibration import cross_validate_calibration
+    rows=[{"query_id":q,"raw_answer":"Paris","confidence":.9,"answers":["Paris"],"ranked_ids":["d"],"relevant_ids":["d"],"retrieval_ms":1,"reader_ms":2,"total_ms":3} for q in ("a","b")]
+    with pytest.raises(ValueError,match="groups"):cross_validate_calibration(rows,{"a":" ","b":"b"},folds=2)
