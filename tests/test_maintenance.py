@@ -81,3 +81,10 @@ def test_grouped_calibration_rejects_blank_labels():
     from retrieval_lab.calibration import cross_validate_calibration
     rows=[{"query_id":q,"raw_answer":"Paris","confidence":.9,"answers":["Paris"],"ranked_ids":["d"],"relevant_ids":["d"],"retrieval_ms":1,"reader_ms":2,"total_ms":3} for q in ("a","b")]
     with pytest.raises(ValueError,match="groups"):cross_validate_calibration(rows,{"a":" ","b":"b"},folds=2)
+
+def test_grouped_split_requires_explicit_string_identities():
+    from retrieval_lab.datasets import grouped_split
+    for values in ([1,"1","b"],[" ","b"],[None,"b"]):
+        with pytest.raises(ValueError):grouped_split(values,lambda value:value)
+    left,right=grouped_split(["a","b"],lambda value:value)
+    assert set(left+right)=={"a","b"}

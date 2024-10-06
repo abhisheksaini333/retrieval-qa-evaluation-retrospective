@@ -43,3 +43,5 @@ CI runs the lightweight suite without model downloads, builds a wheel, and exerc
 `metrics.weighted_mean(values, weights)` supports explicit query weighting. Weights must be finite and nonnegative with positive total; values and weights must have equal cardinality. Report weighting choices alongside results.
 
 Calibration dataset and development fingerprints must be lowercase 64-character SHA-256 hex digests. Supply `dataset_manifest(path)["dataset_sha256"]`; placeholder names such as `dataset-a` are rejected.
+
+`datasets.grouped_split` requires explicit trimmed string group keys. Convert domain identifiers deliberately before calling; integers and strings are not silently merged by coercion. Existing string grouping remains deterministic for a fixed seed.

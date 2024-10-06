@@ -42,7 +42,10 @@ def grouped_split(items, group_key, test_fraction=0.25, *, seed=0):
         raise ValueError("test fraction must be between zero and one and seed an integer")
     groups = {}
     for item in items:
-        groups.setdefault(str(group_key(item)), []).append(item)
+        key = group_key(item)
+        if not isinstance(key, str) or not key.strip() or key != key.strip():
+            raise ValueError("group keys must be explicit nonempty trimmed strings")
+        groups.setdefault(key, []).append(item)
     keys = sorted(groups)
     if len(keys) < 2:
         raise ValueError("at least two groups required")
