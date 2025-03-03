@@ -88,3 +88,8 @@ def test_grouped_split_requires_explicit_string_identities():
         with pytest.raises(ValueError):grouped_split(values,lambda value:value)
     left,right=grouped_split(["a","b"],lambda value:value)
     assert set(left+right)=={"a","b"}
+
+def test_provenance_counts_reject_boolean_equivalence():
+    from retrieval_lab.datasets import validate_provenance
+    value={"kind":"synthetic","license":"MIT","permission":"original","counts":{"corpus":True}}
+    with pytest.raises(ValueError):validate_provenance(value,{"corpus":1})

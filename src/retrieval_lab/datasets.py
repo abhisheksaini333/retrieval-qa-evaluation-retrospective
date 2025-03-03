@@ -8,6 +8,8 @@ def validate_provenance(value, counts):
     for key in ["kind", "license", "permission"]:
         if not isinstance(value.get(key), str) or not value[key].strip():
             raise ValueError(f"provenance {key} is required")
+    if not isinstance(value.get("counts"), dict) or not isinstance(counts, dict) or any(not isinstance(key, str) or type(count) is not int or count < 0 for mapping in (value["counts"], counts) for key, count in mapping.items()):
+        raise ValueError("provenance counts must be nonnegative integers")
     if value.get("counts") != counts:
         raise ValueError("provenance counts do not match dataset")
 
