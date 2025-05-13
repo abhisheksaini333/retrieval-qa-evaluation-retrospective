@@ -93,3 +93,8 @@ def test_provenance_counts_reject_boolean_equivalence():
     from retrieval_lab.datasets import validate_provenance
     value={"kind":"synthetic","license":"MIT","permission":"original","counts":{"corpus":True}}
     with pytest.raises(ValueError):validate_provenance(value,{"corpus":1})
+
+def test_fusion_rejects_malformed_component_rankings():
+    from retrieval_lab.retrieval import reciprocal_rank_fusion
+    for ranking in ([[]],[(None,1)],[("",1)],[("a",float("nan"))]):
+        with pytest.raises(ValueError):reciprocal_rank_fusion([ranking])

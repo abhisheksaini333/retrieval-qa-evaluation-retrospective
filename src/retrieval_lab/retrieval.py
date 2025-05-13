@@ -38,6 +38,9 @@ def reciprocal_rank_fusion(rankings, *, weights=None, rank_constant=60, k=5):
         raise ValueError("invalid fusion configuration")
     scores = defaultdict(float)
     for ranking, weight in zip(rankings, weights):
+        for row in ranking:
+            if not isinstance(row, (tuple, list)) or len(row) != 2 or not isinstance(row[0], str) or not row[0].strip() or type(row[1]) not in (int, float) or not math.isfinite(row[1]):
+                raise ValueError("fusion components require nonempty IDs and finite score pairs")
         identifiers = [row[0] for row in ranking]
         if len(set(identifiers)) != len(identifiers):
             raise ValueError("duplicate IDs in fusion component")
