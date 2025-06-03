@@ -98,3 +98,8 @@ def test_fusion_rejects_malformed_component_rankings():
     from retrieval_lab.retrieval import reciprocal_rank_fusion
     for ranking in ([[]],[(None,1)],[("",1)],[("a",float("nan"))]):
         with pytest.raises(ValueError):reciprocal_rank_fusion([ranking])
+
+def test_fusion_rejects_overflowed_combined_scores():
+    from retrieval_lab.retrieval import reciprocal_rank_fusion
+    with pytest.raises(ValueError,match="finite"):
+        reciprocal_rank_fusion([[('a',1)],[('a',1)]],weights=[1e308,1e308],rank_constant=0)

@@ -47,6 +47,8 @@ def reciprocal_rank_fusion(rankings, *, weights=None, rank_constant=60, k=5):
         if weight:
             for rank, identifier in enumerate(identifiers, 1):
                 scores[identifier] += weight / (rank_constant + rank)
+    if any(not math.isfinite(score) for score in scores.values()):
+        raise ValueError("fused scores must remain finite")
     return stable_top_k(scores.items(), k)
 
 
