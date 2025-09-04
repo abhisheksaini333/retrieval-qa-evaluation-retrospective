@@ -103,3 +103,11 @@ def test_fusion_rejects_overflowed_combined_scores():
     from retrieval_lab.retrieval import reciprocal_rank_fusion
     with pytest.raises(ValueError,match="finite"):
         reciprocal_rank_fusion([[('a',1)],[('a',1)]],weights=[1e308,1e308],rank_constant=0)
+
+def test_fusion_materializes_weights_for_repeated_searches():
+    from retrieval_lab.retrieval import FusionRetriever
+    class Engine:
+        def search(self,question,k):return [("a",1)]
+    retriever=FusionRetriever([Engine()],weights=iter([1]))
+    assert retriever.search("q")==retriever.search("q")
+    with pytest.raises(ValueError):FusionRetriever([Engine()],weights=[-1])

@@ -54,7 +54,12 @@ def reciprocal_rank_fusion(rankings, *, weights=None, rank_constant=60, k=5):
 
 class FusionRetriever:
     def __init__(self, retrievers, weights=None, rank_constant=60):
-        self.retrievers, self.weights, self.rank_constant = list(retrievers), weights, rank_constant
+        self.retrievers = list(retrievers)
+        self.weights = None if weights is None else tuple(weights)
+        self.rank_constant = rank_constant
+        if not self.retrievers or any(not callable(getattr(engine, "search", None)) for engine in self.retrievers):
+            raise ValueError("fusion requires searchable retrievers")
+        reciprocal_rank_fusion([[] for _ in self.retrievers], weights=self.weights, rank_constant=rank_constant)
 
     def search(self, question, k=5):
         return reciprocal_rank_fusion([engine.search(question, k) for engine in self.retrievers],
