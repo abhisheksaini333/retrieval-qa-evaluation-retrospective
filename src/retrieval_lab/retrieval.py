@@ -76,10 +76,15 @@ def mmr_select(query, vectors, doc_ids, k=5, relevance_weight=0.5):
             or len(doc_ids) != len(matrix) or len(set(doc_ids)) != len(doc_ids)
             or not np.isfinite(matrix).all() or not np.isfinite(query).all()):
         raise ValueError("invalid MMR inputs")
-    norms = np.linalg.norm(matrix, axis=1)
-    if (norms == 0).any() or np.linalg.norm(query) == 0:
+    if not matrix.shape[1]:
+        raise ValueError("MMR requires nonempty vectors")
+    scales = np.max(np.abs(matrix), axis=1)
+    query_scale = np.max(np.abs(query))
+    if (scales == 0).any() or query_scale == 0:
         raise ValueError("MMR requires nonzero vectors")
-    matrix = matrix / norms[:, None]
+    matrix = matrix / scales[:, None]
+    matrix = matrix / np.linalg.norm(matrix, axis=1)[:, None]
+    query = query / query_scale
     relevance = matrix @ (query / np.linalg.norm(query))
     selected, remaining = [], set(range(len(matrix)))
     while remaining and len(selected) < k:
