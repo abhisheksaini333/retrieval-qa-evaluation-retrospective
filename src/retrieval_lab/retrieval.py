@@ -19,7 +19,7 @@ def validate_ranked(ranked, known_ids, k):
         if not isinstance(row, (tuple, list)) or len(row) != 2:
             raise ValueError("retriever results require ID/score pairs")
         identifier, score = row
-        if identifier not in known_ids or identifier in seen:
+        if not isinstance(identifier, str) or not identifier.strip() or identifier not in known_ids or identifier in seen:
             raise ValueError("retriever returned unknown or duplicate ID")
         if type(score) not in (int, float) or not math.isfinite(score):
             raise ValueError("retrieval score must be finite")
@@ -113,7 +113,9 @@ class CachedRetriever:
             raise ValueError("cached retriever requires a current fingerprint")
         key = (identity, question, k)
         if key not in self.cache:
-            self.cache[key] = tuple((identifier, score) for identifier, score in self.retriever.search(question, k))
+            rows = list(self.retriever.search(question, k))
+            known = [row[0] for row in rows if isinstance(row, (list, tuple)) and len(row) == 2]
+            self.cache[key] = tuple(tuple(row) for row in validate_ranked(rows, known, k))
             if len(self.cache) > self.capacity:
                 self.cache.popitem(last=False)
         self.cache.move_to_end(key)

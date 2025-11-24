@@ -118,3 +118,12 @@ def test_mmr_normalizes_extreme_finite_vectors_stably():
         result=mmr_select([scale,0],[[scale,0],[0,scale]],["a","b"],k=2)
         assert result[0]==("a",1.0)
         assert all(math.isfinite(score) for _,score in result)
+
+def test_cached_retriever_does_not_store_invalid_rankings():
+    from retrieval_lab.retrieval import CachedRetriever
+    class Engine:
+        fingerprint="a"
+        def search(self,question,k):return [("a",float("nan"))]
+    cached=CachedRetriever(Engine())
+    with pytest.raises(ValueError):cached.search("question")
+    assert not cached.cache
