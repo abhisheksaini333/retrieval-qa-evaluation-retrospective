@@ -135,4 +135,13 @@ def retrieve_batch(retriever, queries, k=5):
                 if hasattr(retriever, "search_batch") else [retriever.search(question, k) for _, question in queries])
     if len(rankings) != len(queries):
         raise ValueError("batch retriever changed query cardinality")
-    return [{"query_id": identifier, "ranked": ranked} for (identifier, _), ranked in zip(queries, rankings)]
+    output = []
+    for (identifier, _), ranked in zip(queries, rankings):
+        try:
+            rows = list(ranked)
+            known = [row[0] for row in rows if isinstance(row, (list, tuple)) and len(row) == 2]
+            validate_ranked(rows, known, k)
+        except (ValueError, TypeError) as error:
+            raise ValueError(f"invalid ranking for query {identifier}") from error
+        output.append({"query_id": identifier, "ranked": rows})
+    return output

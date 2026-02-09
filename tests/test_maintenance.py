@@ -127,3 +127,10 @@ def test_cached_retriever_does_not_store_invalid_rankings():
     cached=CachedRetriever(Engine())
     with pytest.raises(ValueError):cached.search("question")
     assert not cached.cache
+
+def test_batch_retrieval_rejects_invalid_per_query_rankings():
+    from retrieval_lab.retrieval import retrieve_batch
+    class Engine:
+        def search_batch(self,questions,k):return [[("a",float("inf"))] for _ in questions]
+    with pytest.raises(ValueError,match="query-a"):
+        retrieve_batch(Engine(),[("query-a","question")])
