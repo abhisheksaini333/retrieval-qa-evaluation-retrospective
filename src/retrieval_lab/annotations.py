@@ -15,8 +15,8 @@ def validate_span(text, answer, start, end):
 
 
 def answer_spans(text, answer):
-    if not isinstance(answer, str) or not answer:
-        raise ValueError("nonempty answer required")
+    if not isinstance(text, str) or not isinstance(answer, str) or not answer:
+        raise ValueError("source text and nonempty answer strings required")
     return [(match.start(), match.start() + len(answer))
             for match in re.finditer(f"(?={re.escape(answer)})", text)]
 

@@ -134,3 +134,8 @@ def test_batch_retrieval_rejects_invalid_per_query_rankings():
         def search_batch(self,questions,k):return [[("a",float("inf"))] for _ in questions]
     with pytest.raises(ValueError,match="query-a"):
         retrieve_batch(Engine(),[("query-a","question")])
+
+def test_answer_span_search_validates_source_text():
+    from retrieval_lab.annotations import answer_spans
+    with pytest.raises(ValueError):answer_spans(None,"x")
+    assert answer_spans("ééé","éé")==[(0,2),(1,3)]
