@@ -67,6 +67,13 @@ def aggregate_chunks(ranked, chunks, *, policy="max", k=5):
     from .retrieval import stable_top_k, validate_ranked
     if policy not in {"max", "sum"}:
         raise ValueError("chunk score policy must be max or sum")
+    from .core import validate_identifier
+    chunks = list(chunks)
+    for chunk in chunks:
+        if not isinstance(chunk, DocumentChunk) or type(chunk.start) is not int or type(chunk.end) is not int or not 0 <= chunk.start < chunk.end or chunk.end - chunk.start != len(chunk.document.text):
+            raise ValueError("invalid chunk provenance bounds")
+        validate_identifier(chunk.parent_id)
+        validate_identifier(chunk.document.doc_id)
     lookup = {chunk.document.doc_id: chunk for chunk in chunks}
     if len(lookup) != len(chunks):
         raise ValueError("duplicate chunk IDs")

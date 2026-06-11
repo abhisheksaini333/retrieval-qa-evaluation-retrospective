@@ -139,3 +139,9 @@ def test_answer_span_search_validates_source_text():
     from retrieval_lab.annotations import answer_spans
     with pytest.raises(ValueError):answer_spans(None,"x")
     assert answer_spans("ééé","éé")==[(0,2),(1,3)]
+
+def test_chunk_aggregation_rejects_invalid_provenance_offsets():
+    from retrieval_lab.annotations import DocumentChunk,aggregate_chunks
+    from retrieval_lab.core import Document
+    chunk=DocumentChunk(Document("chunk","Title","abc"),"parent",5,6)
+    with pytest.raises(ValueError,match="chunk"):aggregate_chunks([("chunk",1)],[chunk])
