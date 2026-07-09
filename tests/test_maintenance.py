@@ -145,3 +145,12 @@ def test_chunk_aggregation_rejects_invalid_provenance_offsets():
     from retrieval_lab.core import Document
     chunk=DocumentChunk(Document("chunk","Title","abc"),"parent",5,6)
     with pytest.raises(ValueError,match="chunk"):aggregate_chunks([("chunk",1)],[chunk])
+
+def test_bundle_import_rejects_special_files_before_extraction(tmp_path):
+    import stat,zipfile
+    from retrieval_lab.bundle_io import import_bundle
+    archive=tmp_path/"unsafe.zip"
+    item=zipfile.ZipInfo("fifo");item.create_system=3;item.external_attr=(stat.S_IFIFO|0o600)<<16
+    with zipfile.ZipFile(archive,"w") as stream:stream.writestr(item,"")
+    with pytest.raises(ValueError,match="unsafe"):import_bundle(archive,tmp_path/"out")
+    assert not (tmp_path/"out").exists()

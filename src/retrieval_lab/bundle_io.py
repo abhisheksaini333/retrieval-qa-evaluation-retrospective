@@ -224,10 +224,16 @@ def import_bundle(archive, destination, max_bytes=1024 * 1024 * 1024, max_files=
             parts = name.rstrip("/").split("/")
             if not name or name.startswith("/") or "\\" in name or ":" in name or any(p in {"", ".", ".."} for p in parts) or stat.S_ISLNK(member.external_attr >> 16) or name.rstrip("/") in names:
                 raise ValueError("unsafe archive member")
+            mode = stat.S_IFMT(member.external_attr >> 16)
+            if mode not in (0, stat.S_IFREG, stat.S_IFDIR) or member.flag_bits & 1 or (mode == stat.S_IFDIR and not member.is_dir()):
+                raise ValueError("unsafe archive member type or encryption")
             names.add(name.rstrip("/"))
             total += member.file_size
             if total > max_bytes:
                 raise ValueError("archive expanded size exceeds limit")
+        file_names = {member.filename for member in members if not member.is_dir()}
+        if any("/".join(name.split("/")[:index]) in file_names for name in names for index in range(1, len(name.split("/")))):
+            raise ValueError("unsafe archive file/directory collision")
         with atomic_directory(destination) as staging:
             for member in members:
                 target = staging / member.filename
