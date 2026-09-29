@@ -2,19 +2,16 @@
   {
     "url": "https://github.com/huggingface/sentence-transformers/releases/tag/v2.0.0",
     "release": "v2.0.0",
-    "published_at": "2021-06-24T16:16:11Z",
-    "checked_date": "2026-09-29"
+    "published_at": "2021-06-24T16:16:11Z"
   },
   {
     "url": "https://github.com/huggingface/transformers/releases/tag/v3.0.2",
     "release": "v3.0.2",
-    "published_at": "2020-07-06T22:54:07Z",
-    "checked_date": "2026-09-29"
+    "published_at": "2020-07-06T22:54:07Z"
   },
   {
     "url": "https://github.com/deepset-ai/haystack/releases/tag/v1.0.0",
     "release": "v1.0.0",
-    "published_at": "2021-12-08T08:05:22Z",
-    "checked_date": "2026-09-29"
+    "published_at": "2021-12-08T08:05:22Z"
   }
 ]

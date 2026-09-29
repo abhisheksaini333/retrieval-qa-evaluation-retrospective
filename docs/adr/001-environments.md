@@ -1,6 +1,6 @@
 # ADR 001: Isolate the main pipeline and Haystack 1.x
 
-Status: accepted. Date: 2026-09-29.
+Status: accepted.
 
 The main pipeline directly calls Transformers 4.44.2 and uses MLflow 2.17.2. The Haystack adapter uses farm-haystack 1.26.3, whose published dependency metadata requires Transformers 4.39.3. Keeping these in separate virtual environments avoids incompatible resolver requirements and makes each API surface inspectable.
 

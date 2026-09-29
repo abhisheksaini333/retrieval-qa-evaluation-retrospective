@@ -1,6 +1,6 @@
 # Sources and model attribution
 
-Checked on 2026-09-29. This project implements its own evaluation and persistence code; pretrained weights come from the model publishers.
+This project implements its own evaluation and persistence code; pretrained weights come from the model publishers.
 
 | Source | Used for |
 |---|---|

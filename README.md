@@ -51,7 +51,7 @@ The original corpus has 24 documents and 24 questions: 12 development and 12 hel
 
 ## Measured results
 
-The saved [benchmark](evidence/benchmark.json) ran on 2026-09-29 using an Apple M3 Pro, 18 GiB memory, two Torch CPU threads, and no GPU. Latencies are a single warm sequential pass over 12 held-out queries; download, startup, index build, and warmup are excluded. The host also ran other development processes, so these figures are descriptive rather than capacity estimates.
+The saved [benchmark](evidence/benchmark.json) ran using an Apple M3 Pro, 18 GiB memory, two Torch CPU threads, and no GPU. Latencies are a single warm sequential pass over 12 held-out queries; download, startup, index build, and warmup are excluded. The host also ran other development processes, so these figures are descriptive rather than capacity estimates.
 
 | Held-out metric | BM25 + reader | Dense + reader |
 |---|---:|---:|
