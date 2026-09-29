@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "question_count": 12,
+  "exact_prediction_parity": true,
+  "working_directory": "/tmp",
+  "isolated_python": true,
+  "network_mode": "HF_HUB_OFFLINE=1 and TRANSFORMERS_OFFLINE=1",
+  "packaged_code_loaded": true,
+  "model_uri": "runs:/0436146bb8fb44b5ac8c1fe93ba3fb9f/qa_model"
+}

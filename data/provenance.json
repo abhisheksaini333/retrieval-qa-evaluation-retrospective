@@ -1,0 +1,18 @@
+{
+  "created_date": "2026-09-29",
+  "kind": "original synthetic fictional internal knowledge-base documents and questions",
+  "license": "MIT",
+  "permission": "Created specifically for this public project; no employer, customer, private, or scraped documents.",
+  "authoring": "AI-assisted original material, reviewed by executable schema and answer-span checks.",
+  "counts": {
+    "documents": 24,
+    "development_queries": 12,
+    "held_out_queries": 12
+  },
+  "split_policy": "Distinct query IDs, normalized questions and answerable gold documents across dev/test. Test labels never used by calibration. Shared unlabeled retrieval corpus is intentional.",
+  "limits": [
+    "Small English-only synthetic corpus",
+    "No production or historical workload claim",
+    "Single split and descriptive metrics; no significance or generalization claim"
+  ]
+}

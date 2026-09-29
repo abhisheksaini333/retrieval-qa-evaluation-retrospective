@@ -1,0 +1,8 @@
+# Separate compatibility environment for Haystack 1.x APIs.
+farm-haystack[inference]==1.26.3
+sentence-transformers==2.7.0
+transformers==4.39.3
+torch==2.5.1
+numpy==1.26.3
+pydantic==1.10.21
+huggingface-hub==0.26.2

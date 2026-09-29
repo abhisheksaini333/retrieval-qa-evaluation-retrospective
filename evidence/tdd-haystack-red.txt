@@ -1,0 +1,16 @@
+E
+======================================================================
+ERROR: test_real_legacy_retriever_reader_experiment (test_runner.HaystackIntegrationTest.test_real_legacy_retriever_reader_experiment)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/abhishek/Documents/datavedam/retrieval-qa-evaluation-retrospective/experiments/haystack1/test_runner.py", line 9, in test_real_legacy_retriever_reader_experiment
+    report = evaluate(Path('.'), Path('evidence/haystack1.json'))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/abhishek/Documents/datavedam/retrieval-qa-evaluation-retrospective/experiments/haystack1/runner.py", line 2, in evaluate
+    raise NotImplementedError
+NotImplementedError
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

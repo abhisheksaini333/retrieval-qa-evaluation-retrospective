@@ -1,0 +1,12 @@
+{"query_id": "test-iris-retention", "question": "How long are visitor logs preserved in the Iris archive?", "relevant_ids": ["iris-retention"], "answers": ["ninety days"]}
+{"query_id": "test-juniper-returns", "question": "Who issues the code needed to return an opened Juniper monitor?", "relevant_ids": ["juniper-returns"], "answers": ["the service coordinator"]}
+{"query_id": "test-kelp-support", "question": "When does Kelp weekend support stop taking calls?", "relevant_ids": ["kelp-support"], "answers": ["two in the afternoon"]}
+{"query_id": "test-linden-dispatch", "question": "Where do Linden repair kits ship from?", "relevant_ids": ["linden-dispatch"], "answers": ["the Kochi depot"]}
+{"query_id": "test-maple-restore", "question": "Who checks row counts after restoring the Maple database?", "relevant_ids": ["maple-restore"], "answers": ["the reliability engineer"]}
+{"query_id": "test-nettle-expenses", "question": "Within how many days should a Nettle meal reimbursement claim be filed?", "relevant_ids": ["nettle-expenses"], "answers": ["thirty days"]}
+{"query_id": "test-olive-recovery", "question": "How long does an Olive account recovery link remain valid?", "relevant_ids": ["olive-recovery"], "answers": ["twenty minutes"]}
+{"query_id": "test-pine-storage", "question": "Where are Pine calibration weights kept?", "relevant_ids": ["pine-storage"], "answers": ["a dry cabinet on the second floor"]}
+{"query_id": "test-unanswerable-1", "question": "What is the Iris archive administrator phone number?", "relevant_ids": [], "answers": []}
+{"query_id": "test-unanswerable-2", "question": "How much does the Juniper monitor cost?", "relevant_ids": [], "answers": []}
+{"query_id": "test-unanswerable-3", "question": "Who is the chief executive of Nettle?", "relevant_ids": [], "answers": []}
+{"query_id": "test-unanswerable-4", "question": "What is the exact weight of a Pine calibration weight?", "relevant_ids": [], "answers": []}

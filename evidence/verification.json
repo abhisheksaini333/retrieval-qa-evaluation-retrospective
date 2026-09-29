@@ -1,0 +1,37 @@
+{
+  "verified_at": "2026-09-29T12:31:43.493375+00:00",
+  "main_tests": {
+    "passed": 22,
+    "warnings": 1,
+    "warning": "MLflow warns about nullable integer columns when inferring the one-row integration-test output signature; the full mixed-answer benchmark reload passed."
+  },
+  "unit_tests": {
+    "passed": 17,
+    "deselected_integration": 5
+  },
+  "haystack_integration": {
+    "passed": 1,
+    "report": "evidence/haystack1.json"
+  },
+  "ruff": "passed",
+  "local_document_links": "passed",
+  "shell_syntax": "passed",
+  "ci_yaml_structure": "passed",
+  "ci_hosted_execution": "not_run",
+  "linux_execution": "not_run",
+  "mlflow_exact_parity_queries": 12,
+  "model_download_bytes_approx": 382730240,
+  "artifacts_ignored": true,
+  "limits": [
+    "Small synthetic dataset",
+    "CPU latency descriptive; shared host",
+    "Haystack dependency lock tested on macOS ARM64"
+  ],
+  "source_sha256": {
+    "src/retrieval_lab/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/retrieval_lab/benchmark.py": "4403b2777744497acc5fdbe2d751004a8942aa3281d1201be99e0fbc3b2525fa",
+    "src/retrieval_lab/core.py": "752dc4c339c703113e2a251eaf2172a526d60abf6dbb8d4263e217f105f1034a",
+    "src/retrieval_lab/models.py": "f1a9793de59bbfc71adbb48220abf9f510af0151303465eb666410d35e39c824",
+    "src/retrieval_lab/tracking.py": "dd80833825438ee706132f93b8d93e595a027d384c6e7477b388ab135e1f3a92"
+  }
+}

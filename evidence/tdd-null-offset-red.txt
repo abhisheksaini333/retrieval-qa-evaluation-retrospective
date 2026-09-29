@@ -1,0 +1,17 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_mlflow_records_preserve_null_offsets_as_json_null ____________
+
+    def test_mlflow_records_preserve_null_offsets_as_json_null():
+        from retrieval_lab.tracking import json_records
+        import pandas as pd
+        frame = pd.DataFrame([{"answer": "years", "start": 2, "end": 7},
+                              {"answer": "", "start": None, "end": None}])
+        records = json_records(frame)
+>       assert records[1]["start"] is None
+E       assert nan is None
+
+tests/test_core.py:111: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_core.py::test_mlflow_records_preserve_null_offsets_as_json_null
+1 failed in 3.60s

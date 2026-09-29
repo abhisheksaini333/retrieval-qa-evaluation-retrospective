@@ -1,0 +1,298 @@
+FFFFFFFFFFFFFF                                                           [100%]
+=================================== FAILURES ===================================
+_________________ test_bm25_ranks_evidence_and_empty_retrieval _________________
+
+    def test_bm25_ranks_evidence_and_empty_retrieval():
+>       assert BM25(docs()).search("Aster retention records", 2)[0][0] == "d1"
+
+tests/test_core.py:18:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <retrieval_lab.core.BM25 object at 0x106b57450>
+question = 'Aster retention records', k = 2
+
+    def search(self, question, k):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:21: NotImplementedError
+__________________ test_retrieval_rejects_malformed_input[-2] __________________
+
+question = '', k = 2
+
+    @pytest.mark.parametrize("question,k", [("", 2), (None, 2), ("ok", 0), ("ok", -1)])
+    def test_retrieval_rejects_malformed_input(question, k):
+        with pytest.raises(ValueError):
+>           BM25(docs()).search(question, k)
+
+tests/test_core.py:26:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <retrieval_lab.core.BM25 object at 0x106b03890>, question = '', k = 2
+
+    def search(self, question, k):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:21: NotImplementedError
+________________ test_retrieval_rejects_malformed_input[None-2] ________________
+
+question = None, k = 2
+
+    @pytest.mark.parametrize("question,k", [("", 2), (None, 2), ("ok", 0), ("ok", -1)])
+    def test_retrieval_rejects_malformed_input(question, k):
+        with pytest.raises(ValueError):
+>           BM25(docs()).search(question, k)
+
+tests/test_core.py:26:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <retrieval_lab.core.BM25 object at 0x106bc57d0>, question = None, k = 2
+
+    def search(self, question, k):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:21: NotImplementedError
+_________________ test_retrieval_rejects_malformed_input[ok-0] _________________
+
+question = 'ok', k = 0
+
+    @pytest.mark.parametrize("question,k", [("", 2), (None, 2), ("ok", 0), ("ok", -1)])
+    def test_retrieval_rejects_malformed_input(question, k):
+        with pytest.raises(ValueError):
+>           BM25(docs()).search(question, k)
+
+tests/test_core.py:26:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <retrieval_lab.core.BM25 object at 0x106bcbb50>, question = 'ok', k = 0
+
+    def search(self, question, k):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:21: NotImplementedError
+________________ test_retrieval_rejects_malformed_input[ok--1] _________________
+
+question = 'ok', k = -1
+
+    @pytest.mark.parametrize("question,k", [("", 2), (None, 2), ("ok", 0), ("ok", -1)])
+    def test_retrieval_rejects_malformed_input(question, k):
+        with pytest.raises(ValueError):
+>           BM25(docs()).search(question, k)
+
+tests/test_core.py:26:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <retrieval_lab.core.BM25 object at 0x106b56850>, question = 'ok', k = -1
+
+    def search(self, question, k):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:21: NotImplementedError
+_______________________ test_duplicate_document_ids_fail _______________________
+
+tmp_path = PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_duplicate_document_ids_fa0')
+
+    def test_duplicate_document_ids_fail(tmp_path):
+        p = tmp_path / "corpus.jsonl"
+        p.write_text('\n'.join(json.dumps(vars(d)) for d in [docs()[0], docs()[0]]))
+        with pytest.raises(ValueError, match="duplicate"):
+>           load_corpus(p)
+
+tests/test_core.py:33:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_duplicate_document_ids_fa0/corpus.jsonl'),)
+kwargs = {}
+
+    def load_corpus(*args, **kwargs):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:30: NotImplementedError
+____________________ test_malformed_corpus_fails[not json] _____________________
+
+tmp_path = PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_malformed_corpus_fails_no0')
+payload = 'not json'
+
+    @pytest.mark.parametrize("payload", ['not json', '{"doc_id":"a","title":"ok","text":3}',
+                                           '{"doc_id":"a","title":"ok","text":""}'])
+    def test_malformed_corpus_fails(tmp_path, payload):
+        p = tmp_path / "corpus.jsonl"
+        p.write_text(payload)
+        with pytest.raises(ValueError):
+>           load_corpus(p)
+
+tests/test_core.py:42:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_malformed_corpus_fails_no0/corpus.jsonl'),)
+kwargs = {}
+
+    def load_corpus(*args, **kwargs):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:30: NotImplementedError
+______ test_malformed_corpus_fails[{"doc_id":"a","title":"ok","text":3}] _______
+
+tmp_path = PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_malformed_corpus_fails___0')
+payload = '{"doc_id":"a","title":"ok","text":3}'
+
+    @pytest.mark.parametrize("payload", ['not json', '{"doc_id":"a","title":"ok","text":3}',
+                                           '{"doc_id":"a","title":"ok","text":""}'])
+    def test_malformed_corpus_fails(tmp_path, payload):
+        p = tmp_path / "corpus.jsonl"
+        p.write_text(payload)
+        with pytest.raises(ValueError):
+>           load_corpus(p)
+
+tests/test_core.py:42:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_malformed_corpus_fails___0/corpus.jsonl'),)
+kwargs = {}
+
+    def load_corpus(*args, **kwargs):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:30: NotImplementedError
+______ test_malformed_corpus_fails[{"doc_id":"a","title":"ok","text":""}] ______
+
+tmp_path = PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_malformed_corpus_fails___1')
+payload = '{"doc_id":"a","title":"ok","text":""}'
+
+    @pytest.mark.parametrize("payload", ['not json', '{"doc_id":"a","title":"ok","text":3}',
+                                           '{"doc_id":"a","title":"ok","text":""}'])
+    def test_malformed_corpus_fails(tmp_path, payload):
+        p = tmp_path / "corpus.jsonl"
+        p.write_text(payload)
+        with pytest.raises(ValueError):
+>           load_corpus(p)
+
+tests/test_core.py:42:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_malformed_corpus_fails___1/corpus.jsonl'),)
+kwargs = {}
+
+    def load_corpus(*args, **kwargs):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:30: NotImplementedError
+___________ test_query_requires_existing_evidence_and_literal_answer ___________
+
+tmp_path = PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_query_requires_existing_e0')
+
+    def test_query_requires_existing_evidence_and_literal_answer(tmp_path):
+        p = tmp_path / "q.jsonl"
+        base = dict(query_id="q1", question="How long?", relevant_ids=["d1"], answers=["twenty years"])
+        p.write_text(json.dumps(base))
+        with pytest.raises(ValueError, match="answer"):
+>           load_queries(p, docs())
+
+tests/test_core.py:50:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-2998/test_query_require...for seven years.'), Document(doc_id='d2', title='Cedar archive', text='Cedar records are retained for three months.')])
+kwargs = {}
+
+    def load_queries(*args, **kwargs):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:33: NotImplementedError
+___________ test_splits_reject_same_question_even_with_different_ids ___________
+
+    def test_splits_reject_same_question_even_with_different_ids():
+        a = Query("one", "How long?", ("d1",), ("seven years",))
+        b = Query("two", "how LONG?", ("d1",), ("seven years",))
+        with pytest.raises(ValueError, match="overlap"):
+>           validate_splits([a], [b])
+
+tests/test_core.py:61:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = ([Query(query_id='one', question='How long?', relevant_ids=('d1',), answers=('seven years',))], [Query(query_id='two', question='how LONG?', relevant_ids=('d1',), answers=('seven years',))])
+kwargs = {}
+
+    def validate_splits(*args, **kwargs):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:42: NotImplementedError
+__________________ test_index_checks_order_corpus_and_encoder __________________
+
+    def test_index_checks_order_corpus_and_encoder():
+>       manifest = {"corpus_sha256": corpus_hash(docs()), "doc_ids": ["d1", "d2"],
+                    "encoder_fingerprint": "abc"}
+
+tests/test_core.py:65:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = ([Document(doc_id='d1', title='Aster archive', text='Aster records are retained for seven years.'), Document(doc_id='d2', title='Cedar archive', text='Cedar records are retained for three months.')],)
+kwargs = {}
+
+    def corpus_hash(*args, **kwargs):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:27: NotImplementedError
+__________ test_metric_denominators_partial_f1_and_error_attribution ___________
+
+    def test_metric_denominators_partial_f1_and_error_attribution():
+        rows = [row("a", "seven", ["seven years"], ["d1"], ["d1"]),
+                row("b", "wrong", ["red"], ["d2"], ["d3"]),
+                row("c", "noise", [], ["d2"], [], 0.1)]
+>       metrics, scored = score_predictions(rows, 0.5, reader_k=1)
+
+tests/test_core.py:83:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = ([{'answers': ['seven years'], 'confidence': 0.9, 'query_id': 'a', 'ranked_ids': ['d1'], ...}, {'answers': ['red'], 'c... 'b', 'ranked_ids': ['d2'], ...}, {'answers': [], 'confidence': 0.1, 'query_id': 'c', 'ranked_ids': ['d2'], ...}], 0.5)
+kwargs = {'reader_k': 1}
+
+    def score_predictions(*args, **kwargs):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:36: NotImplementedError
+___ test_threshold_calibrates_only_development_and_favors_abstention_on_ties ___
+
+    def test_threshold_calibrates_only_development_and_favors_abstention_on_ties():
+        rows = [row("a", "yes", ["yes"], ["d1"], ["d1"], 0.8),
+                row("b", "noisy", [], ["d1"], [], 0.3)]
+>       result = calibrate_threshold(rows, split="dev")
+
+tests/test_core.py:95:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = ([{'answers': ['yes'], 'confidence': 0.8, 'query_id': 'a', 'ranked_ids': ['d1'], ...}, {'answers': [], 'confidence': 0.3, 'query_id': 'b', 'ranked_ids': ['d1'], ...}],)
+kwargs = {'split': 'dev'}
+
+    def calibrate_threshold(*args, **kwargs):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/core.py:24: NotImplementedError
+=========================== short test summary info ============================
+FAILED tests/test_core.py::test_bm25_ranks_evidence_and_empty_retrieval - Not...
+FAILED tests/test_core.py::test_retrieval_rejects_malformed_input[-2] - NotIm...
+FAILED tests/test_core.py::test_retrieval_rejects_malformed_input[None-2] - N...
+FAILED tests/test_core.py::test_retrieval_rejects_malformed_input[ok-0] - Not...
+FAILED tests/test_core.py::test_retrieval_rejects_malformed_input[ok--1] - No...
+FAILED tests/test_core.py::test_duplicate_document_ids_fail - NotImplementedE...
+FAILED tests/test_core.py::test_malformed_corpus_fails[not json] - NotImpleme...
+FAILED tests/test_core.py::test_malformed_corpus_fails[{"doc_id":"a","title":"ok","text":3}]
+FAILED tests/test_core.py::test_malformed_corpus_fails[{"doc_id":"a","title":"ok","text":""}]
+FAILED tests/test_core.py::test_query_requires_existing_evidence_and_literal_answer
+FAILED tests/test_core.py::test_splits_reject_same_question_even_with_different_ids
+FAILED tests/test_core.py::test_index_checks_order_corpus_and_encoder - NotIm...
+FAILED tests/test_core.py::test_metric_denominators_partial_f1_and_error_attribution
+FAILED tests/test_core.py::test_threshold_calibrates_only_development_and_favors_abstention_on_ties
+14 failed in 0.06s

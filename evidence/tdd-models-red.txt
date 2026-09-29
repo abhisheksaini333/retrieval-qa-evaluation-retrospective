@@ -1,0 +1,109 @@
+EEEFE                                                                    [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_real_dense_encoder_distinguishes_semantics_and_empty_index _
+
+    @pytest.fixture(scope="module")
+    def real_models():
+        if os.environ.get("RUN_MODEL_TESTS") != "1":
+            pytest.skip("set RUN_MODEL_TESTS=1 after downloading real pinned models")
+        path = Path("artifacts/models")
+>       return Encoder(path / "encoder"), Reader(path / "reader")
+
+tests/test_models.py:20:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <retrieval_lab.models.Encoder object at 0x103a1b8d0>
+path = PosixPath('artifacts/models/encoder')
+
+    def __init__(self, path):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/models.py:3: NotImplementedError
+______ ERROR at setup of test_bundle_save_reload_and_corruption_detection ______
+
+    @pytest.fixture(scope="module")
+    def real_models():
+        if os.environ.get("RUN_MODEL_TESTS") != "1":
+            pytest.skip("set RUN_MODEL_TESTS=1 after downloading real pinned models")
+        path = Path("artifacts/models")
+>       return Encoder(path / "encoder"), Reader(path / "reader")
+
+tests/test_models.py:20:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <retrieval_lab.models.Encoder object at 0x103a1b8d0>
+path = PosixPath('artifacts/models/encoder')
+
+    def __init__(self, path):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/models.py:3: NotImplementedError
+______________ ERROR at setup of test_malformed_predict_rejected _______________
+
+    @pytest.fixture(scope="module")
+    def real_models():
+        if os.environ.get("RUN_MODEL_TESTS") != "1":
+            pytest.skip("set RUN_MODEL_TESTS=1 after downloading real pinned models")
+        path = Path("artifacts/models")
+>       return Encoder(path / "encoder"), Reader(path / "reader")
+
+tests/test_models.py:20:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <retrieval_lab.models.Encoder object at 0x103a1b8d0>
+path = PosixPath('artifacts/models/encoder')
+
+    def __init__(self, path):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/models.py:3: NotImplementedError
+_________________ ERROR at setup of test_real_mlflow_roundtrip _________________
+
+    @pytest.fixture(scope="module")
+    def real_models():
+        if os.environ.get("RUN_MODEL_TESTS") != "1":
+            pytest.skip("set RUN_MODEL_TESTS=1 after downloading real pinned models")
+        path = Path("artifacts/models")
+>       return Encoder(path / "encoder"), Reader(path / "reader")
+
+tests/test_models.py:20:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <retrieval_lab.models.Encoder object at 0x103a1b8d0>
+path = PosixPath('artifacts/models/encoder')
+
+    def __init__(self, path):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/models.py:3: NotImplementedError
+=================================== FAILURES ===================================
+____________________ test_fingerprint_detects_weight_bytes _____________________
+
+tmp_path = PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-3003/test_fingerprint_detects_weigh0')
+
+    def test_fingerprint_detects_weight_bytes(tmp_path):
+        p = tmp_path / "model.safetensors"
+        p.write_bytes(b"before")
+>       before = directory_fingerprint(tmp_path)
+
+tests/test_models.py:67:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = PosixPath('/private/var/folders/0g/fz2gvdjx7zj1szl8fp0902s80000gn/T/pytest-of-abhishek/pytest-3003/test_fingerprint_detects_weigh0')
+
+    def directory_fingerprint(path):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/models.py:12: NotImplementedError
+=========================== short test summary info ============================
+FAILED tests/test_models.py::test_fingerprint_detects_weight_bytes - NotImple...
+ERROR tests/test_models.py::test_real_dense_encoder_distinguishes_semantics_and_empty_index
+ERROR tests/test_models.py::test_bundle_save_reload_and_corruption_detection
+ERROR tests/test_models.py::test_malformed_predict_rejected - NotImplementedE...
+ERROR tests/test_models.py::test_real_mlflow_roundtrip - NotImplementedError
+1 failed, 4 errors in 1.68s

@@ -1,0 +1,12 @@
+{"query_id": "dev-aster-retention", "question": "How long does the Aster archive keep purchase receipts?", "relevant_ids": ["aster-retention"], "answers": ["seven years"]}
+{"query_id": "dev-birch-returns", "question": "What is the return window for an unused Birch keyboard?", "relevant_ids": ["birch-returns"], "answers": ["fourteen days"]}
+{"query_id": "dev-cedar-support", "question": "At what time does the Cedar support desk close?", "relevant_ids": ["cedar-support"], "answers": ["five in the afternoon"]}
+{"query_id": "dev-dahlia-shipping", "question": "From which warehouse are Dahlia replacement sensors sent?", "relevant_ids": ["dahlia-shipping"], "answers": ["Pune warehouse"]}
+{"query_id": "dev-elm-backup", "question": "When does the Elm database take a full backup?", "relevant_ids": ["elm-backup"], "answers": ["every Sunday"]}
+{"query_id": "dev-fern-approval", "question": "Who approves Fern travel expenses above five thousand rupees?", "relevant_ids": ["fern-approval"], "answers": ["the finance manager"]}
+{"query_id": "dev-ginkgo-recovery", "question": "What identifier is required for a Ginkgo account recovery request?", "relevant_ids": ["ginkgo-recovery"], "answers": ["employee badge number"]}
+{"query_id": "dev-hazel-storage", "question": "What is the storage temperature range for Hazel test cartridges?", "relevant_ids": ["hazel-storage"], "answers": ["between two and eight degrees Celsius"]}
+{"query_id": "dev-unanswerable-1", "question": "What is the Aster archive encryption password?", "relevant_ids": [], "answers": []}
+{"query_id": "dev-unanswerable-2", "question": "How much is the Birch keyboard shipping fee?", "relevant_ids": [], "answers": []}
+{"query_id": "dev-unanswerable-3", "question": "Who founded the Ginkgo company?", "relevant_ids": [], "answers": []}
+{"query_id": "dev-unanswerable-4", "question": "Which city manufactures Hazel cartridges?", "relevant_ids": [], "answers": []}

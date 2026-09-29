@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools==75.3.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "retrieval-qa-evaluation-retrospective"
+version = "0.1.0"
+description = "BM25 and dense retrieval QA evaluation with calibrated abstention and MLflow"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "numpy==1.26.4",
+  "torch==2.5.1",
+  "transformers==4.44.2",
+  "huggingface-hub==0.26.2",
+  "mlflow==2.17.2",
+  "pandas==2.2.3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.3.3", "ruff==0.7.3"]
+
+[project.scripts]
+retrieval-eval = "retrieval_lab.benchmark:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: real model and MLflow tests; requires model download"]
+
+[tool.ruff]
+line-length = 110
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

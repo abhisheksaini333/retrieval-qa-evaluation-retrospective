@@ -1,0 +1,2289 @@
+{
+  "schema_version": 1,
+  "run_utc": "2026-09-29T12:29:50.536334+00:00",
+  "data_audit": {
+    "document_count": 24,
+    "dev_count": 12,
+    "test_count": 12,
+    "corpus_sha256": "38f6a9892484cfc1d1605e6736ffeceaa1a3891cbfc037dc451a74afdf24c820",
+    "gold_doc_overlap": []
+  },
+  "hardware": {
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "python": "3.11.14",
+    "cpu_count": 11,
+    "device": "cpu",
+    "torch_threads": 2,
+    "gpu_used": false,
+    "cpu_model": "Apple M3 Pro",
+    "memory_bytes": "19327352832"
+  },
+  "build_seconds_excluding_download": 0.9984983750618994,
+  "latency_protocol": {
+    "warmup_queries_per_retriever": 1,
+    "measurement": "one sequential pass",
+    "queries_per_split": 12,
+    "reader_k": 3,
+    "retrieval_k": 5,
+    "includes_query_encoding_and_reader": true,
+    "excludes_download_load_index_warmup": true,
+    "percentile_method": "linear interpolation",
+    "limits": "12 samples per split; descriptive CPU measurements, no throughput claim"
+  },
+  "data_file_sha256": {
+    "corpus.jsonl": "016f6c64c1d24607c8879b1f88f37d42d421d4aae20a761aa1050953422faca7",
+    "dev.jsonl": "b9a1ec6bb40cc0d2329e2aa3fad1b43c175268e8e213fa85a3a5af26b9704b12",
+    "test.jsonl": "5c7d7b686e3f47b26ab921107ea5e966a17c7987847bef97c45e52c2a13c5ec5"
+  },
+  "models": {
+    "encoder": {
+      "files": {
+        "1_Pooling/config.json": "4be450dde3b0273bb9787637cfbd28fe04a7ba6ab9d36ac48e92b11e350ffc23",
+        "config.json": "aed58fca2ba858ac31c042053f99deff1717ca0e7430335d316d58b2d13a046b",
+        "config_sentence_transformers.json": "b8c64b5cece00d8424b4896ea75b512b6008576088497609dfeb6bd63e6d36b8",
+        "model.safetensors": "2ce4480dc3b2f8edeee50c43765c72768e79fc0113d3f73773dded4887cca298",
+        "modules.json": "8f4b264b80206c830bebbdcae377e137925650a433b689343a63bdc9b3145460",
+        "sentence_bert_config.json": "70f4448f31320443fe3557cacea5abf2dcc4915dda8c80646bec9f3bb0aa5a1f",
+        "special_tokens_map.json": "303df45a03609e4ead04bc3dc1536d0ab19b5358db685b6f3da123d05ec200e3",
+        "tokenizer.json": "5fd1c882abbd30517dced455a2c9768945ec726b96727927e4959348d9de550b",
+        "tokenizer_config.json": "65f933db3e0493bcde9a4e1b8fd5ee13f18d2f8ac62db911a1be51b7fd64ffb0",
+        "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+      },
+      "fingerprint": "eede01fa185df340090cfcb7e3109608a9d0504ef79eb2170dcaf0b7f29d1949"
+    },
+    "reader": {
+      "files": {
+        "config.json": "0b5cb15ec08645604ef7085acfaf9c4131158ac22207a76634574cf2771b1515",
+        "model.safetensors": "f198de8ef6e40aeccd6eaa86e34dde73c3bb4bf0e54003cd182a18c29a1811db",
+        "tokenizer.json": "a17c4dbf7a87e1789a01d3e17ad6cb6dd716c883d0e82fcd11eb525ece122e3e",
+        "tokenizer_config.json": "0f6d13e6f4da6f9e24f22ada6bc3be571123d858d7c0c05a8a7cd55a9c23c2e8",
+        "vocab.txt": "eeaa9875b23b04b4c54ef759d03db9d1ba1554838f8fb26c5d96fa551df93d02"
+      },
+      "fingerprint": "32077dcda2d7720fa7ed408c81386bdb8baf8b3523bf0442862430770709920e"
+    }
+  },
+  "dependencies": {
+    "Flask": "3.1.3",
+    "scikit-learn": "1.9.1",
+    "tokenizers": "0.19.1",
+    "opentelemetry-api": "1.45.0",
+    "pandas": "2.2.3",
+    "cloudpickle": "3.1.2",
+    "kiwisolver": "1.5.1",
+    "ruff": "0.7.3",
+    "click": "8.5.0",
+    "joblib": "1.6.0",
+    "iniconfig": "2.3.0",
+    "charset-normalizer": "3.5.1",
+    "GitPython": "3.1.62",
+    "pytest": "8.3.3",
+    "mlflow-skinny": "2.17.2",
+    "google-auth": "2.59.0",
+    "tzdata": "2026.4",
+    "requests": "2.34.2",
+    "importlib_metadata": "8.9.0",
+    "graphene": "3.4.3",
+    "networkx": "3.6.1",
+    "blinker": "1.9.0",
+    "contourpy": "1.3.3",
+    "opentelemetry-sdk": "1.45.0",
+    "filelock": "4.0.6",
+    "transformers": "4.44.2",
+    "itsdangerous": "2.2.0",
+    "huggingface-hub": "0.26.2",
+    "fonttools": "4.66.0",
+    "numpy": "1.26.4",
+    "sqlparse": "0.6.0",
+    "pytz": "2026.4",
+    "alembic": "1.20.0",
+    "safetensors": "0.8.0",
+    "protobuf": "5.29.6",
+    "Markdown": "3.11",
+    "tqdm": "4.70.1",
+    "urllib3": "2.8.0",
+    "pyarrow": "17.0.0",
+    "graphql-relay": "3.2.0",
+    "graphql-core": "3.2.13",
+    "gitdb": "4.0.12",
+    "smmap": "5.0.3",
+    "pycparser": "3.0",
+    "pyasn1": "0.6.4",
+    "python-dateutil": "2.9.0.post0",
+    "mpmath": "1.3.0",
+    "PyYAML": "6.0.3",
+    "torch": "2.5.1",
+    "gunicorn": "23.0.0",
+    "retrieval-qa-evaluation-retrospective": "0.1.0",
+    "fsspec": "2026.9.0",
+    "packaging": "24.2",
+    "matplotlib": "3.11.2",
+    "cffi": "2.1.1",
+    "Mako": "1.4.3",
+    "certifi": "2026.7.22",
+    "SQLAlchemy": "2.1.1",
+    "zipp": "4.1.0",
+    "scipy": "1.17.1",
+    "docker": "7.2.0",
+    "cycler": "0.12.1",
+    "Jinja2": "3.1.6",
+    "regex": "2026.9.29",
+    "MarkupSafe": "3.0.3",
+    "threadpoolctl": "3.7.0",
+    "cryptography": "50.0.1",
+    "pluggy": "1.6.0",
+    "databricks-sdk": "0.143.0",
+    "sympy": "1.13.1",
+    "typing_extensions": "4.16.0",
+    "pyasn1_modules": "0.4.2",
+    "pillow": "12.3.0",
+    "mlflow": "2.17.2",
+    "pyparsing": "3.3.3",
+    "cachetools": "5.5.2",
+    "six": "1.17.0",
+    "opentelemetry-semantic-conventions": "0.66b0",
+    "narwhals": "2.26.0",
+    "idna": "3.20",
+    "Werkzeug": "3.1.9"
+  },
+  "experiments": {
+    "bm25": {
+      "calibration": {
+        "split": "dev",
+        "threshold": 0.5624479651451111,
+        "objective": "balanced_answerability_accuracy",
+        "objective_value": 0.75,
+        "tie_break": "higher_threshold",
+        "query_ids": [
+          "dev-aster-retention",
+          "dev-birch-returns",
+          "dev-cedar-support",
+          "dev-dahlia-shipping",
+          "dev-elm-backup",
+          "dev-fern-approval",
+          "dev-ginkgo-recovery",
+          "dev-hazel-storage",
+          "dev-unanswerable-1",
+          "dev-unanswerable-2",
+          "dev-unanswerable-3",
+          "dev-unanswerable-4"
+        ],
+        "curve": [
+          {
+            "threshold": 0.0,
+            "balanced_accuracy": 0.5
+          },
+          {
+            "threshold": 0.18393196165561676,
+            "balanced_accuracy": 0.5
+          },
+          {
+            "threshold": 0.42417868971824646,
+            "balanced_accuracy": 0.625
+          },
+          {
+            "threshold": 0.5624479651451111,
+            "balanced_accuracy": 0.75
+          },
+          {
+            "threshold": 0.6029759049415588,
+            "balanced_accuracy": 0.6875
+          },
+          {
+            "threshold": 0.6971400380134583,
+            "balanced_accuracy": 0.625
+          },
+          {
+            "threshold": 0.7530971169471741,
+            "balanced_accuracy": 0.5625
+          },
+          {
+            "threshold": 0.7648114562034607,
+            "balanced_accuracy": 0.5
+          },
+          {
+            "threshold": 0.7793825268745422,
+            "balanced_accuracy": 0.4375
+          },
+          {
+            "threshold": 0.7857075333595276,
+            "balanced_accuracy": 0.5625
+          },
+          {
+            "threshold": 0.8665183782577515,
+            "balanced_accuracy": 0.6875
+          },
+          {
+            "threshold": 0.9458144307136536,
+            "balanced_accuracy": 0.625
+          },
+          {
+            "threshold": 0.9674518704414368,
+            "balanced_accuracy": 0.5625
+          },
+          {
+            "threshold": 1.0000001,
+            "balanced_accuracy": 0.5
+          }
+        ]
+      },
+      "dev": {
+        "metrics": {
+          "query_count": 12,
+          "answerable_count": 8,
+          "answer_em": 0.4166666666666667,
+          "answer_f1": 0.4166666666666667,
+          "coverage": 0.8333333333333334,
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr_at_5": 1.0,
+          "selective_em": 0.3,
+          "latency_retrieval_p50_ms": 0.09858340490609407,
+          "latency_retrieval_p95_ms": 0.1191688934341073,
+          "latency_reader_p50_ms": 46.24499997589737,
+          "latency_reader_p95_ms": 52.29851026087999,
+          "latency_total_p50_ms": 46.35477054398507,
+          "latency_total_p95_ms": 52.417883346788585,
+          "count_correct": 3,
+          "count_reader_failure": 5,
+          "count_retrieval_miss": 0,
+          "count_false_abstention": 0,
+          "count_correct_abstention": 2,
+          "count_unanswerable_false_positive": 2
+        },
+        "predictions": [
+          {
+            "query_id": "dev-aster-retention",
+            "question": "How long does the Aster archive keep purchase receipts?",
+            "answers": [
+              "seven years"
+            ],
+            "relevant_ids": [
+              "aster-retention"
+            ],
+            "raw_answer": "ninety days",
+            "confidence": 0.9674518704414368,
+            "document_id": "iris-retention",
+            "start": 42,
+            "end": 53,
+            "ranked_ids": [
+              "aster-retention",
+              "aster-guests",
+              "iris-retention",
+              "iris-receipts",
+              "birch-monitors"
+            ],
+            "ranked_scores": [
+              9.248220915293311,
+              9.005822399857603,
+              6.280993747329548,
+              6.1760182480573835,
+              2.240132095032827
+            ],
+            "retrieval_ms": 0.11825002729892731,
+            "reader_ms": 53.40779200196266,
+            "total_ms": 53.52604202926159,
+            "answer": "ninety days",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "dev-birch-returns",
+            "question": "What is the return window for an unused Birch keyboard?",
+            "answers": [
+              "fourteen days"
+            ],
+            "relevant_ids": [
+              "birch-returns"
+            ],
+            "raw_answer": "prepaid",
+            "confidence": 0.6971400380134583,
+            "document_id": "birch-returns",
+            "start": 110,
+            "end": 117,
+            "ranked_ids": [
+              "birch-returns",
+              "birch-monitors",
+              "juniper-returns",
+              "iris-retention",
+              "iris-receipts"
+            ],
+            "ranked_scores": [
+              15.083870662245388,
+              11.749172268938452,
+              6.468366826885131,
+              1.809005923175726,
+              1.779895217077562
+            ],
+            "retrieval_ms": 0.12029195204377174,
+            "reader_ms": 51.39091610908508,
+            "total_ms": 51.511208061128855,
+            "answer": "prepaid",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "dev-cedar-support",
+            "question": "At what time does the Cedar support desk close?",
+            "answers": [
+              "five in the afternoon"
+            ],
+            "relevant_ids": [
+              "cedar-support"
+            ],
+            "raw_answer": "thirty days",
+            "confidence": 0.9458144307136536,
+            "document_id": "aster-guests",
+            "start": 48,
+            "end": 59,
+            "ranked_ids": [
+              "cedar-support",
+              "aster-guests",
+              "kelp-support",
+              "olive-recovery",
+              "fern-approval"
+            ],
+            "ranked_scores": [
+              11.853214191647446,
+              3.746494285945236,
+              3.4058413448639278,
+              2.73088160258094,
+              2.3227878003115654
+            ],
+            "retrieval_ms": 0.10420801118016243,
+            "reader_ms": 46.436167089268565,
+            "total_ms": 46.54037510044873,
+            "answer": "thirty days",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "dev-dahlia-shipping",
+            "question": "From which warehouse are Dahlia replacement sensors sent?",
+            "answers": [
+              "Pune warehouse"
+            ],
+            "relevant_ids": [
+              "dahlia-shipping"
+            ],
+            "raw_answer": "Chennai",
+            "confidence": 0.6029759049415588,
+            "document_id": "linden-packaging",
+            "start": 47,
+            "end": 54,
+            "ranked_ids": [
+              "dahlia-shipping",
+              "linden-packaging",
+              "linden-dispatch",
+              "olive-recovery",
+              "fern-approval"
+            ],
+            "ranked_scores": [
+              16.70596981112662,
+              4.952392098594781,
+              4.008913280110134,
+              2.7028399899004714,
+              1.7147984280919268
+            ],
+            "retrieval_ms": 0.09616697207093239,
+            "reader_ms": 40.95754097215831,
+            "total_ms": 41.053707944229245,
+            "answer": "Chennai",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "dev-elm-backup",
+            "question": "When does the Elm database take a full backup?",
+            "answers": [
+              "every Sunday"
+            ],
+            "relevant_ids": [
+              "elm-backup"
+            ],
+            "raw_answer": "every Sunday",
+            "confidence": 0.8665183782577515,
+            "document_id": "elm-backup",
+            "start": 47,
+            "end": 59,
+            "ranked_ids": [
+              "elm-backup",
+              "maple-backup",
+              "maple-restore",
+              "birch-monitors",
+              "aster-guests"
+            ],
+            "ranked_scores": [
+              14.3008827104758,
+              4.322652232949364,
+              3.3350323211355954,
+              3.0735387539631285,
+              2.371291489877236
+            ],
+            "retrieval_ms": 0.10099983774125576,
+            "reader_ms": 45.15325021930039,
+            "total_ms": 45.254250057041645,
+            "answer": "every Sunday",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "dev-fern-approval",
+            "question": "Who approves Fern travel expenses above five thousand rupees?",
+            "answers": [
+              "the finance manager"
+            ],
+            "relevant_ids": [
+              "fern-approval"
+            ],
+            "raw_answer": "the procurement officer",
+            "confidence": 0.5624479651451111,
+            "document_id": "fern-vendors",
+            "start": 64,
+            "end": 87,
+            "ranked_ids": [
+              "fern-approval",
+              "fern-vendors",
+              "cedar-support"
+            ],
+            "ranked_scores": [
+              17.279271220814834,
+              14.19446613715737,
+              1.8174152453866523
+            ],
+            "retrieval_ms": 0.0899159349501133,
+            "reader_ms": 48.57420898042619,
+            "total_ms": 48.664124915376306,
+            "answer": "the procurement officer",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "dev-ginkgo-recovery",
+            "question": "What identifier is required for a Ginkgo account recovery request?",
+            "answers": [
+              "employee badge number"
+            ],
+            "relevant_ids": [
+              "ginkgo-recovery"
+            ],
+            "raw_answer": "employee badge number",
+            "confidence": 0.7530971169471741,
+            "document_id": "ginkgo-recovery",
+            "start": 97,
+            "end": 118,
+            "ranked_ids": [
+              "ginkgo-recovery",
+              "olive-recovery",
+              "olive-passwords",
+              "iris-retention",
+              "maple-backup"
+            ],
+            "ranked_scores": [
+              10.049320495418236,
+              5.451238157994508,
+              4.099950980113964,
+              2.6924444505936638,
+              2.483214341580994
+            ],
+            "retrieval_ms": 0.10262499563395977,
+            "reader_ms": 48.43883286230266,
+            "total_ms": 48.54145785793662,
+            "answer": "employee badge number",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "dev-hazel-storage",
+            "question": "What is the storage temperature range for Hazel test cartridges?",
+            "answers": [
+              "between two and eight degrees Celsius"
+            ],
+            "relevant_ids": [
+              "hazel-storage"
+            ],
+            "raw_answer": "between two and eight degrees Celsius",
+            "confidence": 0.7648114562034607,
+            "document_id": "hazel-storage",
+            "start": 37,
+            "end": 74,
+            "ranked_ids": [
+              "hazel-storage",
+              "hazel-transport",
+              "pine-storage",
+              "iris-retention",
+              "iris-receipts"
+            ],
+            "ranked_scores": [
+              14.182092634410267,
+              9.701402238237431,
+              1.880089495919521,
+              1.809005923175726,
+              1.779895217077562
+            ],
+            "retrieval_ms": 0.11533312499523163,
+            "reader_ms": 46.05383286252618,
+            "total_ms": 46.16916598752141,
+            "answer": "between two and eight degrees Celsius",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "dev-unanswerable-1",
+            "question": "What is the Aster archive encryption password?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "purchase receipts",
+            "confidence": 0.7793825268745422,
+            "document_id": "aster-retention",
+            "start": 24,
+            "end": 41,
+            "ranked_ids": [
+              "aster-retention",
+              "aster-guests",
+              "olive-passwords",
+              "iris-retention",
+              "iris-receipts"
+            ],
+            "ranked_scores": [
+              5.284381142532212,
+              3.358803950588627,
+              2.954478451644845,
+              2.9143408783306155,
+              2.8796667150700324
+            ],
+            "retrieval_ms": 0.08870800957083702,
+            "reader_ms": 43.25008415617049,
+            "total_ms": 43.338792165741324,
+            "answer": "purchase receipts",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "unanswerable_false_positive"
+          },
+          {
+            "query_id": "dev-unanswerable-2",
+            "question": "How much is the Birch keyboard shipping fee?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "two-year",
+            "confidence": 0.7857075333595276,
+            "document_id": "birch-monitors",
+            "start": 23,
+            "end": 31,
+            "ranked_ids": [
+              "birch-returns",
+              "birch-monitors",
+              "hazel-transport",
+              "linden-packaging",
+              "maple-backup"
+            ],
+            "ranked_scores": [
+              9.78979459505773,
+              5.436149258810052,
+              2.276228579369908,
+              1.643298302354349,
+              1.6084411165138957
+            ],
+            "retrieval_ms": 0.08758413605391979,
+            "reader_ms": 45.98549986258149,
+            "total_ms": 46.07308399863541,
+            "answer": "two-year",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "unanswerable_false_positive"
+          },
+          {
+            "query_id": "dev-unanswerable-3",
+            "question": "Who founded the Ginkgo company?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "Kelp",
+            "confidence": 0.42417868971824646,
+            "document_id": "kelp-support",
+            "start": 4,
+            "end": 8,
+            "ranked_ids": [
+              "ginkgo-recovery",
+              "cedar-support",
+              "kelp-support",
+              "juniper-returns",
+              "linden-dispatch"
+            ],
+            "ranked_scores": [
+              3.8780401449272923,
+              0.03220721456416147,
+              0.03220721456416147,
+              0.03152195467981761,
+              0.030652383516236437
+            ],
+            "retrieval_ms": 0.07370905950665474,
+            "reader_ms": 46.4750409591943,
+            "total_ms": 46.54875001870096,
+            "answer": "",
+            "abstained": true,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct_abstention"
+          },
+          {
+            "query_id": "dev-unanswerable-4",
+            "question": "Which city manufactures Hazel cartridges?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "Hazel test cartridges must be stored between two and eight degrees Celsius",
+            "confidence": 0.18393196165561676,
+            "document_id": "hazel-storage",
+            "start": 0,
+            "end": 74,
+            "ranked_ids": [
+              "hazel-storage",
+              "hazel-transport"
+            ],
+            "ranked_scores": [
+              6.776839069681474,
+              5.498470637032232
+            ],
+            "retrieval_ms": 0.06595789454877377,
+            "reader_ms": 31.254833098500967,
+            "total_ms": 31.32079099304974,
+            "answer": "",
+            "abstained": true,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct_abstention"
+          }
+        ]
+      },
+      "test": {
+        "metrics": {
+          "query_count": 12,
+          "answerable_count": 8,
+          "answer_em": 0.5,
+          "answer_f1": 0.601010101010101,
+          "coverage": 0.75,
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr_at_5": 1.0,
+          "selective_em": 0.3333333333333333,
+          "latency_retrieval_p50_ms": 0.10147900320589542,
+          "latency_retrieval_p95_ms": 0.11579984566196799,
+          "latency_reader_p50_ms": 49.876896548084915,
+          "latency_reader_p95_ms": 55.24202090455219,
+          "latency_total_p50_ms": 49.96397951617837,
+          "latency_total_p95_ms": 55.34827237715945,
+          "count_correct": 3,
+          "count_reader_failure": 5,
+          "count_retrieval_miss": 0,
+          "count_false_abstention": 0,
+          "count_correct_abstention": 3,
+          "count_unanswerable_false_positive": 1
+        },
+        "predictions": [
+          {
+            "query_id": "test-iris-retention",
+            "question": "How long are visitor logs preserved in the Iris archive?",
+            "answers": [
+              "ninety days"
+            ],
+            "relevant_ids": [
+              "iris-retention"
+            ],
+            "raw_answer": "ninety days",
+            "confidence": 0.9775489568710327,
+            "document_id": "iris-retention",
+            "start": 42,
+            "end": 53,
+            "ranked_ids": [
+              "iris-retention",
+              "iris-receipts",
+              "aster-retention",
+              "pine-storage",
+              "aster-guests"
+            ],
+            "ranked_scores": [
+              13.166922674739801,
+              12.938673178795957,
+              4.309631541054747,
+              2.2084829003229736,
+              2.0277931508671805
+            ],
+            "retrieval_ms": 0.11016707867383957,
+            "reader_ms": 48.135458026081324,
+            "total_ms": 48.24562510475516,
+            "answer": "ninety days",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "test-juniper-returns",
+            "question": "Who issues the code needed to return an opened Juniper monitor?",
+            "answers": [
+              "the service coordinator"
+            ],
+            "relevant_ids": [
+              "juniper-returns"
+            ],
+            "raw_answer": "Birch equipment desk",
+            "confidence": 0.6182385087013245,
+            "document_id": "birch-returns",
+            "start": 4,
+            "end": 24,
+            "ranked_ids": [
+              "juniper-returns",
+              "birch-monitors",
+              "birch-returns",
+              "aster-guests",
+              "olive-recovery"
+            ],
+            "ranked_scores": [
+              17.06696046612645,
+              4.128974140456509,
+              2.9143408783306155,
+              2.371291489877236,
+              2.240132095032827
+            ],
+            "retrieval_ms": 0.11845817789435387,
+            "reader_ms": 48.688333947211504,
+            "total_ms": 48.80679212510586,
+            "answer": "Birch equipment desk",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-kelp-support",
+            "question": "When does Kelp weekend support stop taking calls?",
+            "answers": [
+              "two in the afternoon"
+            ],
+            "relevant_ids": [
+              "kelp-support"
+            ],
+            "raw_answer": "between ten in the morning and two in the afternoon",
+            "confidence": 0.7999163866043091,
+            "document_id": "kelp-support",
+            "start": 47,
+            "end": 98,
+            "ranked_ids": [
+              "kelp-support",
+              "cedar-support",
+              "aster-guests",
+              "birch-monitors"
+            ],
+            "ranked_scores": [
+              9.03346502122726,
+              5.799227831338069,
+              2.3506669162816243,
+              2.2120904823523584
+            ],
+            "retrieval_ms": 0.08462485857307911,
+            "reader_ms": 50.58908415958285,
+            "total_ms": 50.67370901815593,
+            "answer": "between ten in the morning and two in the afternoon",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.5454545454545454,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-linden-dispatch",
+            "question": "Where do Linden repair kits ship from?",
+            "answers": [
+              "the Kochi depot"
+            ],
+            "relevant_ids": [
+              "linden-dispatch"
+            ],
+            "raw_answer": "Chennai warehouse",
+            "confidence": 0.7771884202957153,
+            "document_id": "linden-packaging",
+            "start": 47,
+            "end": 64,
+            "ranked_ids": [
+              "linden-dispatch",
+              "linden-packaging",
+              "hazel-storage",
+              "dahlia-shipping",
+              "fern-approval"
+            ],
+            "ranked_scores": [
+              10.93305625537532,
+              7.720216230251943,
+              2.9334140174749197,
+              1.7147984280919268,
+              1.7147984280919268
+            ],
+            "retrieval_ms": 0.07729209028184414,
+            "reader_ms": 47.676249872893095,
+            "total_ms": 47.75354196317494,
+            "answer": "Chennai warehouse",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-maple-restore",
+            "question": "Who checks row counts after restoring the Maple database?",
+            "answers": [
+              "the reliability engineer"
+            ],
+            "relevant_ids": [
+              "maple-restore"
+            ],
+            "raw_answer": "the reliability engineer",
+            "confidence": 0.5830176472663879,
+            "document_id": "maple-restore",
+            "start": 36,
+            "end": 60,
+            "ranked_ids": [
+              "maple-restore",
+              "maple-backup",
+              "elm-backup",
+              "aster-retention",
+              "hazel-transport"
+            ],
+            "ranked_scores": [
+              16.40713243581903,
+              3.4181492713615014,
+              2.529768891428438,
+              1.7436594385455262,
+              1.7002238297999026
+            ],
+            "retrieval_ms": 0.10691583156585693,
+            "reader_ms": 57.535292115062475,
+            "total_ms": 57.64220794662833,
+            "answer": "the reliability engineer",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "test-nettle-expenses",
+            "question": "Within how many days should a Nettle meal reimbursement claim be filed?",
+            "answers": [
+              "thirty days"
+            ],
+            "relevant_ids": [
+              "nettle-expenses"
+            ],
+            "raw_answer": "thirty",
+            "confidence": 0.8050104975700378,
+            "document_id": "nettle-expenses",
+            "start": 58,
+            "end": 64,
+            "ranked_ids": [
+              "nettle-expenses",
+              "birch-returns",
+              "iris-retention",
+              "pine-storage",
+              "juniper-returns"
+            ],
+            "ranked_scores": [
+              13.719481327990525,
+              3.9795110030200993,
+              2.483214341580994,
+              2.4330011951831394,
+              2.300023397065842
+            ],
+            "retrieval_ms": 0.11362484656274319,
+            "reader_ms": 51.38629116117954,
+            "total_ms": 51.499916007742286,
+            "answer": "thirty",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.6666666666666666,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-olive-recovery",
+            "question": "How long does an Olive account recovery link remain valid?",
+            "answers": [
+              "twenty minutes"
+            ],
+            "relevant_ids": [
+              "olive-recovery"
+            ],
+            "raw_answer": "twenty minutes",
+            "confidence": 0.7510115504264832,
+            "document_id": "olive-recovery",
+            "start": 110,
+            "end": 124,
+            "ranked_ids": [
+              "olive-recovery",
+              "olive-passwords",
+              "ginkgo-recovery",
+              "juniper-returns",
+              "aster-guests"
+            ],
+            "ranked_scores": [
+              11.718898238155044,
+              7.488370514954701,
+              5.381584179185358,
+              2.5058718934704776,
+              2.3506669162816243
+            ],
+            "retrieval_ms": 0.10570790618658066,
+            "reader_ms": 53.36570809595287,
+            "total_ms": 53.47141600213945,
+            "answer": "twenty minutes",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "test-pine-storage",
+            "question": "Where are Pine calibration weights kept?",
+            "answers": [
+              "a dry cabinet on the second floor"
+            ],
+            "relevant_ids": [
+              "pine-storage"
+            ],
+            "raw_answer": "Chennai warehouse",
+            "confidence": 0.8117850422859192,
+            "document_id": "linden-packaging",
+            "start": 47,
+            "end": 64,
+            "ranked_ids": [
+              "pine-storage",
+              "linden-packaging",
+              "iris-retention",
+              "olive-passwords",
+              "iris-receipts"
+            ],
+            "ranked_scores": [
+              12.714286354537633,
+              1.030840124830873,
+              1.0088553828321103,
+              1.0088553828321103,
+              0.9877887971117181
+            ],
+            "retrieval_ms": 0.07766694761812687,
+            "reader_ms": 51.966333063319325,
+            "total_ms": 52.04400001093745,
+            "answer": "Chennai warehouse",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-unanswerable-1",
+            "question": "What is the Iris archive administrator phone number?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "employee badge number",
+            "confidence": 0.5449288487434387,
+            "document_id": "ginkgo-recovery",
+            "start": 97,
+            "end": 118,
+            "ranked_ids": [
+              "iris-retention",
+              "iris-receipts",
+              "ginkgo-recovery",
+              "aster-retention",
+              "linden-packaging"
+            ],
+            "ranked_scores": [
+              6.302760413171352,
+              6.217846092063048,
+              2.6784001138432245,
+              1.9949738668264319,
+              1.643298302354349
+            ],
+            "retrieval_ms": 0.09725010022521019,
+            "reader_ms": 51.67866591364145,
+            "total_ms": 51.77591601386666,
+            "answer": "",
+            "abstained": true,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct_abstention"
+          },
+          {
+            "query_id": "test-unanswerable-2",
+            "question": "How much does the Juniper monitor cost?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "thirty days",
+            "confidence": 0.814077615737915,
+            "document_id": "aster-guests",
+            "start": 48,
+            "end": 59,
+            "ranked_ids": [
+              "juniper-returns",
+              "birch-monitors",
+              "aster-guests",
+              "cedar-support",
+              "kelp-support"
+            ],
+            "ranked_scores": [
+              5.7776334786527705,
+              4.452222577385186,
+              2.371291489877236,
+              0.03220721456416147,
+              0.03220721456416147
+            ],
+            "retrieval_ms": 0.08954107761383057,
+            "reader_ms": 49.164708936586976,
+            "total_ms": 49.25425001420081,
+            "answer": "thirty days",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "unanswerable_false_positive"
+          },
+          {
+            "query_id": "test-unanswerable-3",
+            "question": "Who is the chief executive of Nettle?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "Birch",
+            "confidence": 0.22262071073055267,
+            "document_id": "birch-returns",
+            "start": 4,
+            "end": 9,
+            "ranked_ids": [
+              "nettle-expenses",
+              "birch-returns",
+              "linden-packaging",
+              "maple-backup",
+              "cedar-support"
+            ],
+            "ranked_scores": [
+              6.450041787651259,
+              4.000575437190025,
+              1.643298302354349,
+              1.6084411165138957,
+              1.4318210850622735
+            ],
+            "retrieval_ms": 0.09312503971159458,
+            "reader_ms": 44.9129999615252,
+            "total_ms": 45.006125001236796,
+            "answer": "",
+            "abstained": true,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct_abstention"
+          },
+          {
+            "query_id": "test-unanswerable-4",
+            "question": "What is the exact weight of a Pine calibration weight?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "fourteen days",
+            "confidence": 0.19065997004508972,
+            "document_id": "birch-returns",
+            "start": 64,
+            "end": 77,
+            "ranked_ids": [
+              "pine-storage",
+              "birch-returns",
+              "maple-backup",
+              "nettle-expenses",
+              "juniper-returns"
+            ],
+            "ranked_scores": [
+              7.346136430076102,
+              4.000575437190025,
+              2.512944078101759,
+              2.371291489877236,
+              2.1528103193502215
+            ],
+            "retrieval_ms": 0.10870886035263538,
+            "reader_ms": 47.44620807468891,
+            "total_ms": 47.55491693504155,
+            "answer": "",
+            "abstained": true,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct_abstention"
+          }
+        ]
+      }
+    },
+    "dense": {
+      "calibration": {
+        "split": "dev",
+        "threshold": 0.5250951647758484,
+        "objective": "balanced_answerability_accuracy",
+        "objective_value": 0.625,
+        "tie_break": "higher_threshold",
+        "query_ids": [
+          "dev-aster-retention",
+          "dev-birch-returns",
+          "dev-cedar-support",
+          "dev-dahlia-shipping",
+          "dev-elm-backup",
+          "dev-fern-approval",
+          "dev-ginkgo-recovery",
+          "dev-hazel-storage",
+          "dev-unanswerable-1",
+          "dev-unanswerable-2",
+          "dev-unanswerable-3",
+          "dev-unanswerable-4"
+        ],
+        "curve": [
+          {
+            "threshold": 0.0,
+            "balanced_accuracy": 0.5
+          },
+          {
+            "threshold": 0.4982678294181824,
+            "balanced_accuracy": 0.5
+          },
+          {
+            "threshold": 0.5250951647758484,
+            "balanced_accuracy": 0.625
+          },
+          {
+            "threshold": 0.6971400380134583,
+            "balanced_accuracy": 0.5625
+          },
+          {
+            "threshold": 0.7067697048187256,
+            "balanced_accuracy": 0.5
+          },
+          {
+            "threshold": 0.7530971169471741,
+            "balanced_accuracy": 0.4375
+          },
+          {
+            "threshold": 0.7648114562034607,
+            "balanced_accuracy": 0.375
+          },
+          {
+            "threshold": 0.7793825268745422,
+            "balanced_accuracy": 0.3125
+          },
+          {
+            "threshold": 0.784000813961029,
+            "balanced_accuracy": 0.4375
+          },
+          {
+            "threshold": 0.7857075333595276,
+            "balanced_accuracy": 0.375
+          },
+          {
+            "threshold": 0.8665183782577515,
+            "balanced_accuracy": 0.5
+          },
+          {
+            "threshold": 0.9117317199707031,
+            "balanced_accuracy": 0.4375
+          },
+          {
+            "threshold": 0.9722661375999451,
+            "balanced_accuracy": 0.5625
+          },
+          {
+            "threshold": 1.0000001,
+            "balanced_accuracy": 0.5
+          }
+        ]
+      },
+      "dev": {
+        "metrics": {
+          "query_count": 12,
+          "answerable_count": 8,
+          "answer_em": 0.4166666666666667,
+          "answer_f1": 0.4583333333333333,
+          "coverage": 0.9166666666666666,
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr_at_5": 1.0,
+          "selective_em": 0.36363636363636365,
+          "latency_retrieval_p50_ms": 4.112437483854592,
+          "latency_retrieval_p95_ms": 8.095148287247865,
+          "latency_reader_p50_ms": 59.863541508093476,
+          "latency_reader_p95_ms": 83.34710190538316,
+          "latency_total_p50_ms": 63.990958500653505,
+          "latency_total_p95_ms": 91.66441269917412,
+          "count_correct": 4,
+          "count_reader_failure": 4,
+          "count_retrieval_miss": 0,
+          "count_false_abstention": 0,
+          "count_correct_abstention": 1,
+          "count_unanswerable_false_positive": 3
+        },
+        "predictions": [
+          {
+            "query_id": "dev-aster-retention",
+            "question": "How long does the Aster archive keep purchase receipts?",
+            "answers": [
+              "seven years"
+            ],
+            "relevant_ids": [
+              "aster-retention"
+            ],
+            "raw_answer": "eight years",
+            "confidence": 0.9722661375999451,
+            "document_id": "iris-receipts",
+            "start": 40,
+            "end": 51,
+            "ranked_ids": [
+              "aster-retention",
+              "aster-guests",
+              "iris-receipts",
+              "iris-retention",
+              "fern-vendors"
+            ],
+            "ranked_scores": [
+              0.8769550323486328,
+              0.5541526675224304,
+              0.5427829027175903,
+              0.5256446599960327,
+              0.37996917963027954
+            ],
+            "retrieval_ms": 3.1304589938372374,
+            "reader_ms": 64.70970809459686,
+            "total_ms": 67.8401670884341,
+            "answer": "eight years",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.5,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "dev-birch-returns",
+            "question": "What is the return window for an unused Birch keyboard?",
+            "answers": [
+              "fourteen days"
+            ],
+            "relevant_ids": [
+              "birch-returns"
+            ],
+            "raw_answer": "prepaid",
+            "confidence": 0.6971400380134583,
+            "document_id": "birch-returns",
+            "start": 110,
+            "end": 117,
+            "ranked_ids": [
+              "birch-returns",
+              "birch-monitors",
+              "cedar-support",
+              "juniper-returns",
+              "maple-backup"
+            ],
+            "ranked_scores": [
+              0.7611894607543945,
+              0.5398905277252197,
+              0.3883727192878723,
+              0.3774011731147766,
+              0.375149130821228
+            ],
+            "retrieval_ms": 3.4938331227749586,
+            "reader_ms": 59.832457918673754,
+            "total_ms": 63.32629104144871,
+            "answer": "prepaid",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "dev-cedar-support",
+            "question": "At what time does the Cedar support desk close?",
+            "answers": [
+              "five in the afternoon"
+            ],
+            "relevant_ids": [
+              "cedar-support"
+            ],
+            "raw_answer": "morning",
+            "confidence": 0.784000813961029,
+            "document_id": "maple-backup",
+            "start": 67,
+            "end": 74,
+            "ranked_ids": [
+              "cedar-support",
+              "birch-returns",
+              "maple-backup",
+              "juniper-returns",
+              "birch-monitors"
+            ],
+            "ranked_scores": [
+              0.726070761680603,
+              0.5184494853019714,
+              0.4219469428062439,
+              0.4008350074291229,
+              0.38641855120658875
+            ],
+            "retrieval_ms": 3.8863338995724916,
+            "reader_ms": 59.10504120402038,
+            "total_ms": 62.99137510359287,
+            "answer": "morning",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "dev-dahlia-shipping",
+            "question": "From which warehouse are Dahlia replacement sensors sent?",
+            "answers": [
+              "Pune warehouse"
+            ],
+            "relevant_ids": [
+              "dahlia-shipping"
+            ],
+            "raw_answer": "Pune warehouse",
+            "confidence": 0.5250951647758484,
+            "document_id": "dahlia-shipping",
+            "start": 51,
+            "end": 65,
+            "ranked_ids": [
+              "dahlia-shipping",
+              "hazel-transport",
+              "linden-dispatch",
+              "pine-storage",
+              "birch-returns"
+            ],
+            "ranked_scores": [
+              0.7913200855255127,
+              0.4744724631309509,
+              0.3087400197982788,
+              0.26687395572662354,
+              0.257668673992157
+            ],
+            "retrieval_ms": 3.58775001950562,
+            "reader_ms": 51.860792096704245,
+            "total_ms": 55.448542116209865,
+            "answer": "Pune warehouse",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "dev-elm-backup",
+            "question": "When does the Elm database take a full backup?",
+            "answers": [
+              "every Sunday"
+            ],
+            "relevant_ids": [
+              "elm-backup"
+            ],
+            "raw_answer": "every Sunday",
+            "confidence": 0.8665183782577515,
+            "document_id": "elm-backup",
+            "start": 47,
+            "end": 59,
+            "ranked_ids": [
+              "elm-backup",
+              "maple-backup",
+              "birch-returns",
+              "aster-retention",
+              "iris-retention"
+            ],
+            "ranked_scores": [
+              0.8202375173568726,
+              0.46684616804122925,
+              0.39925867319107056,
+              0.3967820405960083,
+              0.37753328680992126
+            ],
+            "retrieval_ms": 4.873417085036635,
+            "reader_ms": 59.04858303256333,
+            "total_ms": 63.922000117599964,
+            "answer": "every Sunday",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "dev-fern-approval",
+            "question": "Who approves Fern travel expenses above five thousand rupees?",
+            "answers": [
+              "the finance manager"
+            ],
+            "relevant_ids": [
+              "fern-approval"
+            ],
+            "raw_answer": "director",
+            "confidence": 0.7067697048187256,
+            "document_id": "nettle-expenses",
+            "start": 107,
+            "end": 115,
+            "ranked_ids": [
+              "fern-approval",
+              "fern-vendors",
+              "nettle-expenses",
+              "iris-receipts",
+              "hazel-transport"
+            ],
+            "ranked_scores": [
+              0.7978866696357727,
+              0.6392151713371277,
+              0.25194060802459717,
+              0.24767132103443146,
+              0.19928675889968872
+            ],
+            "retrieval_ms": 7.095417007803917,
+            "reader_ms": 92.22962497733533,
+            "total_ms": 99.32504198513925,
+            "answer": "director",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "dev-ginkgo-recovery",
+            "question": "What identifier is required for a Ginkgo account recovery request?",
+            "answers": [
+              "employee badge number"
+            ],
+            "relevant_ids": [
+              "ginkgo-recovery"
+            ],
+            "raw_answer": "employee badge number",
+            "confidence": 0.7530971169471741,
+            "document_id": "ginkgo-recovery",
+            "start": 97,
+            "end": 118,
+            "ranked_ids": [
+              "ginkgo-recovery",
+              "olive-recovery",
+              "iris-retention",
+              "maple-restore",
+              "iris-receipts"
+            ],
+            "ranked_scores": [
+              0.8251060247421265,
+              0.3999423682689667,
+              0.3945077359676361,
+              0.347782701253891,
+              0.341219037771225
+            ],
+            "retrieval_ms": 6.47599995136261,
+            "reader_ms": 71.05270819738507,
+            "total_ms": 77.52870814874768,
+            "answer": "employee badge number",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "dev-hazel-storage",
+            "question": "What is the storage temperature range for Hazel test cartridges?",
+            "answers": [
+              "between two and eight degrees Celsius"
+            ],
+            "relevant_ids": [
+              "hazel-storage"
+            ],
+            "raw_answer": "between two and eight degrees Celsius",
+            "confidence": 0.7648114562034607,
+            "document_id": "hazel-storage",
+            "start": 37,
+            "end": 74,
+            "ranked_ids": [
+              "hazel-storage",
+              "hazel-transport",
+              "pine-storage",
+              "linden-packaging",
+              "aster-retention"
+            ],
+            "ranked_scores": [
+              0.9073066711425781,
+              0.6068209409713745,
+              0.3406091332435608,
+              0.2356690764427185,
+              0.2201826423406601
+            ],
+            "retrieval_ms": 9.317042073234916,
+            "reader_ms": 76.0795830283314,
+            "total_ms": 85.39662510156631,
+            "answer": "between two and eight degrees Celsius",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "dev-unanswerable-1",
+            "question": "What is the Aster archive encryption password?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "purchase receipts",
+            "confidence": 0.7793825268745422,
+            "document_id": "aster-retention",
+            "start": 24,
+            "end": 41,
+            "ranked_ids": [
+              "aster-retention",
+              "iris-retention",
+              "iris-receipts",
+              "olive-passwords",
+              "ginkgo-recovery"
+            ],
+            "ranked_scores": [
+              0.4277770221233368,
+              0.27144771814346313,
+              0.245906263589859,
+              0.22403481602668762,
+              0.21422405540943146
+            ],
+            "retrieval_ms": 6.318625062704086,
+            "reader_ms": 54.387749871239066,
+            "total_ms": 60.70637493394315,
+            "answer": "purchase receipts",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "unanswerable_false_positive"
+          },
+          {
+            "query_id": "dev-unanswerable-2",
+            "question": "How much is the Birch keyboard shipping fee?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "two-year",
+            "confidence": 0.7857075333595276,
+            "document_id": "birch-monitors",
+            "start": 23,
+            "end": 31,
+            "ranked_ids": [
+              "birch-returns",
+              "birch-monitors",
+              "cedar-support",
+              "juniper-returns",
+              "maple-backup"
+            ],
+            "ranked_scores": [
+              0.7007173299789429,
+              0.4488362669944763,
+              0.30265387892723083,
+              0.2718297839164734,
+              0.251040518283844
+            ],
+            "retrieval_ms": 4.338541068136692,
+            "reader_ms": 59.8946250975132,
+            "total_ms": 64.23316616564989,
+            "answer": "two-year",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "unanswerable_false_positive"
+          },
+          {
+            "query_id": "dev-unanswerable-3",
+            "question": "Who founded the Ginkgo company?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "procurement officer",
+            "confidence": 0.4982678294181824,
+            "document_id": "fern-vendors",
+            "start": 68,
+            "end": 87,
+            "ranked_ids": [
+              "ginkgo-recovery",
+              "fern-vendors",
+              "dahlia-shipping",
+              "iris-receipts",
+              "juniper-returns"
+            ],
+            "ranked_scores": [
+              0.526729941368103,
+              0.16970856487751007,
+              0.1325616091489792,
+              0.11969007551670074,
+              0.11620716750621796
+            ],
+            "retrieval_ms": 3.0549168586730957,
+            "reader_ms": 56.18833308108151,
+            "total_ms": 59.243249939754605,
+            "answer": "",
+            "abstained": true,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct_abstention"
+          },
+          {
+            "query_id": "dev-unanswerable-4",
+            "question": "Which city manufactures Hazel cartridges?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "Mumbai",
+            "confidence": 0.9117317199707031,
+            "document_id": "dahlia-shipping",
+            "start": 71,
+            "end": 77,
+            "ranked_ids": [
+              "hazel-storage",
+              "hazel-transport",
+              "dahlia-shipping",
+              "fern-vendors",
+              "linden-packaging"
+            ],
+            "ranked_scores": [
+              0.6438537836074829,
+              0.6273475885391235,
+              0.36987584829330444,
+              0.28720831871032715,
+              0.2649751901626587
+            ],
+            "retrieval_ms": 3.0126250348985195,
+            "reader_ms": 61.04729184880853,
+            "total_ms": 64.05991688370705,
+            "answer": "Mumbai",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "unanswerable_false_positive"
+          }
+        ]
+      },
+      "test": {
+        "metrics": {
+          "query_count": 12,
+          "answerable_count": 8,
+          "answer_em": 0.25,
+          "answer_f1": 0.351010101010101,
+          "coverage": 0.9166666666666666,
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr_at_5": 1.0,
+          "selective_em": 0.18181818181818182,
+          "latency_retrieval_p50_ms": 5.2675416227430105,
+          "latency_retrieval_p95_ms": 7.114514778368175,
+          "latency_reader_p50_ms": 69.76008298806846,
+          "latency_reader_p95_ms": 92.3130705836229,
+          "latency_total_p50_ms": 74.29531251545995,
+          "latency_total_p95_ms": 98.57896071625873,
+          "count_correct": 2,
+          "count_reader_failure": 6,
+          "count_retrieval_miss": 0,
+          "count_false_abstention": 0,
+          "count_correct_abstention": 1,
+          "count_unanswerable_false_positive": 3
+        },
+        "predictions": [
+          {
+            "query_id": "test-iris-retention",
+            "question": "How long are visitor logs preserved in the Iris archive?",
+            "answers": [
+              "ninety days"
+            ],
+            "relevant_ids": [
+              "iris-retention"
+            ],
+            "raw_answer": "ninety days",
+            "confidence": 0.9775489568710327,
+            "document_id": "iris-retention",
+            "start": 42,
+            "end": 53,
+            "ranked_ids": [
+              "iris-retention",
+              "iris-receipts",
+              "aster-retention",
+              "aster-guests",
+              "olive-recovery"
+            ],
+            "ranked_scores": [
+              0.839706540107727,
+              0.7464691400527954,
+              0.4742472767829895,
+              0.41908758878707886,
+              0.3752814531326294
+            ],
+            "retrieval_ms": 3.1470840331166983,
+            "reader_ms": 58.702124981209636,
+            "total_ms": 61.849209014326334,
+            "answer": "ninety days",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "test-juniper-returns",
+            "question": "Who issues the code needed to return an opened Juniper monitor?",
+            "answers": [
+              "the service coordinator"
+            ],
+            "relevant_ids": [
+              "juniper-returns"
+            ],
+            "raw_answer": "the reliability engineer",
+            "confidence": 0.5375155210494995,
+            "document_id": "maple-restore",
+            "start": 36,
+            "end": 60,
+            "ranked_ids": [
+              "juniper-returns",
+              "birch-monitors",
+              "maple-restore",
+              "birch-returns",
+              "ginkgo-recovery"
+            ],
+            "ranked_scores": [
+              0.796000599861145,
+              0.41413748264312744,
+              0.34207645058631897,
+              0.31641197204589844,
+              0.30665338039398193
+            ],
+            "retrieval_ms": 6.222709082067013,
+            "reader_ms": 90.70645808242261,
+            "total_ms": 96.92916716448963,
+            "answer": "the reliability engineer",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-kelp-support",
+            "question": "When does Kelp weekend support stop taking calls?",
+            "answers": [
+              "two in the afternoon"
+            ],
+            "relevant_ids": [
+              "kelp-support"
+            ],
+            "raw_answer": "between ten in the morning and two in the afternoon",
+            "confidence": 0.7999163866043091,
+            "document_id": "kelp-support",
+            "start": 47,
+            "end": 98,
+            "ranked_ids": [
+              "kelp-support",
+              "cedar-support",
+              "elm-backup",
+              "maple-backup",
+              "aster-guests"
+            ],
+            "ranked_scores": [
+              0.675029993057251,
+              0.3573571443557739,
+              0.27191489934921265,
+              0.21815155446529388,
+              0.19747063517570496
+            ],
+            "retrieval_ms": 6.9018329959362745,
+            "reader_ms": 69.9198751244694,
+            "total_ms": 76.82170812040567,
+            "answer": "between ten in the morning and two in the afternoon",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.5454545454545454,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-linden-dispatch",
+            "question": "Where do Linden repair kits ship from?",
+            "answers": [
+              "the Kochi depot"
+            ],
+            "relevant_ids": [
+              "linden-dispatch"
+            ],
+            "raw_answer": "Chennai warehouse",
+            "confidence": 0.7771884202957153,
+            "document_id": "linden-packaging",
+            "start": 47,
+            "end": 64,
+            "ranked_ids": [
+              "linden-dispatch",
+              "linden-packaging",
+              "maple-restore",
+              "maple-backup",
+              "hazel-transport"
+            ],
+            "ranked_scores": [
+              0.692915678024292,
+              0.6388607025146484,
+              0.3533164858818054,
+              0.30116012692451477,
+              0.2952355742454529
+            ],
+            "retrieval_ms": 5.310000153258443,
+            "reader_ms": 69.60029085166752,
+            "total_ms": 74.91029100492597,
+            "answer": "Chennai warehouse",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-maple-restore",
+            "question": "Who checks row counts after restoring the Maple database?",
+            "answers": [
+              "the reliability engineer"
+            ],
+            "relevant_ids": [
+              "maple-restore"
+            ],
+            "raw_answer": "the reliability engineer",
+            "confidence": 0.5830176472663879,
+            "document_id": "maple-restore",
+            "start": 36,
+            "end": 60,
+            "ranked_ids": [
+              "maple-restore",
+              "maple-backup",
+              "iris-retention",
+              "elm-backup",
+              "aster-retention"
+            ],
+            "ranked_scores": [
+              0.8079833984375,
+              0.47836679220199585,
+              0.3422965407371521,
+              0.3154405951499939,
+              0.3135601580142975
+            ],
+            "retrieval_ms": 5.225083092227578,
+            "reader_ms": 62.32745898887515,
+            "total_ms": 67.55254208110273,
+            "answer": "the reliability engineer",
+            "abstained": false,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct"
+          },
+          {
+            "query_id": "test-nettle-expenses",
+            "question": "Within how many days should a Nettle meal reimbursement claim be filed?",
+            "answers": [
+              "thirty days"
+            ],
+            "relevant_ids": [
+              "nettle-expenses"
+            ],
+            "raw_answer": "thirty",
+            "confidence": 0.8050104975700378,
+            "document_id": "nettle-expenses",
+            "start": 58,
+            "end": 64,
+            "ranked_ids": [
+              "nettle-expenses",
+              "fern-vendors",
+              "aster-retention",
+              "aster-guests",
+              "iris-receipts"
+            ],
+            "ranked_scores": [
+              0.8384308815002441,
+              0.2784349322319031,
+              0.27772295475006104,
+              0.2650538980960846,
+              0.26472756266593933
+            ],
+            "retrieval_ms": 6.318666972219944,
+            "reader_ms": 94.27670808508992,
+            "total_ms": 100.59537505730987,
+            "answer": "thirty",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.6666666666666666,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-olive-recovery",
+            "question": "How long does an Olive account recovery link remain valid?",
+            "answers": [
+              "twenty minutes"
+            ],
+            "relevant_ids": [
+              "olive-recovery"
+            ],
+            "raw_answer": "ninety days",
+            "confidence": 0.9688214659690857,
+            "document_id": "iris-retention",
+            "start": 42,
+            "end": 53,
+            "ranked_ids": [
+              "olive-recovery",
+              "olive-passwords",
+              "iris-retention",
+              "iris-receipts",
+              "birch-returns"
+            ],
+            "ranked_scores": [
+              0.895577609539032,
+              0.6624606251716614,
+              0.5105471611022949,
+              0.5023504495620728,
+              0.388605535030365
+            ],
+            "retrieval_ms": 3.32470890134573,
+            "reader_ms": 70.35562512464821,
+            "total_ms": 73.68033402599394,
+            "answer": "ninety days",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-pine-storage",
+            "question": "Where are Pine calibration weights kept?",
+            "answers": [
+              "a dry cabinet on the second floor"
+            ],
+            "relevant_ids": [
+              "pine-storage"
+            ],
+            "raw_answer": "monitors",
+            "confidence": 0.6178211569786072,
+            "document_id": "birch-monitors",
+            "start": 6,
+            "end": 14,
+            "ranked_ids": [
+              "pine-storage",
+              "maple-restore",
+              "birch-monitors",
+              "hazel-storage",
+              "maple-backup"
+            ],
+            "ranked_scores": [
+              0.7289693355560303,
+              0.3196820616722107,
+              0.2839563190937042,
+              0.27954167127609253,
+              0.2632567882537842
+            ],
+            "retrieval_ms": 3.136082785204053,
+            "reader_ms": 77.24595908075571,
+            "total_ms": 80.38204186595976,
+            "answer": "monitors",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "reader_failure"
+          },
+          {
+            "query_id": "test-unanswerable-1",
+            "question": "What is the Iris archive administrator phone number?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "registered email address",
+            "confidence": 0.37420549988746643,
+            "document_id": "olive-passwords",
+            "start": 97,
+            "end": 121,
+            "ranked_ids": [
+              "iris-retention",
+              "iris-receipts",
+              "olive-passwords",
+              "ginkgo-recovery",
+              "olive-recovery"
+            ],
+            "ranked_scores": [
+              0.5970790386199951,
+              0.5935126543045044,
+              0.42219915986061096,
+              0.3866579830646515,
+              0.3524295687675476
+            ],
+            "retrieval_ms": 7.374459179118276,
+            "reader_ms": 60.02987502142787,
+            "total_ms": 67.40433420054615,
+            "answer": "",
+            "abstained": true,
+            "answer_em": 1.0,
+            "answer_f1": 1.0,
+            "failure": "correct_abstention"
+          },
+          {
+            "query_id": "test-unanswerable-2",
+            "question": "How much does the Juniper monitor cost?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "two-year",
+            "confidence": 0.7692385911941528,
+            "document_id": "birch-monitors",
+            "start": 23,
+            "end": 31,
+            "ranked_ids": [
+              "juniper-returns",
+              "birch-monitors",
+              "birch-returns",
+              "iris-retention",
+              "iris-receipts"
+            ],
+            "ranked_scores": [
+              0.5480355024337769,
+              0.40699487924575806,
+              0.2844957113265991,
+              0.2692611813545227,
+              0.26355910301208496
+            ],
+            "retrieval_ms": 5.0152919720858335,
+            "reader_ms": 71.17895781993866,
+            "total_ms": 76.1942497920245,
+            "answer": "two-year",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "unanswerable_false_positive"
+          },
+          {
+            "query_id": "test-unanswerable-3",
+            "question": "Who is the chief executive of Nettle?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "finance manager",
+            "confidence": 0.7477843761444092,
+            "document_id": "fern-approval",
+            "start": 78,
+            "end": 93,
+            "ranked_ids": [
+              "nettle-expenses",
+              "fern-vendors",
+              "fern-approval",
+              "juniper-returns",
+              "cedar-support"
+            ],
+            "ranked_scores": [
+              0.3966705799102783,
+              0.18833568692207336,
+              0.14664743840694427,
+              0.12494377046823502,
+              0.10000342130661011
+            ],
+            "retrieval_ms": 4.540625028312206,
+            "reader_ms": 65.23316586390138,
+            "total_ms": 69.77379089221358,
+            "answer": "finance manager",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "unanswerable_false_positive"
+          },
+          {
+            "query_id": "test-unanswerable-4",
+            "question": "What is the exact weight of a Pine calibration weight?",
+            "answers": [],
+            "relevant_ids": [],
+            "raw_answer": "two-year",
+            "confidence": 0.5946634411811829,
+            "document_id": "birch-monitors",
+            "start": 23,
+            "end": 31,
+            "ranked_ids": [
+              "pine-storage",
+              "birch-monitors",
+              "hazel-storage",
+              "maple-restore",
+              "juniper-returns"
+            ],
+            "ranked_scores": [
+              0.5735585689544678,
+              0.22194932401180267,
+              0.22071775794029236,
+              0.18359428644180298,
+              0.15766552090644836
+            ],
+            "retrieval_ms": 6.279958179220557,
+            "reader_ms": 64.73795790225267,
+            "total_ms": 71.01791608147323,
+            "answer": "two-year",
+            "abstained": false,
+            "answer_em": 0.0,
+            "answer_f1": 0.0,
+            "failure": "unanswerable_false_positive"
+          }
+        ]
+      }
+    }
+  },
+  "limitations": [
+    "Original small synthetic English dataset, not production evidence",
+    "Dependency and model snapshots are recorded in this report",
+    "Extractive SQuAD 1 reader scores are not calibrated probabilities of answerability",
+    "No test-set tuning, confidence intervals, significance claim, GPU, or public service"
+  ],
+  "mlflow": {
+    "tracking_uri": "file:///Users/abhishek/Documents/datavedam/retrieval-qa-evaluation-retrospective/artifacts/final-run/mlruns",
+    "run_id": "0436146bb8fb44b5ac8c1fe93ba3fb9f",
+    "model_uri": "runs:/0436146bb8fb44b5ac8c1fe93ba3fb9f/qa_model",
+    "prediction_parity": true,
+    "comparison": "exact dataframe equality: answer, score, abstention, IDs, offsets",
+    "loaded_prediction": [
+      {
+        "answer": "ninety days",
+        "confidence": 0.9775489568710327,
+        "abstained": false,
+        "document_id": "iris-retention",
+        "start": 42.0,
+        "end": 53.0,
+        "retrieved_ids": "[\"iris-retention\", \"iris-receipts\", \"aster-retention\", \"aster-guests\", \"olive-recovery\"]"
+      },
+      {
+        "answer": "the reliability engineer",
+        "confidence": 0.5375155210494995,
+        "abstained": false,
+        "document_id": "maple-restore",
+        "start": 36.0,
+        "end": 60.0,
+        "retrieved_ids": "[\"juniper-returns\", \"birch-monitors\", \"maple-restore\", \"birch-returns\", \"ginkgo-recovery\"]"
+      },
+      {
+        "answer": "between ten in the morning and two in the afternoon",
+        "confidence": 0.7999163866043091,
+        "abstained": false,
+        "document_id": "kelp-support",
+        "start": 47.0,
+        "end": 98.0,
+        "retrieved_ids": "[\"kelp-support\", \"cedar-support\", \"elm-backup\", \"maple-backup\", \"aster-guests\"]"
+      },
+      {
+        "answer": "Chennai warehouse",
+        "confidence": 0.7771884202957153,
+        "abstained": false,
+        "document_id": "linden-packaging",
+        "start": 47.0,
+        "end": 64.0,
+        "retrieved_ids": "[\"linden-dispatch\", \"linden-packaging\", \"maple-restore\", \"maple-backup\", \"hazel-transport\"]"
+      },
+      {
+        "answer": "the reliability engineer",
+        "confidence": 0.5830176472663879,
+        "abstained": false,
+        "document_id": "maple-restore",
+        "start": 36.0,
+        "end": 60.0,
+        "retrieved_ids": "[\"maple-restore\", \"maple-backup\", \"iris-retention\", \"elm-backup\", \"aster-retention\"]"
+      },
+      {
+        "answer": "thirty",
+        "confidence": 0.8050104975700378,
+        "abstained": false,
+        "document_id": "nettle-expenses",
+        "start": 58.0,
+        "end": 64.0,
+        "retrieved_ids": "[\"nettle-expenses\", \"fern-vendors\", \"aster-retention\", \"aster-guests\", \"iris-receipts\"]"
+      },
+      {
+        "answer": "ninety days",
+        "confidence": 0.9688214659690857,
+        "abstained": false,
+        "document_id": "iris-retention",
+        "start": 42.0,
+        "end": 53.0,
+        "retrieved_ids": "[\"olive-recovery\", \"olive-passwords\", \"iris-retention\", \"iris-receipts\", \"birch-returns\"]"
+      },
+      {
+        "answer": "monitors",
+        "confidence": 0.6178211569786072,
+        "abstained": false,
+        "document_id": "birch-monitors",
+        "start": 6.0,
+        "end": 14.0,
+        "retrieved_ids": "[\"pine-storage\", \"maple-restore\", \"birch-monitors\", \"hazel-storage\", \"maple-backup\"]"
+      },
+      {
+        "answer": "",
+        "confidence": 0.37420549988746643,
+        "abstained": true,
+        "document_id": null,
+        "start": null,
+        "end": null,
+        "retrieved_ids": "[\"iris-retention\", \"iris-receipts\", \"olive-passwords\", \"ginkgo-recovery\", \"olive-recovery\"]"
+      },
+      {
+        "answer": "two-year",
+        "confidence": 0.7692385911941528,
+        "abstained": false,
+        "document_id": "birch-monitors",
+        "start": 23.0,
+        "end": 31.0,
+        "retrieved_ids": "[\"juniper-returns\", \"birch-monitors\", \"birch-returns\", \"iris-retention\", \"iris-receipts\"]"
+      },
+      {
+        "answer": "finance manager",
+        "confidence": 0.7477843761444092,
+        "abstained": false,
+        "document_id": "fern-approval",
+        "start": 78.0,
+        "end": 93.0,
+        "retrieved_ids": "[\"nettle-expenses\", \"fern-vendors\", \"fern-approval\", \"juniper-returns\", \"cedar-support\"]"
+      },
+      {
+        "answer": "two-year",
+        "confidence": 0.5946634411811829,
+        "abstained": false,
+        "document_id": "birch-monitors",
+        "start": 23.0,
+        "end": 31.0,
+        "retrieved_ids": "[\"pine-storage\", \"birch-monitors\", \"hazel-storage\", \"maple-restore\", \"juniper-returns\"]"
+      }
+    ]
+  },
+  "bundle_manifest": {
+    "schema_version": 1,
+    "corpus_sha256": "38f6a9892484cfc1d1605e6736ffeceaa1a3891cbfc037dc451a74afdf24c820",
+    "doc_ids": [
+      "aster-retention",
+      "birch-returns",
+      "cedar-support",
+      "dahlia-shipping",
+      "elm-backup",
+      "fern-approval",
+      "ginkgo-recovery",
+      "hazel-storage",
+      "iris-retention",
+      "juniper-returns",
+      "kelp-support",
+      "linden-dispatch",
+      "maple-restore",
+      "nettle-expenses",
+      "olive-recovery",
+      "pine-storage",
+      "aster-guests",
+      "birch-monitors",
+      "fern-vendors",
+      "olive-passwords",
+      "hazel-transport",
+      "linden-packaging",
+      "iris-receipts",
+      "maple-backup"
+    ],
+    "encoder_fingerprint": "eede01fa185df340090cfcb7e3109608a9d0504ef79eb2170dcaf0b7f29d1949",
+    "reader_fingerprint": "32077dcda2d7720fa7ed408c81386bdb8baf8b3523bf0442862430770709920e",
+    "embeddings_sha256": "7c323898cda026b1126fc8f9a1688f93958d6a5defb31464c1bdf3e28367a092",
+    "threshold": 0.5250951647758484,
+    "reader_k": 3,
+    "encoder_max_tokens": 128,
+    "reader_max_tokens": 384,
+    "encoder_id": "sentence-transformers/paraphrase-MiniLM-L6-v2",
+    "encoder_revision": "c9a2bfebc254878aee8c3aca9e6844d5bbb102d1",
+    "reader_id": "distilbert/distilbert-base-cased-distilled-squad",
+    "reader_revision": "564e9b582944a57a3e586bbb98fd6f0a4118db7f"
+  }
+}

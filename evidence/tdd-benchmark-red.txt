@@ -1,0 +1,53 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+__________ test_committed_data_is_disjoint_and_all_answer_spans_exist __________
+
+    def test_committed_data_is_disjoint_and_all_answer_spans_exist():
+>       audit = audit_data(Path("data"))
+
+tests/test_benchmark.py:10:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = PosixPath('data')
+
+    def audit_data(path):
+>       raise NotImplementedError
+E       NotImplementedError
+
+src/retrieval_lab/benchmark.py:2: NotImplementedError
+_______________ test_cli_audit_produces_machine_readable_output ________________
+
+    def test_cli_audit_produces_machine_readable_output():
+        output = subprocess.check_output([sys.executable, "-m", "retrieval_lab.benchmark", "audit"], text=True)
+>       assert json.loads(output)["document_count"] == 24
+
+tests/test_benchmark.py:19:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.runtime/cpython-3.11.14-macos-aarch64-none/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+.runtime/cpython-3.11.14-macos-aarch64-none/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <json.decoder.JSONDecoder object at 0x10601ba10>, s = '', idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+
+        """
+        try:
+            obj, end = self.scan_once(s, idx)
+        except StopIteration as err:
+>           raise JSONDecodeError("Expecting value", s, err.value) from None
+E           json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+.runtime/cpython-3.11.14-macos-aarch64-none/lib/python3.11/json/decoder.py:355: JSONDecodeError
+=========================== short test summary info ============================
+FAILED tests/test_benchmark.py::test_committed_data_is_disjoint_and_all_answer_spans_exist
+FAILED tests/test_benchmark.py::test_cli_audit_produces_machine_readable_output
+2 failed in 0.45s

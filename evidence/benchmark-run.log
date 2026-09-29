@@ -1,0 +1,56 @@
+Evaluating bm25 on CPU
+Evaluating dense on CPU
+2026/09/29 17:59:55 INFO mlflow.tracking.fluent: Experiment with name 'retrieval-qa-evaluation' does not exist. Creating a new experiment.
+Downloading artifacts:   0%|          | 0/18 [00:00<?, ?it/s]Downloading artifacts:   6%|▌         | 1/18 [00:00<00:00, 3788.89it/s]Downloading artifacts:  11%|█         | 2/18 [00:00<00:00, 5882.61it/s]Downloading artifacts:  17%|█▋        | 3/18 [00:00<00:00, 5918.59it/s]Downloading artifacts:  22%|██▏       | 4/18 [00:00<00:00, 6462.72it/s]Downloading artifacts:  28%|██▊       | 5/18 [00:00<00:00, 6685.22it/s]Downloading artifacts:  33%|███▎      | 6/18 [00:00<00:00, 7051.23it/s]Downloading artifacts:  39%|███▉      | 7/18 [00:00<00:00, 7779.58it/s]Downloading artifacts:  44%|████▍     | 8/18 [00:00<00:00, 7945.64it/s]Downloading artifacts:  50%|█████     | 9/18 [00:00<00:00, 8540.44it/s]Downloading artifacts:  56%|█████▌    | 10/18 [00:00<00:00, 9191.99it/s]Downloading artifacts:  61%|██████    | 11/18 [00:00<00:00, 9849.99it/s]Downloading artifacts:  67%|██████▋   | 12/18 [00:00<00:00, 10118.95it/s]Downloading artifacts:  72%|███████▏  | 13/18 [00:00<00:00, 10399.76it/s]Downloading artifacts:  78%|███████▊  | 14/18 [00:00<00:00, 10896.32it/s]Downloading artifacts:  83%|████████▎ | 15/18 [00:00<00:00, 11416.18it/s]Downloading artifacts:  89%|████████▉ | 16/18 [00:00<00:00, 11932.59it/s]Downloading artifacts:  94%|█████████▍| 17/18 [00:00<00:00, 789.86it/s]  Downloading artifacts: 100%|██████████| 18/18 [00:00<00:00, 103.14it/s]Downloading artifacts: 100%|██████████| 18/18 [00:00<00:00, 103.14it/s]Downloading artifacts: 100%|██████████| 18/18 [00:00<00:00, 102.83it/s]
+2026/09/29 17:59:55 WARNING mlflow.utils.environment: Failed to resolve installed pip version. ``pip`` will be added to conda.yaml environment spec without a version specifier.
+Downloading artifacts:   0%|          | 0/30 [00:00<?, ?it/s]Downloading artifacts:   3%|▎         | 1/30 [00:00<00:00, 5785.25it/s]Downloading artifacts:   7%|▋         | 2/30 [00:00<00:00, 5482.75it/s]Downloading artifacts:  10%|█         | 3/30 [00:00<00:00, 5398.07it/s]Downloading artifacts:  13%|█▎        | 4/30 [00:00<00:00, 6078.70it/s]Downloading artifacts:  17%|█▋        | 5/30 [00:00<00:00, 6925.87it/s]Downloading artifacts:  20%|██        | 6/30 [00:00<00:00, 7033.49it/s]Downloading artifacts:  23%|██▎       | 7/30 [00:00<00:00, 7510.91it/s]Downloading artifacts:  27%|██▋       | 8/30 [00:00<00:00, 8050.49it/s]Downloading artifacts:  30%|███       | 9/30 [00:00<00:00, 7792.89it/s]Downloading artifacts:  33%|███▎      | 10/30 [00:00<00:00, 2106.53it/s]Downloading artifacts:  37%|███▋      | 11/30 [00:00<00:00, 1556.12it/s]Downloading artifacts:  40%|████      | 12/30 [00:00<00:00, 1683.05it/s]Downloading artifacts:  43%|████▎     | 13/30 [00:00<00:00, 1805.79it/s]Downloading artifacts:  47%|████▋     | 14/30 [00:00<00:00, 1932.41it/s]Downloading artifacts:  50%|█████     | 15/30 [00:00<00:00, 2060.75it/s]Downloading artifacts:  53%|█████▎    | 16/30 [00:00<00:00, 2158.67it/s]Downloading artifacts:  57%|█████▋    | 17/30 [00:00<00:00, 2235.35it/s]Downloading artifacts:  60%|██████    | 18/30 [00:00<00:00, 2310.98it/s]Downloading artifacts:  63%|██████▎   | 19/30 [00:00<00:00, 2422.61it/s]Downloading artifacts:  67%|██████▋   | 20/30 [00:00<00:00, 2533.86it/s]Downloading artifacts:  70%|███████   | 21/30 [00:00<00:00, 2645.22it/s]Downloading artifacts:  73%|███████▎  | 22/30 [00:00<00:00, 2755.87it/s]Downloading artifacts:  77%|███████▋  | 23/30 [00:00<00:00, 2865.73it/s]Downloading artifacts:  80%|████████  | 24/30 [00:00<00:00, 2692.11it/s]Downloading artifacts:  83%|████████▎ | 25/30 [00:00<00:00, 2623.60it/s]Downloading artifacts:  87%|████████▋ | 26/30 [00:00<00:00, 2046.77it/s]Downloading artifacts:  90%|█████████ | 27/30 [00:00<00:00, 1940.94it/s]Downloading artifacts:  93%|█████████▎| 28/30 [00:00<00:00, 1975.88it/s]Downloading artifacts:  97%|█████████▋| 29/30 [00:00<00:00, 632.46it/s] Downloading artifacts: 100%|██████████| 30/30 [00:00<00:00, 217.16it/s]Downloading artifacts: 100%|██████████| 30/30 [00:00<00:00, 217.16it/s]Downloading artifacts: 100%|██████████| 30/30 [00:00<00:00, 216.42it/s]
+{
+  "bm25": {
+    "query_count": 12,
+    "answerable_count": 8,
+    "answer_em": 0.5,
+    "answer_f1": 0.601010101010101,
+    "coverage": 0.75,
+    "recall_at_1": 1.0,
+    "recall_at_3": 1.0,
+    "recall_at_5": 1.0,
+    "mrr_at_5": 1.0,
+    "selective_em": 0.3333333333333333,
+    "latency_retrieval_p50_ms": 0.10147900320589542,
+    "latency_retrieval_p95_ms": 0.11579984566196799,
+    "latency_reader_p50_ms": 49.876896548084915,
+    "latency_reader_p95_ms": 55.24202090455219,
+    "latency_total_p50_ms": 49.96397951617837,
+    "latency_total_p95_ms": 55.34827237715945,
+    "count_correct": 3,
+    "count_reader_failure": 5,
+    "count_retrieval_miss": 0,
+    "count_false_abstention": 0,
+    "count_correct_abstention": 3,
+    "count_unanswerable_false_positive": 1
+  },
+  "dense": {
+    "query_count": 12,
+    "answerable_count": 8,
+    "answer_em": 0.25,
+    "answer_f1": 0.351010101010101,
+    "coverage": 0.9166666666666666,
+    "recall_at_1": 1.0,
+    "recall_at_3": 1.0,
+    "recall_at_5": 1.0,
+    "mrr_at_5": 1.0,
+    "selective_em": 0.18181818181818182,
+    "latency_retrieval_p50_ms": 5.2675416227430105,
+    "latency_retrieval_p95_ms": 7.114514778368175,
+    "latency_reader_p50_ms": 69.76008298806846,
+    "latency_reader_p95_ms": 92.3130705836229,
+    "latency_total_p50_ms": 74.29531251545995,
+    "latency_total_p95_ms": 98.57896071625873,
+    "count_correct": 2,
+    "count_reader_failure": 6,
+    "count_retrieval_miss": 0,
+    "count_false_abstention": 0,
+    "count_correct_abstention": 1,
+    "count_unanswerable_false_positive": 3
+  }
+}

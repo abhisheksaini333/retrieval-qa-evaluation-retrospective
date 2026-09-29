@@ -1,0 +1,24 @@
+{"doc_id": "aster-retention", "title": "Aster record retention", "text": "The Aster archive keeps purchase receipts for seven years. After that period, receipts are deleted in the monthly cleanup."}
+{"doc_id": "birch-returns", "title": "Birch return window", "text": "The Birch equipment desk accepts unused keyboard returns within fourteen days of delivery. Return shipping is prepaid."}
+{"doc_id": "cedar-support", "title": "Cedar support hours", "text": "The Cedar support desk opens at nine in the morning and closes at five in the afternoon on weekdays. Weekend support is unavailable."}
+{"doc_id": "dahlia-shipping", "title": "Dahlia dispatch location", "text": "Dahlia replacement sensors are dispatched from the Pune warehouse. The Mumbai office handles invoices but stores no replacement sensors."}
+{"doc_id": "elm-backup", "title": "Elm backup schedule", "text": "The Elm reporting database takes a full backup every Sunday. Incremental backups run every night."}
+{"doc_id": "fern-approval", "title": "Fern expense approval", "text": "At Fern, travel expenses above five thousand rupees require approval from the finance manager. Team leads approve smaller amounts."}
+{"doc_id": "ginkgo-recovery", "title": "Ginkgo account recovery", "text": "Ginkgo users recover a locked account by contacting the help desk. Recovery requests require the employee badge number. Passwords are never requested."}
+{"doc_id": "hazel-storage", "title": "Hazel storage temperature", "text": "Hazel test cartridges must be stored between two and eight degrees Celsius. Do not freeze the cartridges."}
+{"doc_id": "iris-retention", "title": "Iris record retention", "text": "The Iris archive retains visitor logs for ninety days. Purchase receipts are stored in a separate archive."}
+{"doc_id": "juniper-returns", "title": "Juniper return procedure", "text": "The Juniper equipment desk requires a return authorization code before an opened monitor can be shipped back. The code is issued by the service coordinator."}
+{"doc_id": "kelp-support", "title": "Kelp weekend service", "text": "The Kelp support desk provides weekend service between ten in the morning and two in the afternoon. Weekday requests use a separate queue."}
+{"doc_id": "linden-dispatch", "title": "Linden dispatch location", "text": "Linden repair kits leave from the Kochi depot. The Chennai warehouse only stores packaging supplies."}
+{"doc_id": "maple-restore", "title": "Maple restore checks", "text": "After a Maple database restoration, the reliability engineer must verify row counts before reopening the reporting dashboard."}
+{"doc_id": "nettle-expenses", "title": "Nettle expense deadline", "text": "Nettle staff must submit meal reimbursement claims within thirty days of the purchase. Late claims require director approval."}
+{"doc_id": "olive-recovery", "title": "Olive recovery method", "text": "Olive account recovery uses a one-time link sent to the registered work email address. The link expires after twenty minutes."}
+{"doc_id": "pine-storage", "title": "Pine storage restriction", "text": "Pine calibration weights are kept in a dry cabinet on the second floor. They must not be stored near the wash station."}
+{"doc_id": "aster-guests", "title": "Aster guest log", "text": "The Aster reception desk retains guest logs for thirty days. This schedule does not apply to purchase receipts."}
+{"doc_id": "birch-monitors", "title": "Birch monitor warranty", "text": "Birch monitors carry a two-year warranty. The warranty covers display defects but does not change the unused keyboard return window."}
+{"doc_id": "fern-vendors", "title": "Fern vendor invoices", "text": "Fern vendor invoices above five thousand rupees are reviewed by the procurement officer. Employee travel follows the finance approval policy."}
+{"doc_id": "olive-passwords", "title": "Olive password rotation", "text": "Olive service account passwords are rotated every sixty days. Interactive user recovery uses the registered email address."}
+{"doc_id": "hazel-transport", "title": "Hazel transport containers", "text": "Hazel shipping containers can be reused after inspection by the lab technician. Containers and test cartridges have different storage instructions."}
+{"doc_id": "linden-packaging", "title": "Linden packaging orders", "text": "Linden packaging supplies are ordered from the Chennai warehouse. The repair kit distribution location is separate."}
+{"doc_id": "iris-receipts", "title": "Iris receipt archive", "text": "Iris purchase receipts are retained for eight years in the finance archive. Visitor logs follow the reception policy."}
+{"doc_id": "maple-backup", "title": "Maple backup notification", "text": "The Maple backup scheduler emails the operations coordinator every morning. Restoration validation is a separate reliability task."}
