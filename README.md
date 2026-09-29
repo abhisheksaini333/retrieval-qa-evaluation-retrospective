@@ -92,7 +92,7 @@ The [compatibility ADR](docs/adr/001-environments.md) explains why the environme
 - `experiments/haystack1/`: pinned legacy API adapter and executable integration check.
 - `tests/`: malformed input, empty retrieval, duplicate IDs, split leakage, index mismatch, real semantic retrieval, reload, and JSON-null regression checks.
 
-Default CI runs tests without downloading models. Real-model CI is an explicit manual workflow with a timeout and a fixed two-model download. The committed evidence is from local execution; hosted CI results are recorded by GitHub when it runs.
+The [hosted Ubuntu CI run](https://github.com/abhisheksaini333/retrieval-qa-evaluation-retrospective/actions/runs/36570175393) passed at commit `74bbd4b`: locked environment setup, lint, 17 lightweight tests and dataset validation. Five model integration tests are excluded from this default job. Real-model CI is an explicit manual workflow with a timeout and a fixed two-model download; the model and Haystack results above come from local execution.
 
 ## Attribution
 
