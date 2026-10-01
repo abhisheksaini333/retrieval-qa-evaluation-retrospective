@@ -25,7 +25,10 @@ def load_prediction_requests(path):
 
 
 def batch_predict(bundle, requests, output, *, continue_on_error=False):
+    if type(continue_on_error) is not bool:
+        raise ValueError("continue_on_error must be a boolean")
     rows = validate_requests(requests)
+    success_count = error_count = 0
     output = Path(output)
     if output.exists() or output.is_symlink():
         raise FileExistsError("prediction output already exists")
@@ -39,10 +42,12 @@ def batch_predict(bundle, requests, output, *, continue_on_error=False):
                 for row in rows:
                     try:
                         result = {"query_id": row["query_id"], "prediction": bundle.predict(row["question"])}
+                        success_count += 1
                     except (ValueError, RuntimeError) as error:
                         if not continue_on_error:
                             raise
                         result = {"query_id": row["query_id"], "error": {"type": type(error).__name__, "message": str(error)}}
+                        error_count += 1
                     stream.write(json.dumps(result, allow_nan=False) + "\n")
             if output.exists() or output.is_symlink():
                 raise FileExistsError("prediction output appeared during evaluation")
@@ -52,4 +57,4 @@ def batch_predict(bundle, requests, output, *, continue_on_error=False):
             if temporary is not None:
                 temporary.unlink(missing_ok=True)
             lock.unlink()
-    return {"request_count": len(rows), "output": str(output)}
+    return {"request_count": len(rows), "success_count": success_count, "error_count": error_count, "output": str(output)}

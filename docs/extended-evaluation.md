@@ -45,3 +45,5 @@ CI runs the lightweight suite without model downloads, builds a wheel, and exerc
 Calibration dataset and development fingerprints must be lowercase 64-character SHA-256 hex digests. Supply `dataset_manifest(path)["dataset_sha256"]`; placeholder names such as `dataset-a` are rejected.
 
 `datasets.grouped_split` requires explicit trimmed string group keys. Convert domain identifiers deliberately before calling; integers and strings are not silently merged by coercion. Existing string grouping remains deterministic for a fixed seed.
+
+Batch prediction summaries contain `success_count` and `error_count` in addition to request count. `continue_on_error` must be a boolean; partial output is visible in the summary.
